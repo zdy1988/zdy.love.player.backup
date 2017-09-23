@@ -1,0 +1,183 @@
+﻿<UserControl x:Class="Zhu.UserControls.Home.Media.Video.VideoListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
+             xmlns:MaterialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:Layout="clr-namespace:Zhu.UserControls.Layout"
+             xmlns:Controls="clr-namespace:Zhu.Controls"
+             xmlns:Converters="clr-namespace:Zhu.Converters"
+             xmlns:AttachedProperties="clr-namespace:Zhu.AttachedProperties"
+             xmlns:Reused="clr-namespace:Zhu.UserControls.Reused"
+             mc:Ignorable="d"
+             DataContext="{Binding MovieList, Source={StaticResource Locator}}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Layout:ContentPane HeadingText="我的视频">
+        <Layout:ContentPane.HeaderContent>
+            <StackPanel Margin="0 12 0 0">
+                <StackPanel.Resources>
+                    <Style TargetType="ListBox" BasedOn="{StaticResource MaterialDesignToolToggleFlatListBox}">
+                        <Setter Property="Margin" Value="0 10 0 0"></Setter>
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <DropShadowEffect ShadowDepth="0" BlurRadius="0" Opacity="0" Color="#00000000" />
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="ItemContainerStyle">
+                            <Setter.Value>
+                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                                    <Setter Property="TextBlock.FontWeight" Value="DemiBold"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="Opacity" Value="1"/>
+                                    <Setter Property="BorderThickness" Value="0"></Setter>
+                                </Style>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </StackPanel.Resources>
+                <ListBox x:Name="ListBox_SelectCountry" ItemsSource="{Binding CountryCollection}" SelectedValue="{Binding SelectCountry}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding SearchMediaCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+                <ListBox x:Name="ListBox_SelectMediaLength" ItemsSource="{Binding MediaLengthCollection}" SelectedValue="{Binding SelectMediaLength}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding SearchMediaCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+                <ListBox x:Name="ListBox_SelectImageQuality" ItemsSource="{Binding ImageQualityCollection}" SelectedValue="{Binding SelectImageQuality}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding SearchMediaCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+                <DockPanel Margin="0 10 0 0">
+                    <DockPanel.Resources>
+                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                            <Setter Property="Margin" Value="0 0 0 0" />
+                        </Style>
+                        <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MaterialDesignComboBox}">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        </Style>
+                    </DockPanel.Resources>
+                    <MaterialDesign:PackIcon Kind="Keyboard" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" Margin="0 10 10 0"/>
+                    <TextBox MaterialDesign:HintAssist.Hint="输入需要查找的关键词..." Width="300" Text="{Binding SearchText,Mode=TwoWay}" KeyDown="SearchTextBox_KeyDown"></TextBox>
+                    <MaterialDesign:PackIcon Kind="Sort" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" Margin="10 10 10 0"/>
+                    <ComboBox x:Name="ComboBox_MediaSort" ItemsSource="{Binding SortFields}" SelectedValue="{Binding SearchOrderField}" Width="300" DisplayMemberPath="Key" SelectedValuePath="Value">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding SortMediaCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <TextBlock></TextBlock>
+                </DockPanel>
+            </StackPanel>
+        </Layout:ContentPane.HeaderContent>
+        <Layout:ContentPane.InnerContent>
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="ItemsControl">
+                        <Setter Property="ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel IsItemsHost="True" 
+                                               VirtualizingPanel.IsVirtualizing="True" 
+                                               VirtualizingPanel.VirtualizationMode="Recycling" 
+                                               Width="{Binding ElementName=ScrollView, Path=ActualWidth, Mode=OneWay}">
+                                        <i:Interaction.Behaviors>
+                                            <ei:FluidMoveBehavior AppliesTo="Children" Duration="00:00:1.5">
+                                                <ei:FluidMoveBehavior.EaseY>
+                                                    <QuinticEase EasingMode="EaseOut"/>
+                                                </ei:FluidMoveBehavior.EaseY>
+                                                <ei:FluidMoveBehavior.EaseX>
+                                                    <QuinticEase EasingMode="EaseOut"/>
+                                                </ei:FluidMoveBehavior.EaseX>
+                                            </ei:FluidMoveBehavior>
+                                        </i:Interaction.Behaviors>
+                                    </WrapPanel>
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Grid.Resources>
+                <Controls:AnimatedScrollViewer x:Name="ScrollView"
+                                           Focusable="False"
+                                           CanKeyboardScroll="True"
+                                           HorizontalAlignment="Stretch" 
+                                           TargetVerticalOffset="{Binding VerticalScroll, Mode=TwoWay}"
+                                           ScrollChanged="ScrollViewer_ScrollChanged">
+                    <ItemsControl VerticalAlignment="Top" 
+                              ItemsSource="{Binding Medias, Mode=OneTime}"
+                              ScrollViewer.CanContentScroll="True"
+                              VirtualizingStackPanel.IsVirtualizing="True" 
+                              VirtualizingStackPanel.VirtualizationMode="Recycling">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="30 20 0 0"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       RenderOptions.ClearTypeHint="Enabled"
+                                       TextOptions.TextRenderingMode="ClearType">
+                                    <Grid.Width>
+                                        <MultiBinding Converter="{Converters:MediaListItemWidthConverter}">
+                                            <Binding ElementName="ScrollView" Path="ActualWidth"/>
+                                            <Binding Source="240"/>
+                                            <Binding Source="30"/>
+                                        </MultiBinding>
+                                    </Grid.Width>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Image x:Name="ThumbnailImage" Grid.Row="0"
+                                           AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1.Cover,Converter={Converters:UriToCachedImageConverter}, Mode=OneTime}"
+                                           AttachedProperties:ImageAsyncHelper.Type="Thumbnail"
+                                           Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={Converters:RatioConverter}, ConverterParameter='0.56'}" 
+                                           Stretch="UniformToFill" 
+                                           Cursor="Hand">
+                                        <Image.Effect>
+                                            <DropShadowEffect Color="Black" BlurRadius="5" ShadowDepth="0" Opacity="0.3" />
+                                        </Image.Effect>
+                                    </Image>
+                                    <Reused:PlayerMasker Grid.Row="0" PlayIconWidth="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseDown">
+                                                <i:InvokeCommandAction CommandParameter="{Binding Item1}" Command="{Binding MovieList.PlayMediaCommand,Source={StaticResource Locator}}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Reused:PlayerMasker>
+                                    <StackPanel Grid.Row="1" Margin="2 4 2 4">
+                                        <StackPanel.Resources>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontSize" Value="13"></Setter>
+                                            </Style>
+                                        </StackPanel.Resources>
+                                        <Button Style="{StaticResource MaterialDesignToolButton}" 
+                                                Margin="-2 0" 
+                                                Cursor="Hand" 
+                                                HorizontalAlignment="Left"
+                                                Command="{x:Static MaterialDesign:Transitioner.MoveNextCommand}">
+                                            <TextBlock Text="{Binding Item1.Title}" ToolTip="{Binding Item1.Title}" ></TextBlock>
+                                        </Button>
+                                        <Viewbox Margin="0 -2 0 6" Height="16" HorizontalAlignment="Left">
+                                            <MaterialDesign:RatingBar Value="{Binding Item1.Rating}" Orientation="Horizontal" Foreground="Gold" Margin="0" Cursor="Hand" Tag="{Binding Item1}" ValueChanged="RatingBar_ValueChanged">
+                                            </MaterialDesign:RatingBar>
+                                        </Viewbox>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Controls:AnimatedScrollViewer>
+            </Grid>
+        </Layout:ContentPane.InnerContent>
+    </Layout:ContentPane>
+</UserControl>

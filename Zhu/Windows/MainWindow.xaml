@@ -1,0 +1,339 @@
+﻿<Window x:Class="Zhu.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:MainType="clr-namespace:Zhu.ViewModels.Main"
+        xmlns:MaterialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:UserControls="clr-namespace:Zhu.UserControls"
+        xmlns:Converters="clr-namespace:Zhu.Converters"
+        xmlns:Controls="clr-namespace:Zhu.Controls"
+        xmlns:Home="clr-namespace:Zhu.UserControls.Home"
+        xmlns:Media="clr-namespace:Zhu.UserControls.Home.Media"
+        xmlns:AttachedProperties="clr-namespace:Zhu.AttachedProperties"
+        xmlns:Pages="clr-namespace:Zhu.ViewModels.Pages"
+        mc:Ignorable="d"
+        Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={Converters:RatioConverter}, ConverterParameter='0.8'}"
+        Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={Converters:RatioConverter}, ConverterParameter='0.8'}"
+        MinWidth="1020"
+        MinHeight="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={Converters:RatioConverter}, ConverterParameter='0.5'}"
+        DataContext="{Binding Main, Source={StaticResource Locator}}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        WindowStartupLocation="CenterScreen"
+        WindowState="{Binding ApplicationState.IsFullScreen, Converter={Converters:WindowStateToBooleanConverter}, Mode=TwoWay}"
+        WindowStyle="None"
+        SizeToContent="Manual"
+        AllowsTransparency="True"
+        FontFamily="{StaticResource MaterialDesignFont}" 
+        ResizeMode="CanResizeWithGrip"
+        KeyDown="Window_KeyDown"
+        Icon="/favicon.ico"
+        Title="Zhu Player">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ContextMenu x:Key="NotifyIconMenu" StaysOpen="False">
+                <MenuItem Header="Exit" InputGestureText="Ctrl+E">
+                    <MenuItem.Icon>
+                        <MaterialDesign:PackIcon Kind="ExitToApp" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Exit" InputGestureText="Ctrl+E">
+                    <MenuItem.Icon>
+                        <MaterialDesign:PackIcon Kind="ExitToApp" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Exit" InputGestureText="Ctrl+E">
+                    <MenuItem.Icon>
+                        <MaterialDesign:PackIcon Kind="ExitToApp" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </ContextMenu>
+        </ResourceDictionary>
+    </Window.Resources>
+    <MaterialDesign:DialogHost Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" 
+                               x:Name="PlayerMain" 
+                               AllowDrop="True"
+                               DragEnter="PlayerMain_DragEnter" 
+                               Drop="PlayerMain_Drop">
+        <MaterialDesign:DrawerHost IsRightDrawerOpen="{Binding IsMovieFlyoutOpen}">
+            <MaterialDesign:DrawerHost.RightDrawerContent>
+                <DockPanel Width="{Binding ElementName=PlayerMain, Path=ActualWidth}">
+                    <UserControls:MediaPlayer/>
+                </DockPanel>
+            </MaterialDesign:DrawerHost.RightDrawerContent>
+            <DockPanel>
+                <MaterialDesign:ColorZone Padding="24" Mode="PrimaryDark" DockPanel.Dock="Top" 
+                                  MouseLeftButtonDown="TopBar_MouseLeftButtonDown"
+                                  MouseDoubleClick="TopBar_MouseDoubleClick"
+                                  x:Name="TopBar">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <StackPanel.Resources>
+                                <Style BasedOn="{StaticResource MaterialDesignToolForegroundButton}" TargetType="Button">
+                                    <Setter Property="Margin" Value="8 0 0 0"></Setter>
+                                </Style>
+                                <Style TargetType="MaterialDesign:PackIcon">
+                                    <Setter Property="Width" Value="20"></Setter>
+                                    <Setter Property="Height" Value="20"></Setter>
+                                </Style>
+                            </StackPanel.Resources>
+                            <Button x:Name="Menu" ToolTip="菜单">
+                                <MaterialDesign:PackIcon Kind="Menu" />
+                            </Button>
+                            <Button x:Name="WindowMinimized" ToolTip="最小化" Click="WindowMinimized_Click">
+                                <MaterialDesign:PackIcon Kind="FormatVerticalAlignBottom" />
+                            </Button>
+                            <Button x:Name="WindowFullScreen" ToolTip="{Binding ApplicationState.IsFullScreen, Converter={Converters:WindowStateTooltipConverter}, Mode=TwoWay}" Click="WindowFullScreen_Click">
+                                <MaterialDesign:PackIcon Kind="{Binding ApplicationState.IsFullScreen, Converter={Converters:WindowStateIconConverter}, Mode=TwoWay}" />
+                            </Button>
+                            <Button x:Name="WindowClose" Click="WindowClose_Click" ToolTip="关闭">
+                                <MaterialDesign:PackIcon Kind="WindowClose" />
+                            </Button>
+                        </StackPanel>
+                        <Button Style="{DynamicResource MaterialDesignToolForegroundButton}" 
+                        FontSize="22" 
+                        VerticalAlignment="Center"  
+                        HorizontalAlignment="Center"
+                        Command="{Binding ToggleMoviePalyerCommand}">
+                            Zhu Player
+                        </Button>
+                    </DockPanel>
+                </MaterialDesign:ColorZone>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="149*"/>
+                        <RowDefinition Height="201*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Background="#EAEAEA" Grid.Column="0" Grid.RowSpan="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.Resources>
+                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border Background="{TemplateBinding Background}" Cursor="Hand" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                                                <MaterialDesign:Ripple x:Name="Ripple" 
+                                                                       Padding="14 10"
+                                                                       Feedback="{TemplateBinding Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                                                       Focusable="False"
+                                                                       Content="{TemplateBinding Content}"
+                                                                       ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                       ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                                       SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                                       HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                                                </MaterialDesign:Ripple>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter Property="BorderThickness" Value="3 0 0 0"></Setter>
+                                        <Setter Property="BorderBrush" Value="Red"></Setter>
+                                        <Setter Property="Background" Value="#EAD7DB"/>
+                                        <Setter Property="Foreground" Value="Red"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter Property="Background" Value="#EAD7DB"/>
+                                        <Setter Property="Foreground" Value="Red"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                            <DataTemplate x:Key="ListItemTemplate" DataType="MainType:TabItem">
+                                <WrapPanel Margin="4">
+                                    <MaterialDesign:PackIcon Kind="{Binding Icon}" Grid.Column="0" Margin="16 1 0 0" Width="18" Height="18"/>
+                                    <TextBlock Text="{Binding Title}" Margin="12 0 16 0" Grid.Column="1" FontSize="14"/>
+                                </WrapPanel>
+                            </DataTemplate>
+                        </Grid.Resources>
+                        <StackPanel Margin="36 20" Grid.Row="0">
+                            <Grid VerticalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <MaterialDesign:PackIcon Kind="GithubCircle" Width="120" Height="120" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" />
+                                <StackPanel  Grid.Row="1">
+                                    <TextBlock Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="0 16 0 8" HorizontalAlignment="Center">Hey! Jude.</TextBlock>
+                                </StackPanel>
+                                <Button Style="{DynamicResource MaterialDesignFlatButton}" Grid.Row="2">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock VerticalAlignment="Center">Super</TextBlock>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                        <Border BorderThickness="0 1 0 0" Grid.Row="1" BorderBrush="{StaticResource MaterialDesignDivider}" />
+                        <StackPanel Margin="36 20" Grid.Row="2">
+                            <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}" Opacity="0.6">我的影片</TextBlock>
+                        </StackPanel>
+                        <ListBox x:Name="CatgoryItemsListBox"  Grid.Row="3"
+                                 Padding="0 0 0 20" 
+                                 SelectedIndex="0" 
+                                 ItemTemplate="{StaticResource ListItemTemplate}">
+                            <MainType:TabItem Title="电影院" Icon="Movie">
+                                <MainType:TabItem.Content>
+                                    <Home:Index />
+                                </MainType:TabItem.Content>
+                            </MainType:TabItem>
+                            <MainType:TabItem Title="我的电影" Icon="Movie">
+                                <MainType:TabItem.Content>
+                                    <Media:MyMoives />
+                                </MainType:TabItem.Content>
+                            </MainType:TabItem>
+                            <MainType:TabItem Title="我的视频" Icon="AirPlay">
+                                <MainType:TabItem.Content>
+                                    <Media:MyVideos />
+                                </MainType:TabItem.Content>
+                            </MainType:TabItem>
+                            <MainType:TabItem Title="网络电视" Icon="Cast">
+                                <MainType:TabItem.Content>
+                                    <Media:MyNetTV />
+                                </MainType:TabItem.Content>
+                            </MainType:TabItem>
+                            <MainType:TabItem Title="播放历史" Icon="CameraTimer">
+                                <MainType:TabItem.Content>
+                                    <Home:Index />
+                                </MainType:TabItem.Content>
+                            </MainType:TabItem>
+                            <MainType:TabItem Title="我喜欢的" Icon="HeartPulse">
+                                <MainType:TabItem.Content>
+                                    <Home:Index />
+                                </MainType:TabItem.Content>
+                            </MainType:TabItem>
+                            <MainType:TabItem Title="文件管理" Icon="BriefcaseCheck">
+                                <MainType:TabItem.Content>
+                                    <UserControls:FileExplorer />
+                                </MainType:TabItem.Content>
+                            </MainType:TabItem>
+                        </ListBox>
+                        <Border BorderThickness="0 1 0 0" Grid.Row="4" BorderBrush="{DynamicResource MaterialDesignDivider}" />
+                        <DockPanel Margin="36 20" Grid.Row="5">
+                            <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}" Opacity="0.6">我的影集</TextBlock>
+                            <Button Style="{StaticResource MaterialDesignToolForegroundButton}" DockPanel.Dock="Right" 
+                                    Width="24" Height="24" Margin="0 -2 -110 -2"
+                                    ToolTip="创建影集">
+                                <MaterialDesign:PackIcon Kind="PlaylistPlus" />
+                            </Button>
+                        </DockPanel>
+                        <Controls:AnimatedScrollViewer Grid.Row="6">
+                            <ListView Margin="26 0 8 0" Cursor="Hand">
+                                <ListViewItem>
+                                    <DockPanel>
+                                        <MaterialDesign:PackIcon Kind="Wunderlist" Width="20" Height="20"/>
+                                        <TextBlock Margin="10 1 0 0">Hello</TextBlock>
+                                    </DockPanel>
+                                </ListViewItem>
+                                <ListViewItem>
+                                    <DockPanel>
+                                        <MaterialDesign:PackIcon Kind="Wunderlist" Width="20" Height="20"/>
+                                        <TextBlock Margin="10 1 0 0">Hello</TextBlock>
+                                    </DockPanel>
+                                </ListViewItem>
+                                <ListViewItem>
+                                    <DockPanel>
+                                        <MaterialDesign:PackIcon Kind="Wunderlist" Width="20" Height="20"/>
+                                        <TextBlock Margin="10 1 0 0">Hello</TextBlock>
+                                    </DockPanel>
+                                </ListViewItem>
+                                <ListViewItem>
+                                    <DockPanel>
+                                        <MaterialDesign:PackIcon Kind="Wunderlist" Width="20" Height="20"/>
+                                        <TextBlock Margin="10 1 0 0">Hello</TextBlock>
+                                    </DockPanel>
+                                </ListViewItem>
+                                <ListViewItem>
+                                    <DockPanel>
+                                        <MaterialDesign:PackIcon Kind="Wunderlist" Width="20" Height="20"/>
+                                        <TextBlock Margin="10 1 0 0">Hello</TextBlock>
+                                    </DockPanel>
+                                </ListViewItem>
+                                <ListViewItem>
+                                    <DockPanel>
+                                        <MaterialDesign:PackIcon Kind="Wunderlist" Width="20" Height="20"/>
+                                        <TextBlock Margin="10 1 0 0">Hello</TextBlock>
+                                    </DockPanel>
+                                </ListViewItem>
+                                <ListViewItem>
+                                    <DockPanel>
+                                        <MaterialDesign:PackIcon Kind="Wunderlist" Width="20" Height="20"/>
+                                        <TextBlock Margin="10 1 0 0">Hello</TextBlock>
+                                    </DockPanel>
+                                </ListViewItem>
+                                <ListViewItem>
+                                    <DockPanel>
+                                        <MaterialDesign:PackIcon Kind="Wunderlist" Width="20" Height="20"/>
+                                        <TextBlock Margin="10 1 0 0">Hello</TextBlock>
+                                    </DockPanel>
+                                </ListViewItem>
+                            </ListView>
+                        </Controls:AnimatedScrollViewer>
+                    </Grid>
+
+                    <ContentControl Content="{Binding ElementName=CatgoryItemsListBox, Path=SelectedItem.Content}" Grid.RowSpan="2" Grid.Column="1"/>
+                    <MaterialDesign:Snackbar MessageQueue="{MaterialDesign:MessageQueue}" x:Name="MainSnackbar" Margin="402,0" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+                    <MaterialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+                                             Background="{DynamicResource SecondaryAccentBrush}"
+                                             BorderBrush="{DynamicResource SecondaryAccentBrush}"
+                                             HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                             Margin="32" Grid.Row="1">
+                        <StackPanel>
+                            <Button ToolTip="打开媒体" 
+                                    BorderBrush="Transparent" 
+                                    Command="{Binding SelectMediaDialogOpenCommand}">
+                                <MaterialDesign:PackIcon Kind="OpenInNew" Height="20" Width="20" />
+                            </Button>
+                            <Button ToolTip="导入网媒"
+                                    BorderBrush="Transparent"
+                                    Command="{Binding ImportNetworkMediaDialogOpenCommand}"
+                                    Background="{DynamicResource PrimaryHueMidBrush}"
+                                    Foreground="{DynamicResource PrimaryHueMidForegroundBrush}">
+                                <MaterialDesign:PackIcon Kind="FileImport" />
+                            </Button>
+                            <Button ToolTip="Chat"  BorderBrush="Transparent">
+                                <Button.Background>
+                                    <SolidColorBrush Color="{StaticResource GreenPrimary500}" />
+                                </Button.Background>
+                                <Button.Foreground>
+                                    <SolidColorBrush Color="{StaticResource GreenPrimary500Foreground}" />
+                                </Button.Foreground>
+                                <MaterialDesign:PackIcon Kind="FileFind" />
+                            </Button>
+                            <Button Background="{DynamicResource SecondaryAccentBrush}"  BorderBrush="Transparent"
+                                    Foreground="{DynamicResource SecondaryAccentForegroundBrush}">
+                                <MaterialDesign:PackIcon Kind="Email" />
+                            </Button>
+                            <Button BorderBrush="Transparent">
+                                <Button.Background>
+                                    <SolidColorBrush Color="{StaticResource GreenPrimary200}" />
+                                </Button.Background>
+                                <Button.Foreground>
+                                    <SolidColorBrush Color="{StaticResource GreenPrimary200Foreground}" />
+                                </Button.Foreground>
+                                <MaterialDesign:PackIcon Kind="Gift" />
+                            </Button>
+                        </StackPanel>
+                    </MaterialDesign:PopupBox>
+                </Grid>
+            </DockPanel>
+        </MaterialDesign:DrawerHost>
+    </MaterialDesign:DialogHost>
+</Window>
