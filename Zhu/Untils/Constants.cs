@@ -17,7 +17,7 @@ namespace Zhu.Untils
         /// <summary>
         /// 资源目录
         /// </summary>
-        public static string Assets { get; } = Path.GetTempPath() + "Zhu\\Assets\\";
+        public static string TempDictionary { get; } = Path.GetTempPath() + "Zhu\\Assets\\";
         //public static string Assets { get; } = Path.GetTempPath() + "Popcorn\\Assets\\";
 
         //F:\照片  E:\vedio
@@ -32,11 +32,6 @@ namespace Zhu.Untils
         /// 演员封面文件夹
         /// </summary>
         public const string ActorCoverDictionary = @"D:\\MovieImage\\Actors\\";
-
-        /// <summary>
-        /// 临时文件夹
-        /// </summary>
-        public static string TempDictionary { get; } = Path.GetTempPath() + "WantCha\\Temp\\";
 
         /// <summary>
         /// 加载影片数据条数

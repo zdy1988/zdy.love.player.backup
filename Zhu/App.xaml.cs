@@ -31,9 +31,9 @@ namespace Zhu
             WatchStart = Stopwatch.StartNew();
             Logger.Info("Application Starting...");
             DispatcherHelper.Initialize();
-            if (!Directory.Exists(Constants.Assets))
+            if (!Directory.Exists(Constants.TempDictionary))
             {
-                Directory.CreateDirectory(Constants.Assets);
+                Directory.CreateDirectory(Constants.TempDictionary);
             }
         }
 

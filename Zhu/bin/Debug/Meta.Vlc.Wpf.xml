@@ -989,6 +989,13 @@
             <param name="format"></param>
             <param name="quality"></param>
         </member>
+        <member name="M:Meta.Vlc.Wpf.VlcPlayer.TakeSnapshot(System.String,System.Int32)">
+            <summary>
+                Take a snapshot.
+            </summary>
+            <param name="file"></param>
+            <param name="quality"></param>
+        </member>
         <member name="M:Meta.Vlc.Wpf.VlcPlayer.EnumAudioDeviceList">
             <summary>
                 Gets a list of potential audio output devices.

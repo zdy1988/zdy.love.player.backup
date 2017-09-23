@@ -119,9 +119,9 @@ namespace Zhu.AttachedProperties
                     string localFile;
                     var hash = Convert.ToBase64String(Encoding.UTF8.GetBytes(path));
                     var mustDownload = false;
-                    if (File.Exists(Constants.Assets + hash))
+                    if (File.Exists(Constants.TempDictionary + hash))
                     {
-                        localFile = Constants.Assets + hash;
+                        localFile = Constants.TempDictionary + hash;
                     }
                     else
                     {
@@ -157,7 +157,7 @@ namespace Zhu.AttachedProperties
                             image.RenderTransform = loadingAnimationTransform;
                         }
 
-                        localFile = Constants.Assets + hash;
+                        localFile = Constants.TempDictionary + hash;
                     }
 
                     await Task.Run(async () =>
@@ -175,9 +175,9 @@ namespace Zhu.AttachedProperties
                                             using (var stream = new MemoryStream())
                                             {
                                                 await ms.CopyToAsync(stream).ConfigureAwait(false);
-                                                if (!File.Exists(Constants.Assets + hash))
+                                                if (!File.Exists(Constants.TempDictionary + hash))
                                                 {
-                                                    using (var fs = new FileStream(Constants.Assets + hash, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true))
+                                                    using (var fs = new FileStream(Constants.TempDictionary + hash, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true))
                                                     {
                                                         var writeAsync = stream.ToArray();
                                                         await fs.WriteAsync(writeAsync, 0, writeAsync.Length).ConfigureAwait(false);
@@ -191,7 +191,7 @@ namespace Zhu.AttachedProperties
                                 {
                                     if (File.Exists(path))
                                     {
-                                        using (var fs = new FileStream(Constants.Assets + hash, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true))
+                                        using (var fs = new FileStream(Constants.TempDictionary + hash, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true))
                                         {
                                             var writeAsync = BitmapImageHelper.BitmapImageToByteArray(path);
                                             await fs.WriteAsync(writeAsync, 0, writeAsync.Length).ConfigureAwait(false);
