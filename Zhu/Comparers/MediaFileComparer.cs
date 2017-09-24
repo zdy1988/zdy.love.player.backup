@@ -6,7 +6,7 @@ namespace Zhu.Comparers
     /// <summary>
     /// Compare two movies
     /// </summary>
-    public class MediaFileComparer : IEqualityComparer<Movie>
+    public class MediaFileComparer : IEqualityComparer<Media>
     {
         /// <summary>
         /// Compare two movies
@@ -14,7 +14,7 @@ namespace Zhu.Comparers
         /// <param name="x">First movie</param>
         /// <param name="y">Second movie</param>
         /// <returns>True if both movies are the same, false otherwise</returns>
-        public bool Equals(Movie x, Movie y)
+        public bool Equals(Media x, Media y)
         {
             //Check whether the compared objects reference the same data.
             if (ReferenceEquals(x, y)) return true;
@@ -32,7 +32,7 @@ namespace Zhu.Comparers
         /// </summary>
         /// <param name="movie">A movie</param>
         /// <returns>Unique hashcode</returns>
-        public int GetHashCode(Movie movie)
+        public int GetHashCode(Media movie)
         {
             //Check whether the object is null
             if (ReferenceEquals(movie, null)) return 0;

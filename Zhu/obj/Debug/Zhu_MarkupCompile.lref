@@ -1,4 +1,4 @@
-﻿D:\Work\zhu.player\Zhu\obj\Debug\GeneratedInternalTypeHelper.g.cs
+﻿
 FD:\Work\zhu.player\Zhu\App.xaml;;
 FD:\Work\zhu.player\Zhu\Resources\AnimatedScrollViewer.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\FileExplorer.xaml;;
@@ -11,9 +11,13 @@ FD:\Work\zhu.player\Zhu\UserControls\Home\Media\MyNetTV.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Media\MyVideos.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Media\NetTV\NetTVDetailView.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Media\NetTV\NetTVListView.xaml;;
+FD:\Work\zhu.player\Zhu\UserControls\Home\Media\SeenHistory.xaml;;
+FD:\Work\zhu.player\Zhu\UserControls\Home\Media\Seen\SeenMediaListView.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Media\Video\VideoListView.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Layout\Resources\ContentPane.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Reused\PlayerMasker.xaml;;
+FD:\Work\zhu.player\Zhu\UserControls\Reused\SampleLoading.xaml;;
+FD:\Work\zhu.player\Zhu\UserControls\Reused\SampleMessage.xaml;;
 FD:\Work\zhu.player\Zhu\Windows\MainWindow.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Main\ImportNetworkMediaDialog.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Player\MediaPlayer.xaml;;

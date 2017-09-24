@@ -32,11 +32,14 @@ namespace Zhu.UserControls.Home.Media.NetTV
 
         private void NetTVListView_Loaded(object sender, RoutedEventArgs e)
         {
-            if (isLoaded) return; else isLoaded = true;
+            if (!isLoaded)
+            {
+                isLoaded = true;
 
-            var vm = DataContext as NetTVListViewModel;
-            vm.SearchOrderField = "ID";
-            vm.LoadMediaCommand.Execute(null);
+                var vm = DataContext as NetTVListViewModel;
+                vm.SearchOrderField = "ID";
+                vm.LoadMediasAsync().ConfigureAwait(false);
+            }
         }
 
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -45,8 +48,8 @@ namespace Zhu.UserControls.Home.Media.NetTV
             if (!totalHeight.Equals(e.ExtentHeight)) return;
 
             var vm = DataContext as NetTVListViewModel;
-            if (vm != null && !vm.IsLoadingMedias)
-                vm.LoadMediaCommand.Execute(null);
+            if (vm != null && !vm.IsDataLoading)
+                vm.LoadMediasAsync().ConfigureAwait(false);
 
         }
 

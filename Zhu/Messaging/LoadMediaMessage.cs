@@ -10,9 +10,9 @@ namespace Zhu.Messaging
 {
     public class LoadMediaMessage : MessageBase
     {
-        public IMedia Media { get; set; }
+        public Media Media { get; set; }
 
-        public LoadMediaMessage(IMedia media)
+        public LoadMediaMessage(Media media)
         {
             Media = media;
         }

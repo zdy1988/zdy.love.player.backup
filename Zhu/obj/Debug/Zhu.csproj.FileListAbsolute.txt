@@ -96,13 +96,9 @@ D:\Work\WantCha\Zhu\obj\Debug\Zhu.exe
 D:\Work\WantCha\Zhu\obj\Debug\Zhu.pdb
 D:\Work\zhu.player\Zhu\obj\Debug\Zhu.csprojResolveAssemblyReference.cache
 D:\Work\zhu.player\Zhu\obj\Debug\Resources\ImageLoading.baml
-D:\Work\zhu.player\Zhu\obj\Debug\Controls\SampleMessageDialog.baml
-D:\Work\zhu.player\Zhu\obj\Debug\Controls\SampleProgressDialog.baml
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Media\Moive\MoiveDetailView.baml
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Media\Video\VideoDetailView.baml
 D:\Work\zhu.player\Zhu\obj\Debug\Windows\SplashScreen.baml
-D:\Work\zhu.player\Zhu\obj\Debug\Controls\SampleMessageDialog.g.cs
-D:\Work\zhu.player\Zhu\obj\Debug\Controls\SampleProgressDialog.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\FileExplorer.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Elements\UserControl1.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Elements\UserControl2.g.cs
@@ -205,3 +201,11 @@ D:\Work\zhu.player\Zhu\obj\Debug\Zhu.Properties.Resources.resources
 D:\Work\zhu.player\Zhu\obj\Debug\Zhu.csproj.GenerateResource.Cache
 D:\Work\zhu.player\Zhu\obj\Debug\Zhu.exe
 D:\Work\zhu.player\Zhu\obj\Debug\Zhu.pdb
+D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Media\Seen\SeenMediaListView.g.cs
+D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Media\SeenHistory.g.cs
+D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Media\Seen\SeenMediaListView.baml
+D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Media\SeenHistory.baml
+D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Reused\SampleLoading.g.cs
+D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Reused\SampleMessage.g.cs
+D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Reused\SampleLoading.baml
+D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Reused\SampleMessage.baml

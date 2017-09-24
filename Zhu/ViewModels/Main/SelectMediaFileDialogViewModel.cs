@@ -17,12 +17,12 @@ namespace Zhu.ViewModels.Main
             set { Set(() => FilePath, ref _filePath, value); }
         }
 
-        private string _streamNetworkAddress;
+        private string _networkAddress;
 
-        public string StreamNetworkAddress
+        public string NetworkAddress
         {
-            get { return _streamNetworkAddress; }
-            set { Set(() => StreamNetworkAddress, ref _streamNetworkAddress, value); }
+            get { return _networkAddress; }
+            set { Set(() => NetworkAddress, ref _networkAddress, value); }
         }
     }
 }

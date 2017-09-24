@@ -76,9 +76,6 @@
                                            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth}" 
                                            Stretch="UniformToFill" 
                                            Cursor="Hand">
-                                        <Image.Effect>
-                                            <DropShadowEffect Color="Black" BlurRadius="5" ShadowDepth="0" Opacity="0.3" />
-                                        </Image.Effect>
                                     </Image>
                                     <Reused:PlayerMasker Grid.Row="0" PlayIconWidth="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
                                         <i:Interaction.Triggers>

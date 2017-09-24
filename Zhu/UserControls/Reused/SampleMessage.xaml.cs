@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Zhu.Controls
+namespace Zhu.UserControls.Reused
 {
     /// <summary>
-    /// Interaction logic for SampleProgressDialog.xaml
+    /// SampleMessage.xaml 的交互逻辑
     /// </summary>
-    public partial class SampleProgressDialog : UserControl
+    public partial class SampleMessage : UserControl
     {
-        public SampleProgressDialog()
+        public SampleMessage()
         {
             InitializeComponent();
         }

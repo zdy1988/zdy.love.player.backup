@@ -39,8 +39,8 @@ namespace Zhu.ViewModels
 
             #region DataServices
             SimpleIoc.Default.Register<ITagService, TagService>();
-            SimpleIoc.Default.Register<IMovieService, MovieService>();
-            SimpleIoc.Default.Register<INetTVService, NetTVService>();
+            SimpleIoc.Default.Register<IMediaService, MediaService>();
+            SimpleIoc.Default.Register<ISeenService, SeenService>();
             #endregion
 
             SimpleIoc.Default.Register<IApplicationState, ApplicationState>();
@@ -48,17 +48,18 @@ namespace Zhu.ViewModels
             #region ViewModels
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<FileExplorerViewModel>();
+            SimpleIoc.Default.Register<MediaPlayerViewModel>();
             SimpleIoc.Default.Register<MovieListViewModel>();
             SimpleIoc.Default.Register<NetTVListViewModel>();
-            SimpleIoc.Default.Register<MediaPlayerViewModel>();
+            SimpleIoc.Default.Register<SeenListViewModel>();
             #endregion
         }
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
         public FileExplorerViewModel FileExplorer => ServiceLocator.Current.GetInstance<FileExplorerViewModel>();
+        public MediaPlayerViewModel MediaPlayer => ServiceLocator.Current.GetInstance<MediaPlayerViewModel>();
         public MovieListViewModel MovieList => ServiceLocator.Current.GetInstance<MovieListViewModel>();
         public NetTVListViewModel NetTVList => ServiceLocator.Current.GetInstance<NetTVListViewModel>();
-        public MediaPlayerViewModel MediaPlayer => ServiceLocator.Current.GetInstance<MediaPlayerViewModel>();
-
+        public SeenListViewModel SeenList => ServiceLocator.Current.GetInstance<SeenListViewModel>();
     }
 }

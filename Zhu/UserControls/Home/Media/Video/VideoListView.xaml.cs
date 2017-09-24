@@ -32,15 +32,17 @@ namespace Zhu.UserControls.Home.Media.Video
 
         private void MovieLibrary_Loaded(object sender, RoutedEventArgs e)
         {
-            if (isLoaded) return; else isLoaded = true;
+            if (!isLoaded)
+            {
+                isLoaded = true;
+                this.ComboBox_MediaSort.SelectedIndex = 0;
+                this.ListBox_SelectCountry.SelectedIndex = 0;
+                this.ListBox_SelectImageQuality.SelectedIndex = 0;
+                this.ListBox_SelectMediaLength.SelectedIndex = 0;
 
-            this.ComboBox_MediaSort.SelectedIndex = 0;
-            this.ListBox_SelectCountry.SelectedIndex = 0;
-            this.ListBox_SelectImageQuality.SelectedIndex = 0;
-            this.ListBox_SelectMediaLength.SelectedIndex = 0;
-
-            var vm = DataContext as MovieListViewModel;
-            vm.LoadMediaCommand.Execute(null);
+                var vm = DataContext as MovieListViewModel;
+                vm.LoadMediasAsync().ConfigureAwait(false);
+            }
         }
 
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -49,8 +51,8 @@ namespace Zhu.UserControls.Home.Media.Video
             if (!totalHeight.Equals(e.ExtentHeight)) return;
 
             var vm = DataContext as MovieListViewModel;
-            if (vm != null && !vm.IsLoadingMedias)
-                vm.LoadMediaCommand.Execute(null);
+            if (vm != null && !vm.IsDataLoading)
+                vm.LoadMediasAsync().ConfigureAwait(false);
 
         }
 

@@ -8,8 +8,8 @@
         xmlns:UserControls="clr-namespace:Zhu.UserControls"
         xmlns:Converters="clr-namespace:Zhu.Converters"
         xmlns:Controls="clr-namespace:Zhu.Controls"
-        xmlns:Home="clr-namespace:Zhu.UserControls.Home"
-        xmlns:Media="clr-namespace:Zhu.UserControls.Home.Media"
+        xmlns:HomePage="clr-namespace:Zhu.UserControls.Home"
+        xmlns:MediaPage="clr-namespace:Zhu.UserControls.Home.Media"
         xmlns:AttachedProperties="clr-namespace:Zhu.AttachedProperties"
         xmlns:Pages="clr-namespace:Zhu.ViewModels.Pages"
         mc:Ignorable="d"
@@ -191,32 +191,32 @@
                                  ItemTemplate="{StaticResource ListItemTemplate}">
                             <MainType:TabItem Title="电影院" Icon="Movie">
                                 <MainType:TabItem.Content>
-                                    <Home:Index />
+                                    <HomePage:Index />
                                 </MainType:TabItem.Content>
                             </MainType:TabItem>
                             <MainType:TabItem Title="我的电影" Icon="Movie">
                                 <MainType:TabItem.Content>
-                                    <Media:MyMoives />
+                                    <MediaPage:MyMoives />
                                 </MainType:TabItem.Content>
                             </MainType:TabItem>
                             <MainType:TabItem Title="我的视频" Icon="AirPlay">
                                 <MainType:TabItem.Content>
-                                    <Media:MyVideos />
+                                    <MediaPage:MyVideos />
                                 </MainType:TabItem.Content>
                             </MainType:TabItem>
                             <MainType:TabItem Title="网络电视" Icon="Cast">
                                 <MainType:TabItem.Content>
-                                    <Media:MyNetTV />
+                                    <MediaPage:MyNetTV />
                                 </MainType:TabItem.Content>
                             </MainType:TabItem>
                             <MainType:TabItem Title="播放历史" Icon="CameraTimer">
                                 <MainType:TabItem.Content>
-                                    <Home:Index />
+                                    <MediaPage:SeenHistory />
                                 </MainType:TabItem.Content>
                             </MainType:TabItem>
                             <MainType:TabItem Title="我喜欢的" Icon="HeartPulse">
                                 <MainType:TabItem.Content>
-                                    <Home:Index />
+                                    <HomePage:Index />
                                 </MainType:TabItem.Content>
                             </MainType:TabItem>
                             <MainType:TabItem Title="文件管理" Icon="BriefcaseCheck">

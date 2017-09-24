@@ -20,63 +20,24 @@ using GalaSoft.MvvmLight.Threading;
 
 namespace Zhu.ViewModels.Pages
 {
-    public class MediaListViewModel<T> : ViewModelBase where T : class, IMedia
+    public class MediaListViewModel : BasePagingViewModel
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public IApplicationState ApplicationState { get; set; }
+        public IApplicationState _applicationState { get; set; }
 
-        public IMediaService<T> MediaService { get; set; }
+        public IMediaService _mediaService { get; set; }
 
-        public MediaListViewModel(IApplicationState applicationState, IMediaService<T> mediaService)
+        public MediaListViewModel(IApplicationState applicationState, IMediaService mediaService)
         {
-            ApplicationState = applicationState;
-            MediaService = mediaService;
+            _applicationState = applicationState;
+            _mediaService = mediaService;
 
             RegisterCommands();
         }
 
-        protected int PageIndex { get; set; }
-
-        protected int PageSize { get; set; } = Constants.LoadMoviesPageSize;
-
-        private bool _hasLoadingFailed;
-        public bool HasLoadingFailed
-        {
-            get { return _hasLoadingFailed; }
-            set { Set(() => HasLoadingFailed, ref _hasLoadingFailed, value); }
-        }
-
-        private bool _isLoadingMedias;
-        public bool IsLoadingMedias
-        {
-            get { return _isLoadingMedias; }
-            protected set { Set(() => IsLoadingMedias, ref _isLoadingMedias, value); }
-        }
-
-        private bool _isMoviesFound = true;
-        public bool IsMediasFound
-        {
-            get { return _isMoviesFound; }
-            set { Set(() => IsMediasFound, ref _isMoviesFound, value); }
-        }
-
-        private int _currentNumberOfMedias;
-        public int CurrentNumberOfMedias
-        {
-            get { return _currentNumberOfMedias; }
-            set { Set(() => CurrentNumberOfMedias, ref _currentNumberOfMedias, value); }
-        }
-
-        private int _maxNumberOfMedias;
-        public int MaxNumberOfMedias
-        {
-            get { return _maxNumberOfMedias; }
-            set { Set(() => MaxNumberOfMedias, ref _maxNumberOfMedias, value); }
-        }
-
-        private ObservableCollection<Tuple<MediaDTO, int>> _medias = new ObservableCollection<Tuple<MediaDTO, int>>();
-        public ObservableCollection<Tuple<MediaDTO, int>> Medias
+        private ObservableCollection<Tuple<Media, int>> _medias = new ObservableCollection<Tuple<Media, int>>();
+        public ObservableCollection<Tuple<Media, int>> Medias
         {
             get { return _medias; }
         }
@@ -88,62 +49,53 @@ namespace Zhu.ViewModels.Pages
             set { Set(() => SearchText, ref _searchText, value); }
         }
 
-        private string _searchOrderField;
-        public string SearchOrderField
+        public virtual async Task LoadMediasAsync()
         {
-            get { return _searchOrderField; }
-            set { Set(() => SearchOrderField, ref _searchOrderField, value); }
-        }
+            MediaBeforeLoad?.Invoke(this, new EventArgs());
 
-        protected QueryModel SearchQueryModel = new QueryModel();
-
-        protected virtual async Task LoadMediasAsync()
-        {
             var watch = Stopwatch.StartNew();
 
             PageIndex++;
-
-            Logger.Info($"Loading page {PageIndex}...");
-
             HasLoadingFailed = false;
+            Logger.Info($"Loading page {PageIndex}...");
 
             try
             {
-                IsLoadingMedias = true;
+                IsDataLoading = true;
                 await Task.Run(async () =>
                 {
-                    var getMediasWatcher = new Stopwatch();
-                    getMediasWatcher.Start();
+                    var loadDataWatcher = new Stopwatch();
+                    loadDataWatcher.Start();
 
-                    var medias = await MediaService.GetMediasForPagingAsync(PageIndex, PageSize, SearchOrderField, false, SearchQueryModel);
-                    var mediaItems = new List<Tuple<MediaDTO, int>>();
+                    var medias = await _mediaService.GetMediasForPagingAsync(PageIndex, PageSize, SearchOrderField, false, SearchQueryModel);
+                    var mediaItems = new List<Tuple<Media, int>>();
                     for (var i = 0; i < medias.Item1.Count(); i++)
                     {
-                        mediaItems.Add(new Tuple<MediaDTO, int>(medias.Item1[i], i + 1));
+                        mediaItems.Add(new Tuple<Media, int>(medias.Item1[i], i + 1));
                     }
 
-                    getMediasWatcher.Stop();
-                    var getMediasEllapsedTime = getMediasWatcher.ElapsedMilliseconds;
-                    if (getMediasEllapsedTime < 500)
+                    loadDataWatcher.Stop();
+                    var elapsedMs = loadDataWatcher.ElapsedMilliseconds;
+                    if (elapsedMs < 500)
                     {
-                        await Task.Delay(500 - (int)getMediasEllapsedTime).ConfigureAwait(false);
+                        await Task.Delay(500 - (int)elapsedMs).ConfigureAwait(false);
                     }
 
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
                         Medias.AddRange(mediaItems);
-                        IsLoadingMedias = false;
-                        IsMediasFound = Medias.Any();
-                        CurrentNumberOfMedias = Medias.Count;
-                        MaxNumberOfMedias = medias.Item2;
+                        IsDataLoading = false;
+                        IsDataFound = Medias.Any();
+                        CurrentNumberOfData = Medias.Count;
+                        MaxNumberOfData = medias.Item2;
                     });
                 });
             }
             catch (Exception exception)
             {
                 PageIndex--;
-                Logger.Error($"Error while loading page {PageIndex}: {exception.Message}");
                 HasLoadingFailed = true;
+                Logger.Error($"Error while loading page {PageIndex}: {exception.Message}");
                 Messenger.Default.Send(new ManageExceptionMessage(exception));
             }
             finally
@@ -152,84 +104,43 @@ namespace Zhu.ViewModels.Pages
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info($"Loaded page {PageIndex} in {elapsedMs} milliseconds.");
             }
+
+            MediaLoaded?.Invoke(this, new EventArgs());
         }
 
-        private ObservableCollection<Tuple<string, string>> _tags = new ObservableCollection<Tuple<string, string>>();
+        public event EventHandler<EventArgs> MediaBeforeLoad;
+        public event EventHandler<EventArgs> MediaLoaded;
 
-        public ObservableCollection<Tuple<string, string>> Tags
-        {
-            get { return _tags; }
-        }
-
-        protected virtual async Task LoadMeidaTags(string type)
-        {
-            await Task.Run(async () =>
-            {
-                var queryModel = new QueryModel();
-                queryModel.Items.Add(new ConditionItem("Type", QueryMethod.Equal, type));
-                var tags = await GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstance<ITagService>().GetTagsForPagingAsync(1, 50, queryModel);
-                //if (tags.Item1.Count > 0)
-                //{
-                //    for (var i = 0; i < tags.Item1.Count; i++)
-                //    {
-                //        Dispatcher.CurrentDispatcher.Invoke(() =>
-                //        {
-                //            _tags.Add(new Tuple<string, string>(tags.Item1[i], tags.Item1[i].Substring(0, 1)));
-                //        }, DispatcherPriority.Background);
-                //    }
-                //}
-            });
-        }
+        #region Command
 
         public RelayCommand<Media> PlayMediaCommand { get; set; }
         public RelayCommand<Media> SetMediaRatingCommand { get; private set; }
         public RelayCommand<Media> SetMediaFavoriteCommand { get; private set; }
-        public RelayCommand SortMediaCommand { get; private set; }
-        public RelayCommand LoadMediaCommand { get; private set; }
         public RelayCommand SearchMediaCommand { get; private set; }
-        public RelayCommand<string> LoadMeidaTagCommand { get; private set; }
-        public RelayCommand<string> DeleteTagCommand { get; private set; }
-
-        public event EventHandler<EventArgs> MediaBeforeLoad;
-        public event EventHandler<EventArgs> MediaLoaded;
 
         private void RegisterCommands()
         {
             SetMediaRatingCommand = new RelayCommand<Media>(async (media) =>
             {
-                var entity = MediaService.GetEntity(t => t.ID == media.ID);
+                var entity = _mediaService.GetEntity(t => t.ID == media.ID);
                 if (entity != null)
                 {
                     entity.Rating = media.Rating;
-                    await MediaService.UpdateAsync(entity);
+                    await _mediaService.UpdateAsync(entity);
                 }
             });
 
             SetMediaFavoriteCommand = new RelayCommand<Media>(async (media) =>
             {
-                var entity = MediaService.GetEntity(t => t.ID == media.ID);
+                var entity = _mediaService.GetEntity(t => t.ID == media.ID);
                 if (entity != null)
                 {
                     entity.IsFavorite = media.IsFavorite;
-                    await MediaService.UpdateAsync(entity);
+                    await _mediaService.UpdateAsync(entity);
                 }
             });
 
-            LoadMediaCommand = new RelayCommand(async () =>
-            {
-                MediaBeforeLoad?.Invoke(this, new EventArgs());
-                await LoadMediasAsync().ConfigureAwait(false);
-                MediaLoaded?.Invoke(this, new EventArgs());
-            });
-
-            SortMediaCommand = new RelayCommand(() =>
-            {
-                Medias.Clear();
-                PageIndex = 0;
-                this.LoadMediaCommand.Execute(null);
-            });
-
-            SearchMediaCommand = new RelayCommand(() =>
+            SearchMediaCommand = new RelayCommand(async () =>
             {
                 SearchQueryModel.Items.Clear();
                 if (!string.IsNullOrEmpty(this.SearchText))
@@ -241,20 +152,10 @@ namespace Zhu.ViewModels.Pages
                 }
                 Medias.Clear();
                 PageIndex = 0;
-                this.LoadMediaCommand.Execute(null);
-            });
-
-            LoadMeidaTagCommand = new RelayCommand<string>(async (type) => {
-                await LoadMeidaTags(type);
-            });
-
-            DeleteTagCommand = new RelayCommand<string>((keyWord) =>
-            {
-                _tags.Where(t => t.Item1 == keyWord).ToList().ForEach(t =>
-                {
-                    _tags.Remove(t);
-                });
+                await LoadMediasAsync().ConfigureAwait(false);
             });
         }
+
+        #endregion
     }
 }

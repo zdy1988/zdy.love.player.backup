@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Zhu.Controls
+namespace Zhu.UserControls.Home.Media
 {
     /// <summary>
-    /// SampleMessageDialog.xaml 的交互逻辑
+    /// SeenHistory.xaml 的交互逻辑
     /// </summary>
-    public partial class SampleMessageDialog : UserControl
+    public partial class SeenHistory : UserControl
     {
-        public SampleMessageDialog()
+        public SeenHistory()
         {
             InitializeComponent();
         }

@@ -18,21 +18,18 @@ using MaterialDesignThemes.Wpf;
 using System.Threading;
 using GalaSoft.MvvmLight.Ioc;
 using Infrastructure.SearchModel.Model;
+using Zhu.UserControls.Reused;
 
 namespace Zhu.ViewModels.Pages
 {
-    public class MovieListViewModel : MediaListViewModel<Movie>
+    public class MovieListViewModel : MediaListViewModel
     {
-        private IMovieService MovieServices;
-
-        public MovieListViewModel(IApplicationState applicationState, IMovieService movieServices)
-            : base(applicationState, movieServices)
+        public MovieListViewModel(IApplicationState applicationState, IMediaService mediaService)
+            : base(applicationState, mediaService)
         {
-            MovieServices = movieServices;
-
             SortFields = new Dictionary<string, string>();
             SortFields.Add("加入顺序", "ID");
-            SortFields.Add("发布时间", "Pubdates");
+            SortFields.Add("发布时间", "PubDate");
             SortFields.Add("影片编码", "Code");
             
             CountryCollection = new List<string> { "不限", "内地", "港台", "日本", "欧美", "韩国", "其他" };
@@ -40,8 +37,6 @@ namespace Zhu.ViewModels.Pages
             ImageQualityCollection = new List<string> { "不限", "高清", "超清", "1080P", "4K" };
 
             RegisterCommands();
-
-            this.MediaBeforeLoad += MovieLibraryViewModel_StartLoadMediaEvent;
         }
 
         public Dictionary<string, string> SortFields { get; set; }
@@ -71,28 +66,28 @@ namespace Zhu.ViewModels.Pages
             set { Set(() => SelectImageQuality, ref _selectImageQuality, value); }
         }
 
-        private void MovieLibraryViewModel_StartLoadMediaEvent(object sender, EventArgs e)
+        public override Task LoadMediasAsync()
         {
+            this.SearchQueryModel.Items.Add(new ConditionItem("MediaType", QueryMethod.LessThanOrEqual, (int)PubilcEnum.MediaType.Movie));
             if (!string.IsNullOrEmpty(SelectCountry) && SelectCountry != "不限")
             {
                 this.SearchQueryModel.Items.Add(new ConditionItem("Countries", QueryMethod.Equal, SelectCountry));
             }
+            return base.LoadMediasAsync();
         }
 
         private void RegisterCommands()
         {
             PlayMediaCommand = new RelayCommand<Media>(async (media) =>
             {
-                var view = new SampleProgressDialog();
-                await DialogHost.Show(view, "RootDialog", (object sender, DialogOpenedEventArgs eventArgs) =>
+                await DialogHost.Show(new SampleLoading(), "RootDialog", (object sender, DialogOpenedEventArgs eventArgs) =>
                 {
                     Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(async (t) =>
                     {
-                        var movie = await SimpleIoc.Default.GetInstance<IMovieService>().GetEntityAsync(e => e.ID == media.ID);
+                        var movie = await SimpleIoc.Default.GetInstance<IMediaService>().GetEntityAsync(e => e.ID == media.ID);
                         Messenger.Default.Send(new LoadMediaMessage(movie));
                         eventArgs.Session.Close(false);
-                    },
-                    TaskScheduler.FromCurrentSynchronizationContext());
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
                 }, (object sender, DialogClosingEventArgs eventArgs) => { });
             });
         }

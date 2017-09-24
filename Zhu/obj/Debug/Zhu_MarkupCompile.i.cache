@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\Work\zhu.player\Zhu\App.xaml
-24-1879203064
+26-154782696
 2-1757564741
-133-1174019487
+136-467127011
 90-1497983576
-Resources\AnimatedScrollViewer.xaml;Resources\ImageLoading.xaml;Controls\SampleMessageDialog.xaml;Controls\SampleProgressDialog.xaml;UserControls\FileExplorer.xaml;UserControls\Home\Elements\UserControl1.xaml;UserControls\Home\Elements\UserControl2.xaml;UserControls\Home\Index.xaml;UserControls\Home\Media\Moive\MoiveDetailView.xaml;UserControls\Home\Media\Moive\MovieListView.xaml;UserControls\Home\Media\MyMoives.xaml;UserControls\Home\Media\MyNetTV.xaml;UserControls\Home\Media\MyVideos.xaml;UserControls\Home\Media\NetTV\NetTVDetailView.xaml;UserControls\Home\Media\NetTV\NetTVListView.xaml;UserControls\Home\Media\Video\VideoDetailView.xaml;UserControls\Home\Media\Video\VideoListView.xaml;UserControls\Layout\Resources\ContentPane.xaml;UserControls\Reused\PlayerMasker.xaml;Windows\MainWindow.xaml;UserControls\Main\ImportNetworkMediaDialog.xaml;UserControls\Player\MediaPlayer.xaml;UserControls\Main\SelectMediaFileDialog.xaml;Windows\SplashScreen.xaml;
+Resources\AnimatedScrollViewer.xaml;Resources\ImageLoading.xaml;UserControls\FileExplorer.xaml;UserControls\Home\Elements\UserControl1.xaml;UserControls\Home\Elements\UserControl2.xaml;UserControls\Home\Index.xaml;UserControls\Home\Media\Moive\MoiveDetailView.xaml;UserControls\Home\Media\Moive\MovieListView.xaml;UserControls\Home\Media\MyMoives.xaml;UserControls\Home\Media\MyNetTV.xaml;UserControls\Home\Media\MyVideos.xaml;UserControls\Home\Media\NetTV\NetTVDetailView.xaml;UserControls\Home\Media\NetTV\NetTVListView.xaml;UserControls\Home\Media\SeenHistory.xaml;UserControls\Home\Media\Seen\SeenMediaListView.xaml;UserControls\Home\Media\Video\VideoDetailView.xaml;UserControls\Home\Media\Video\VideoListView.xaml;UserControls\Layout\Resources\ContentPane.xaml;UserControls\Reused\PlayerMasker.xaml;UserControls\Reused\SampleLoading.xaml;UserControls\Reused\SampleMessage.xaml;Windows\MainWindow.xaml;UserControls\Main\ImportNetworkMediaDialog.xaml;UserControls\Player\MediaPlayer.xaml;UserControls\Main\SelectMediaFileDialog.xaml;Windows\SplashScreen.xaml;
 
-True
+False
 

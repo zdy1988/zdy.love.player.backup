@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Meta.Vlc.Wpf;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Zhu.UserControls
 {
@@ -59,7 +60,7 @@ namespace Zhu.UserControls
 
         private void VlcMediaPlayer_TimeChanged(object sender, EventArgs e)
         {
-            this.Dispatcher.Invoke(() =>
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 if ((Player == null) || (UserIsDraggingMediaPlayerSlider)) return;
                 MediaPlayerSliderProgress.Value = Player.Time.TotalSeconds;
@@ -69,7 +70,7 @@ namespace Zhu.UserControls
         private void VlcMediaPlayer_Playing(object sender, Meta.Vlc.ObjectEventArgs<Meta.Vlc.Interop.Media.MediaState> e)
         {
             MediaPlayerIsPlaying = true;
-            this.Dispatcher.Invoke(() =>
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 MediaPlayerSliderProgress.Minimum = 0;
                 MediaPlayerSliderProgress.Maximum = Player.Length.TotalSeconds;
@@ -79,26 +80,25 @@ namespace Zhu.UserControls
         private void VlcMediaPlayer_Stoped(object sender, Meta.Vlc.ObjectEventArgs<Meta.Vlc.Interop.Media.MediaState> e)
         {
             MediaPlayerIsPlaying = false;
+            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+            {
+                Messenger.Default.Send(new MediaFlyoutCloseMessage());
+                var vm = DataContext as MediaPlayerViewModel;
+                await vm.HasSeenMovie();
+            });
         }
 
         private void VlcMediaPlayer_EndReached(object sender, EventArgs e)
         {
-            this.Dispatcher.Invoke(async () =>
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                var vm = DataContext as MediaPlayerViewModel;
-                if (vm == null)
-                    return;
-
                 MediaPlayerIsPlaying = false;
-
-                Messenger.Default.Send(new MediaFlyoutCloseMessage());
-                await vm.HasSeenMovie();
             });
         }
 
         private void VlcMediaPlayer_EncounteredError(object sender, EventArgs e)
         {
-            this.Dispatcher.Invoke(() =>
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 Messenger.Default.Send(new ManageExceptionMessage(new Exception("媒体错误或者媒体地址未找到！")));
                 Messenger.Default.Send(new MediaFlyoutCloseMessage());
@@ -109,12 +109,12 @@ namespace Zhu.UserControls
 
         private void OnStartPlayingMedia(object sender, EventArgs e)
         {
-            this.Dispatcher.Invoke(() =>
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 var vm = DataContext as MediaPlayerViewModel;
                 if (vm == null) return;
                 if (vm.Media == null) return;
-                if (vm.Media.Path == null) return;
+                if (vm.Media.MediaSource == null) return;
                 //字幕
                 //if (!string.IsNullOrEmpty(vm.Movie.SelectedSubtitle?.FilePath))
                 //{
@@ -125,14 +125,14 @@ namespace Zhu.UserControls
                 //    Zhu.LoadMedia(vm.Movie.FilePath);
                 //}
                 Player.Stop();
-                Player.LoadMedia(vm.Media.Path);
+                Player.LoadMedia(vm.Media.MediaSource);
                 PlayMedia();
             });
         }
 
         private void OnStoppedPlayingMedia(object sender, EventArgs e)
         {
-            this.Dispatcher.Invoke(() =>
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 if (Player.VlcMediaPlayer.IsPlaying)
                 {
@@ -253,11 +253,14 @@ namespace Zhu.UserControls
 
         private void MediaPlayerSliderProgress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            MoviePlayerTextProgressStatus.Text =
-                TimeSpan.FromSeconds(MediaPlayerSliderProgress.Value)
-                    .ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture) + " / " +
-                TimeSpan.FromSeconds(Player.Length.TotalSeconds)
-                    .ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture);
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                MoviePlayerTextProgressStatus.Text =
+                  TimeSpan.FromSeconds(MediaPlayerSliderProgress.Value)
+                      .ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture) + " / " +
+                  TimeSpan.FromSeconds(Player.Length.TotalSeconds)
+                      .ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture);
+            });
         }
 
         protected void MediaPlayerSliderProgress_DragStarted(object sender, DragStartedEventArgs e) => UserIsDraggingMediaPlayerSlider = true;
@@ -405,7 +408,7 @@ namespace Zhu.UserControls
             var vm = this.DataContext as MediaPlayerViewModel;
             if (vm != null)
             {
-                vm.ApplicationState.IsFullScreen = !vm.ApplicationState.IsFullScreen;
+                vm._applicationState.IsFullScreen = !vm._applicationState.IsFullScreen;
             }
         }
 

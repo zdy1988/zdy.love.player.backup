@@ -138,12 +138,6 @@
     <Compile Include="AttachedProperties\TabContent.cs" />
     <Compile Include="Comparers\MediaFileComparer.cs" />
     <Compile Include="Controls\AnimatedScrollViewer.cs" />
-    <Compile Include="Controls\SampleMessageDialog.xaml.cs">
-      <DependentUpon>SampleMessageDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SampleProgressDialog.xaml.cs">
-      <DependentUpon>SampleProgressDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Converters\BoolToInverseBoolConverter.cs" />
     <Compile Include="Converters\BoolToInverseVisibilityConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
@@ -160,6 +154,9 @@
     <Compile Include="Converters\WindowStateTooltipConverter.cs" />
     <Compile Include="Converters\WindowStateIconConverter.cs" />
     <Compile Include="Converters\WindowStateToBooleanConverter.cs" />
+    <Compile Include="Messaging\SelectMediaFileDialogOpenMessage.cs" />
+    <Compile Include="PubilcEnum\MediaSourceType.cs" />
+    <Compile Include="PubilcEnum\MediaType.cs" />
     <Compile Include="Infrastructure\EntityFramework\EntityFrameworkRepository.cs" />
     <Compile Include="Infrastructure\EntityFramework\EntityFrameworkRepositoryContext.cs" />
     <Compile Include="Infrastructure\EntityFramework\ExpressionExtensions.cs" />
@@ -191,6 +188,10 @@
     <Compile Include="Infrastructure\SearchModel\TransformProviders\UnixTimeTransformProvider.cs" />
     <Compile Include="Infrastructure\SearchModel\TypeUtil.cs" />
     <Compile Include="Infrastructure\SearchModel\UnixTime.cs" />
+    <Compile Include="Models\Seen.cs" />
+    <Compile Include="Services\Media\MediaService.cs" />
+    <Compile Include="Services\Seen\ISeenService.cs" />
+    <Compile Include="Services\Seen\SeenService.cs" />
     <Compile Include="Untils\BitmapImageHelper.cs" />
     <Compile Include="Untils\Constants.cs" />
     <Compile Include="Untils\Extension\LinqExtensions.cs" />
@@ -205,29 +206,20 @@
     <Compile Include="Messaging\LoadMediaMessage.cs" />
     <Compile Include="Messaging\ManageExceptionMessage.cs" />
     <Compile Include="Messaging\MediaFlyoutOpenMessage.cs" />
-    <Compile Include="Messaging\SelectMediaFileDialogOpenMessage.cs" />
     <Compile Include="Messaging\WindowStateChangeMessage.cs" />
     <Compile Include="Models\Actor.cs" />
     <Compile Include="Models\ApplicationState\ApplicationState.cs" />
     <Compile Include="Models\ApplicationState\IApplicationState.cs" />
     <Compile Include="Models\Image.cs" />
-    <Compile Include="Models\IMedia.cs" />
     <Compile Include="Models\Media.cs" />
-    <Compile Include="Models\Movie.cs" />
-    <Compile Include="Models\MediaDTO.cs" />
-    <Compile Include="Models\NetTV.cs" />
     <Compile Include="Models\Tag.cs" />
-    <Compile Include="Models\WantChaContext.cs" />
-    <Compile Include="Services\BaseService.cs" />
-    <Compile Include="Services\IBaseService.cs" />
-    <Compile Include="Services\IMediaService.cs" />
-    <Compile Include="Services\IMovieService.cs" />
-    <Compile Include="Services\INetTVService.cs" />
-    <Compile Include="Services\ITagService.cs" />
-    <Compile Include="Services\MovieService.cs" />
-    <Compile Include="Services\NetTVService.cs" />
-    <Compile Include="Services\1.PlayerDataContext.cs" />
-    <Compile Include="Services\TagService.cs" />
+    <Compile Include="Models\Context\ZhuContext.cs" />
+    <Compile Include="Services\Base\BaseService.cs" />
+    <Compile Include="Services\Base\IBaseService.cs" />
+    <Compile Include="Services\Media\IMediaService.cs" />
+    <Compile Include="Services\Tag\ITagService.cs" />
+    <Compile Include="Services\Base\PlayerDataContext.cs" />
+    <Compile Include="Services\Tag\TagService.cs" />
     <Compile Include="UserControls\FileExplorer.xaml.cs">
       <DependentUpon>FileExplorer.xaml</DependentUpon>
     </Compile>
@@ -261,6 +253,12 @@
     <Compile Include="UserControls\Home\Media\NetTV\NetTVListView.xaml.cs">
       <DependentUpon>NetTVListView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Home\Media\SeenHistory.xaml.cs">
+      <DependentUpon>SeenHistory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Home\Media\Seen\SeenMediaListView.xaml.cs">
+      <DependentUpon>SeenMediaListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Home\Media\Video\VideoDetailView.xaml.cs">
       <DependentUpon>VideoDetailView.xaml</DependentUpon>
     </Compile>
@@ -280,6 +278,12 @@
     <Compile Include="UserControls\Reused\PlayerMasker.xaml.cs">
       <DependentUpon>PlayerMasker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Reused\SampleLoading.xaml.cs">
+      <DependentUpon>SampleLoading.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Reused\SampleMessage.xaml.cs">
+      <DependentUpon>SampleMessage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ValidationRules\FileExistsValidationRule.cs" />
     <Compile Include="ValidationRules\IsUriValidationRule.cs" />
     <Compile Include="ValidationRules\NotEmptyValidationRule.cs" />
@@ -292,6 +296,9 @@
     <Compile Include="ViewModels\Pages\MovieListViewModel.cs" />
     <Compile Include="ViewModels\Pages\NetTVListViewModel.cs" />
     <Compile Include="ViewModels\Pages\MediaListViewModel.cs" />
+    <Compile Include="ViewModels\Pages\BasePagingViewModel.cs" />
+    <Compile Include="ViewModels\Pages\SeenListItemViewModel.cs" />
+    <Compile Include="ViewModels\Pages\SeenListViewModel.cs" />
     <Compile Include="ViewModels\Player\MediaPlayerViewModel.cs" />
     <Compile Include="ViewModels\Main\SelectMediaFileDialogViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
@@ -303,14 +310,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\ImageLoading.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\SampleMessageDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\SampleProgressDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -358,6 +357,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\Home\Media\SeenHistory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Home\Media\Seen\SeenMediaListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\Home\Media\Video\VideoDetailView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -371,6 +378,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\Reused\PlayerMasker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Reused\SampleLoading.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Reused\SampleMessage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

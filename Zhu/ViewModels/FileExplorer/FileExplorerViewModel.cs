@@ -12,11 +12,8 @@ namespace Zhu.ViewModels.FileExplorer
 {
     public class FileExplorerViewModel : ViewModelBase
     {
-        private IMovieService MovieServices;
-
-        public FileExplorerViewModel(IMovieService movieServices)
+        public FileExplorerViewModel()
         {
-            this.MovieServices = movieServices;
 
             RegisterCommands();
 
@@ -89,18 +86,6 @@ namespace Zhu.ViewModels.FileExplorer
             {
                 await System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
-                    SelectedItem.FileList?.Where(t => t.IsSelected).ToList().ForEach(async (t) =>
-                    {
-                        await MovieServices.InsertAsync(new Movie
-                        {
-                            Title = t.FileName.Replace(t.File.Extension, ""),
-                            FilePath = t.File.Directory.FullName + "\\" + t.File.Name,
-                            MD5 = FileHelper.MD5File(t.File.Directory.FullName + "\\" + t.File.Name),
-                            IsFavorite =false,
-                            EnterDate = DateTime.Now,
-                            UpdateDate = DateTime.Now
-                        });
-                    });
                 });
             });
         }

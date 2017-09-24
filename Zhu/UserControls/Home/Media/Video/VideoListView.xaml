@@ -74,7 +74,7 @@
                     <ComboBox x:Name="ComboBox_MediaSort" ItemsSource="{Binding SortFields}" SelectedValue="{Binding SearchOrderField}" Width="300" DisplayMemberPath="Key" SelectedValuePath="Value">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding SortMediaCommand}"/>
+                                <i:InvokeCommandAction Command="{Binding SearchMediaCommand}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
@@ -143,9 +143,6 @@
                                            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={Converters:RatioConverter}, ConverterParameter='0.56'}" 
                                            Stretch="UniformToFill" 
                                            Cursor="Hand">
-                                        <Image.Effect>
-                                            <DropShadowEffect Color="Black" BlurRadius="5" ShadowDepth="0" Opacity="0.3" />
-                                        </Image.Effect>
                                     </Image>
                                     <Reused:PlayerMasker Grid.Row="0" PlayIconWidth="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
                                         <i:Interaction.Triggers>

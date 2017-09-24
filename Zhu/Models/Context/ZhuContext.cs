@@ -3,17 +3,17 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace Zhu.Models
 {
-    public class WantChaContext : DbContext
+    public class ZhuContext : DbContext
     {
-        public WantChaContext() : base("WantCha") {
+        public ZhuContext() : base("WantCha") {
             this.Configuration.LazyLoadingEnabled = false;
         }
 
-        public DbSet<Movie> Movie { get; set; }
-
-        public DbSet<NetTV> NetTV { get; set; }
+        public DbSet<Media> Media { get; set; }
 
         public DbSet<Image> Image { get; set; }
+
+        public DbSet<Seen> Seen { get; set; }
 
         public DbSet<Tag> Tag { get; set; }
 

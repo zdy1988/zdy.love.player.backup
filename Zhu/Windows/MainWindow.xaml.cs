@@ -15,6 +15,7 @@ using Meta.Vlc.Wpf;
 using System.ComponentModel;
 using Zhu.Controls;
 using Zhu.Models;
+using Zhu.UserControls.Reused;
 
 namespace Zhu.Windows
 {
@@ -34,7 +35,6 @@ namespace Zhu.Windows
         {
             InitializeTaskBarNotify();
             InitializeMessageNotice();
-
 
             Task.Factory.StartNew(() =>
             {
@@ -102,10 +102,10 @@ namespace Zhu.Windows
 
             Task.Factory.StartNew(async () =>
             {
-                await DialogHost.Show(new SampleProgressDialog(), "RootDialog");
+                await DialogHost.Show(new SampleLoading(), "RootDialog");
             }).ContinueWith(t =>
             {
-                Messenger.Default.Send(new LoadMediaMessage(new Media { Path = fileName }));
+                Messenger.Default.Send(new LoadMediaMessage(new Media { MediaSource = fileName }));
             });
         }
 

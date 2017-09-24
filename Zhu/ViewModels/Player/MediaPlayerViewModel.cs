@@ -11,6 +11,10 @@ using Zhu.UserControls;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Zhu.UserControls.Reused;
+using GalaSoft.MvvmLight.Threading;
+using GalaSoft.MvvmLight.Ioc;
+using Zhu.Services;
 
 namespace Zhu.ViewModels.Player
 {
@@ -18,13 +22,13 @@ namespace Zhu.ViewModels.Player
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public IMedia Media;
+        public Media Media;
 
-        public IApplicationState ApplicationState { get; set; }
+        public IApplicationState _applicationState { get; set; }
 
         public MediaPlayerViewModel(IApplicationState applicationState)
         {
-            ApplicationState = applicationState;
+            _applicationState = applicationState;
 
             RegisterCommands();
             RegisterMessages();
@@ -42,9 +46,22 @@ namespace Zhu.ViewModels.Player
 
         public async Task HasSeenMovie()
         {
-            //await MovieHistoryService.SetHasBeenSeenMovieAsync(Movie);
-            //Messenger.Default.Send(new ChangeHasBeenSeenMovieMessage());
-            //Messenger.Default.Send(new StopPlayingMovieMessage());
+            try
+            {
+                Logger.Info($"Seen Media {Media.Title}...");
+
+                await SimpleIoc.Default.GetInstance<ISeenService>().InsertAsync(new Seen
+                {
+                    MediaSource = Media.MediaSource,
+                    SeenDate = DateTime.Now,
+                    Title = Media.Title,
+                    MediaID = Media.ID
+                });
+            }
+            catch
+            {
+                Logger.Error($"Error Seen Media {Media.Title}...");
+            }
         }
 
         public RelayCommand StopPlayingMediaCommand { get; private set; }
@@ -53,8 +70,8 @@ namespace Zhu.ViewModels.Player
         {
             StopPlayingMediaCommand = new RelayCommand(async () =>
             {
-                var view = new SampleProgressDialog();
-                await DialogHost.Show(view, "RootDialog", (object sender, DialogOpenedEventArgs eventArgs) => {
+                await DialogHost.Show(new SampleLoading(), "RootDialog", (object sender, DialogOpenedEventArgs eventArgs) =>
+                {
                     Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(t =>
                     {
                         StoppedPlayingMedia?.Invoke(this, new EventArgs());
@@ -70,7 +87,7 @@ namespace Zhu.ViewModels.Player
             Messenger.Default.Register<LoadMediaMessage>(this, e =>
             {
                 if (e.Media == null) return;
-                if (string.IsNullOrEmpty(e.Media.Path))
+                if (string.IsNullOrEmpty(e.Media.MediaSource))
                 {
                     Messenger.Default.Send(new MediaFlyoutCloseMessage());
                     Messenger.Default.Send(new ManageExceptionMessage(new Exception("未获取媒体！")));

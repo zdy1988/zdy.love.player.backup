@@ -17,6 +17,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Zhu.ViewModels.Pages;
+using Zhu.UserControls.Reused;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Zhu.ViewModels.Main
 {
@@ -31,44 +33,16 @@ namespace Zhu.ViewModels.Main
             set { Set(() => ApplicationState, ref _applicationState, value); }
         }
 
-        private INetTVService NetTVServices;
-        private IMovieService MovieServices;
+        private IMediaService _mediaService;
 
         public MainViewModel(IApplicationState applicationState,
-            IMovieService movieServices,
-            INetTVService netTVServices)
+            IMediaService mediaService)
         {
-            ApplicationState = applicationState;
-            MovieServices = movieServices;
-            NetTVServices = netTVServices;
+            _applicationState = applicationState;
+            _mediaService = mediaService;
 
             RegisterMessages();
             RegisterCommands();
-
-            Tabs.Add(new NetTVListViewModel(ApplicationState, NetTVServices));
-            Tabs.Add(new MovieListViewModel(ApplicationState, MovieServices));
-            SelectedTab = Tabs[0];
-        }
-
-
-
-        private ObservableCollection<object> _tabs = new ObservableCollection<object>();
-
-        public ObservableCollection<object> Tabs
-        {
-            get { return _tabs; }
-            set { Set(() => Tabs, ref _tabs, value); }
-        }
-
-        private object _selectedTab;
-
-        public object SelectedTab
-        {
-            get => _selectedTab;
-            set
-            {
-                Set(() => SelectedTab, ref _selectedTab, value);
-            }
         }
 
         private bool _isMovieFlyoutOpen;
@@ -83,8 +57,20 @@ namespace Zhu.ViewModels.Main
 
         private void RegisterMessages()
         {
-            Messenger.Default.Register<MediaFlyoutOpenMessage>(this, e => IsMovieFlyoutOpen = true);
-            Messenger.Default.Register<MediaFlyoutCloseMessage>(this, e => IsMovieFlyoutOpen = false);
+            Messenger.Default.Register<MediaFlyoutOpenMessage>(this, e =>
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    IsMovieFlyoutOpen = true;
+                });
+            });
+            Messenger.Default.Register<MediaFlyoutCloseMessage>(this, e =>
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    IsMovieFlyoutOpen = false;
+                });
+            });
             Messenger.Default.Register<ManageExceptionMessage>(this, e =>
             {
                 MessageNotice?.Invoke(this, e.UnHandledException.Message);
@@ -97,24 +83,27 @@ namespace Zhu.ViewModels.Main
                 };
 
                 await DialogHost.Show(view, "RootDialog", (object sender, DialogOpenedEventArgs eventArgs) => { }, async (object sender, DialogClosingEventArgs eventArgs) =>
-                 {
-                     if ((bool)eventArgs.Parameter == false) return;
-                     eventArgs.Cancel();
-                     eventArgs.Session.UpdateContent(new SampleProgressDialog());
-                     await Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(t =>
-                     {
-                         var vm = view.DataContext as SelectMediaFileDialogViewModel;
-                         if (vm != null)
-                         {
-                             string path = string.IsNullOrEmpty(vm.FilePath) ? vm.StreamNetworkAddress : vm.FilePath;
-                             Messenger.Default.Send(new LoadMediaMessage(new Media
-                             {
-                                 Path = path
-                             }));
-                         }
-                         eventArgs.Session.Close(false);
-                     }, TaskScheduler.FromCurrentSynchronizationContext());
-                 });
+                {
+                    if ((bool)eventArgs.Parameter == false) return;
+                    eventArgs.Cancel();
+                    eventArgs.Session.UpdateContent(new SampleLoading());
+                    await Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(t =>
+                    {
+                        var vm = view.DataContext as SelectMediaFileDialogViewModel;
+                        if (vm != null)
+                        {
+                            string mediaSource = string.IsNullOrEmpty(vm.FilePath) ? vm.NetworkAddress : vm.FilePath;
+                            string mediaTitle = string.IsNullOrEmpty(vm.FilePath) ? vm.NetworkAddress : vm.FilePath.Substring(vm.FilePath.LastIndexOf("\\") + 1);
+                            Messenger.Default.Send(new LoadMediaMessage(new Media
+                            {
+                                ID = 0,
+                                Title = mediaTitle,
+                                MediaSource = mediaSource
+                            }));
+                        }
+                        eventArgs.Session.Close(false);
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
+                });
             });
             Messenger.Default.Register<ImportNetworkMediaDialogOpenMessage>(this, async (e) =>
             {
@@ -124,53 +113,53 @@ namespace Zhu.ViewModels.Main
                 };
 
                 await DialogHost.Show(view, "RootDialog", (object sender, DialogOpenedEventArgs eventArgs) => { }, (object sender, DialogClosingEventArgs eventArgs) =>
-               {
-                   if ((bool)eventArgs.Parameter == false) return;
-                   eventArgs.Cancel();
-                   eventArgs.Session.UpdateContent(new SampleProgressDialog());
-                   Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(async (t) =>
-                   {
-                       await view.Dispatcher.Invoke(async () =>
-                       {
-                           var vm = view.DataContext as ImportNetworkMediaDialogViewModel;
-                           if (vm != null)
-                           {
-                               if (!File.Exists(vm.FilePath))
-                               {
-                                   Messenger.Default.Send(new ManageExceptionMessage(new Exception("未找到导入文件！")));
-                               }
-                               else
-                               {
-                                   List<NetTV> netTVList = new List<NetTV>();
-                                   StreamReader sr = new StreamReader(vm.FilePath, Encoding.Default);
-                                   string line;
-                                   while ((line = await sr.ReadLineAsync()) != null)
-                                   {
-                                       if (line.IndexOf(",") != -1)
-                                       {
-                                           string[] item = line.Split(',');
-                                           netTVList.Add(new NetTV
-                                           {
-                                               Title = item[0],
-                                               StreamNetworkAddress = item[1],
-                                               IsFavorite = false,
-                                               EnterDate = DateTime.Now,
-                                               UpdateDate = DateTime.Now
-                                           });
-                                       }
-                                   }
+                {
+                    if ((bool)eventArgs.Parameter == false) return;
+                    eventArgs.Cancel();
+                    eventArgs.Session.UpdateContent(new SampleLoading());
+                    Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(async (t) =>
+                    {
+                        await view.Dispatcher.Invoke(async () =>
+                        {
+                            var vm = view.DataContext as ImportNetworkMediaDialogViewModel;
+                            if (vm != null)
+                            {
+                                if (!File.Exists(vm.FilePath))
+                                {
+                                    Messenger.Default.Send(new ManageExceptionMessage(new Exception("未找到导入文件！")));
+                                }
+                                else
+                                {
+                                    StreamReader sr = new StreamReader(vm.FilePath, Encoding.Default);
+                                    int count = 0;
+                                    string line;
+                                    while ((line = await sr.ReadLineAsync()) != null)
+                                    {
+                                        if (line.IndexOf(",") != -1)
+                                        {
+                                            string[] item = line.Split(',');
+                                            var media = new Media
+                                            {
+                                                Title = item[0],
+                                                MediaType = (int)PubilcEnum.MediaType.NetTV,
+                                                MediaSource = item[1],
+                                                MediaSourceType = (int)PubilcEnum.MediaSourceType.NetworkAddress,
+                                                IsFavorite = false,
+                                                EnterDate = DateTime.Now,
+                                                UpdateDate = DateTime.Now
+                                            };
+                                            await _mediaService.InsertAsync(media);
+                                            count++;
+                                        }
+                                    }
 
-                                   await NetTVServices.InsertAsync(netTVList);
-
-                                   Messenger.Default.Send(new ManageExceptionMessage(new Exception(
-                                       $"已导入{netTVList.Count}条！")
-                                       ));
-                               }
-                               eventArgs.Session.Close(false);
-                           }
-                       });
-                   }, TaskScheduler.FromCurrentSynchronizationContext());
-               });
+                                    Messenger.Default.Send(new ManageExceptionMessage(new Exception($"已导入{count}条！")));
+                                }
+                                eventArgs.Session.Close(false);
+                            }
+                        });
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
+                });
             });
         }
 
@@ -184,7 +173,10 @@ namespace Zhu.ViewModels.Main
         {
             ToggleMoviePalyerCommand = new RelayCommand(() =>
             {
-                this.IsMovieFlyoutOpen = !this.IsMovieFlyoutOpen;
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    this.IsMovieFlyoutOpen = !this.IsMovieFlyoutOpen;
+                });
             });
 
             SelectMediaDialogOpenCommand = new RelayCommand(() =>
