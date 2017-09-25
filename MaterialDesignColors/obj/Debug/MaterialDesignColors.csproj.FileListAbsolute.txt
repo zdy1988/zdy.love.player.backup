@@ -301,3 +301,4 @@ D:\Work\zhu.player\MaterialDesignColors\obj\Debug\MaterialDesignColors.Propertie
 D:\Work\zhu.player\MaterialDesignColors\obj\Debug\MaterialDesignColors.csproj.GenerateResource.Cache
 D:\Work\zhu.player\MaterialDesignColors\obj\Debug\MaterialDesignColors.dll
 D:\Work\zhu.player\MaterialDesignColors\obj\Debug\MaterialDesignColors.pdb
+D:\Work\zhu.player\MaterialDesignColors\obj\Debug\MaterialDesignColors.csprojResolveAssemblyReference.cache

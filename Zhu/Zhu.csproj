@@ -194,6 +194,7 @@
     <Compile Include="Services\Seen\SeenService.cs" />
     <Compile Include="Untils\BitmapImageHelper.cs" />
     <Compile Include="Untils\Constants.cs" />
+    <Compile Include="Untils\Extension\AsyncObservableCollection.cs" />
     <Compile Include="Untils\Extension\LinqExtensions.cs" />
     <Compile Include="Untils\Extension\ObservableRangeCollection.cs" />
     <Compile Include="Untils\FileHelper.cs" />

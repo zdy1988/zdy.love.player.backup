@@ -1,17 +1,24 @@
-﻿using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Ioc;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using MaterialDesignThemes.Wpf;
-using Zhu.Controls;
+using NLog;
 using Zhu.Messaging;
-using Zhu.Models;
 using Zhu.Models.ApplicationState;
 using Zhu.Services;
-using System.Collections.Generic;
-using System.Threading;
+using Zhu.Models;
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
-using Zhu.UserControls.Reused;
+using GalaSoft.MvvmLight.Command;
+using Zhu.Untils;
+using System.Collections.Generic;
+using Zhu.Controls;
+using MaterialDesignThemes.Wpf;
+using System.Threading;
+using GalaSoft.MvvmLight.Ioc;
 using Infrastructure.SearchModel.Model;
+using Zhu.UserControls.Reused;
 
 namespace Zhu.ViewModels.Pages
 {
@@ -29,10 +36,14 @@ namespace Zhu.ViewModels.Pages
 
         public Dictionary<string, string> SortFields { get; set; }
 
-        public override Task LoadMediasAsync()
+        public override Task LoadMediasAsync(bool isRefresh = false)
         {
-            this.SearchQueryModel.Items.Add(new ConditionItem("MediaType", QueryMethod.Equal, (int)PubilcEnum.MediaType.NetTV));
-            return base.LoadMediasAsync();
+            if (!this.SearchQueryModel.Items.Any(t => t.Field == "MediaType"))
+            {
+                this.SearchQueryModel.Items.Add(new ConditionItem("MediaType", QueryMethod.Equal, (int)PubilcEnum.MediaType.NetTV));
+            }
+
+            return base.LoadMediasAsync(isRefresh);
         }
 
         private void RegisterCommands()

@@ -22,10 +22,10 @@
                         <Setter Property="ItemsPanel">
                             <Setter.Value>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel IsItemsHost="True" 
+                                    <WrapPanel IsItemsHost="True"
+                                               Width="{Binding ElementName=ScrollView, Path=ActualWidth, Mode=OneWay}"
                                                VirtualizingPanel.IsVirtualizing="True" 
-                                               VirtualizingPanel.VirtualizationMode="Recycling" 
-                                               Width="{Binding ElementName=ScrollView, Path=ActualWidth, Mode=OneWay}">
+                                               VirtualizingPanel.VirtualizationMode="Recycling">
                                         <i:Interaction.Behaviors>
                                             <ei:FluidMoveBehavior AppliesTo="Children" Duration="00:00:1.5">
                                                 <ei:FluidMoveBehavior.EaseY>
@@ -67,13 +67,13 @@
                                         </MultiBinding>
                                     </Grid.Width>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth}"/>
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
                                     <Image x:Name="ThumbnailImage" Grid.Row="0"
                                            AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1.Cover,Converter={Converters:UriToCachedImageConverter}, Mode=OneTime}"
-                                           AttachedProperties:ImageAsyncHelper.Type="Thumbnail"
-                                           Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth}" 
+                                           AttachedProperties:ImageAsyncHelper.ImageType="Thumbnail"
+                                           AttachedProperties:ImageAsyncHelper.ThumbnailSize="NetTV"
                                            Stretch="UniformToFill" 
                                            Cursor="Hand">
                                     </Image>

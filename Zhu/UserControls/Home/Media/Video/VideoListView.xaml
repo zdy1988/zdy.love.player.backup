@@ -32,6 +32,7 @@
                                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                     <Setter Property="Background" Value="White"/>
                                     <Setter Property="Opacity" Value="1"/>
+                                    <Setter Property="FontWeight" Value="Normal"/>
                                     <Setter Property="BorderThickness" Value="0"></Setter>
                                 </Style>
                             </Setter.Value>
@@ -71,7 +72,7 @@
                     <MaterialDesign:PackIcon Kind="Keyboard" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" Margin="0 10 10 0"/>
                     <TextBox MaterialDesign:HintAssist.Hint="输入需要查找的关键词..." Width="300" Text="{Binding SearchText,Mode=TwoWay}" KeyDown="SearchTextBox_KeyDown"></TextBox>
                     <MaterialDesign:PackIcon Kind="Sort" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" Margin="10 10 10 0"/>
-                    <ComboBox x:Name="ComboBox_MediaSort" ItemsSource="{Binding SortFields}" SelectedValue="{Binding SearchOrderField}" Width="300" DisplayMemberPath="Key" SelectedValuePath="Value">
+                    <ComboBox x:Name="ComboBox_MediaSort" ItemsSource="{Binding SortFields}" SelectedValue="{Binding OrderField}" Width="300" DisplayMemberPath="Key" SelectedValuePath="Value">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding SearchMediaCommand}"/>
@@ -89,10 +90,10 @@
                         <Setter Property="ItemsPanel">
                             <Setter.Value>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel IsItemsHost="True" 
+                                    <WrapPanel IsItemsHost="True"
+                                               Width="{Binding ElementName=ScrollView, Path=ActualWidth, Mode=OneWay}"
                                                VirtualizingPanel.IsVirtualizing="True" 
-                                               VirtualizingPanel.VirtualizationMode="Recycling" 
-                                               Width="{Binding ElementName=ScrollView, Path=ActualWidth, Mode=OneWay}">
+                                               VirtualizingPanel.VirtualizationMode="Recycling">
                                         <i:Interaction.Behaviors>
                                             <ei:FluidMoveBehavior AppliesTo="Children" Duration="00:00:1.5">
                                                 <ei:FluidMoveBehavior.EaseY>
@@ -134,13 +135,13 @@
                                         </MultiBinding>
                                     </Grid.Width>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={Converters:RatioConverter}, ConverterParameter='0.5625'}"/>
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
                                     <Image x:Name="ThumbnailImage" Grid.Row="0"
                                            AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1.Cover,Converter={Converters:UriToCachedImageConverter}, Mode=OneTime}"
-                                           AttachedProperties:ImageAsyncHelper.Type="Thumbnail"
-                                           Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={Converters:RatioConverter}, ConverterParameter='0.56'}" 
+                                           AttachedProperties:ImageAsyncHelper.ImageType="Thumbnail"
+                                           AttachedProperties:ImageAsyncHelper.ThumbnailSize="Video"
                                            Stretch="UniformToFill" 
                                            Cursor="Hand">
                                     </Image>

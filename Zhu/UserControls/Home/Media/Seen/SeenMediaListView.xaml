@@ -6,39 +6,112 @@
              xmlns:local="clr-namespace:Zhu.UserControls.Home.Media.Seen"
              xmlns:MaterialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:Layout="clr-namespace:Zhu.UserControls.Layout"
+             xmlns:Controls="clr-namespace:Zhu.Controls"
+             xmlns:Converters="clr-namespace:Zhu.Converters"
              DataContext="{Binding SeenList, Source={StaticResource Locator}}"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Layout:ContentPane HeadingText="播放历史">
+        <Layout:ContentPane.HeaderContent>
+            <StackPanel Orientation="Horizontal" Margin="0 20 0 0">
+                <MaterialDesign:Badged Margin="0 12 16 4" Badge="{MaterialDesign:PackIcon PlaylistCheck}" BadgeColorZoneMode="Light">
+                    <Button Style="{StaticResource MaterialDesignFlatOutlineButton}">
+                        批量操作
+                    </Button>
+                </MaterialDesign:Badged>
+                <MaterialDesign:Badged Margin="0 12 16 4" Badge="{MaterialDesign:PackIcon PlaylistRemove}" BadgeColorZoneMode="Light">
+                    <Button Style="{StaticResource MaterialDesignFlatOutlineButton}">
+                        清空历史
+                    </Button>
+                </MaterialDesign:Badged>
+            </StackPanel>
+        </Layout:ContentPane.HeaderContent>
         <Layout:ContentPane.InnerContent>
-            <ItemsControl  ItemsSource="{Binding SeenMedias}" Grid.IsSharedSizeScope="True">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border x:Name="Border" Padding="32 8" BorderThickness="0 0 0 1" BorderBrush="{DynamicResource MaterialDesignDivider}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition SharedSizeGroup="Checkerz" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <ToggleButton VerticalAlignment="Center" IsChecked="{Binding Item1.IsSelected}"
-                                          Style="{StaticResource MaterialDesignActionLightToggleButton}">
-                                    C
-                                </ToggleButton>
-                                <StackPanel Margin="32 0 0 0" Grid.Column="1">
-                                    <TextBlock FontWeight="Bold" Text="{Binding Item1.Title}" />
-                                    <TextBlock Text="{Binding Item1.MediaSource}" />
-                                    <TextBlock Text="{Binding Item1.SeenDate}" />
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding Item1.IsSelected}" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource MaterialDesignSelection}" />
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <Controls:AnimatedScrollViewer x:Name="ScrollView" Padding="15 0 0 0"
+                                           Focusable="False"
+                                           CanKeyboardScroll="True"
+                                           HorizontalAlignment="Stretch" 
+                                           TargetVerticalOffset="{Binding VerticalScroll, Mode=TwoWay}"
+                                           ScrollChanged="ScrollViewer_ScrollChanged">
+                <DataGrid Background="White"
+                          ItemsSource="{Binding SeenMedias}" 
+                          CanUserSortColumns="True" 
+                          CanUserAddRows="False"
+                          CanUserResizeColumns="False"
+                          AutoGenerateColumns="False"
+                          MaterialDesign:DataGridAssist.CellPadding="8 12 8 12" MaterialDesign:DataGridAssist.ColumnHeaderPadding="8">
+                    <DataGrid.Resources>
+                        <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="{x:Type DataGridCell}">
+                            <Setter Property="IsSelected" Value="False"></Setter>
+                            <Setter Property="IsEditing" Value="False"></Setter>
+                            <Setter Property="BorderThickness" Value="0"></Setter>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.Header>
+                                <Border Background="Transparent" Padding="5 0 5 0" HorizontalAlignment="Center">
+                                    <CheckBox HorizontalAlignment="Center" 
+                                              DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext}"
+                                              IsChecked="{Binding IsSelectedAll}"/>
+                                </Border>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Background="Transparent" Padding="5 0 5 0" HorizontalAlignment="Center">
+                                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Item1.IsSelected}" Margin="0 -1 0 0"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Binding="{Binding Item1.Title}" 
+                                            Header="名称" Width="*"
+                                            IsReadOnly="True"/>
+                        <DataGridTemplateColumn IsReadOnly="True" Width="80">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock></TextBlock>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                        <StackPanel.Resources>
+                                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignToolButton}">
+                                                <Setter Property="Width" Value="40"></Setter>
+                                                <Setter Property="Height" Value="20"></Setter>
+                                                <Setter Property="Padding" Value="-4 -4"></Setter>
+                                                <Setter Property="Margin" Value="-4 -4"></Setter>
+                                                <Setter Property="Opacity" Value="0.8"></Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Foreground" Value="Red"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                            <Style TargetType="MaterialDesign:PackIcon">
+                                                <Setter Property="Width" Value="20"></Setter>
+                                                <Setter Property="Height" Value="20"></Setter>
+                                            </Style>
+                                        </StackPanel.Resources>
+                                        <Button ToolTip="播放">
+                                            <MaterialDesign:PackIcon Kind="Play"></MaterialDesign:PackIcon>
+                                        </Button>
+                                        <Button ToolTip="添加到">
+                                            <MaterialDesign:PackIcon Kind="ShapeSquarePlus"></MaterialDesign:PackIcon>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Binding="{Binding Item1.MediaSource}"  Width="*"
+                                            Header="视频源" 
+                                            IsReadOnly="True"/>
+                        <DataGridTextColumn Binding="{Binding Item1.SeenDate, Converter={Converters:DateTimeConverter}}" 
+                                            Header="播放时间"
+                                            Width="135"
+                                            IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Controls:AnimatedScrollViewer>
         </Layout:ContentPane.InnerContent>
     </Layout:ContentPane>
 </UserControl>

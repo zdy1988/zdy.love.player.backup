@@ -30,6 +30,8 @@ namespace Zhu.ViewModels.Pages
         {
             this._applicationState = applicationState;
             this._seenService = seenService;
+
+            this.PageSize = 100;
         }
 
         private ObservableCollection<Tuple<SeenListItemViewModel, int>> _seenMedias = new ObservableCollection<Tuple<SeenListItemViewModel, int>>();
@@ -38,8 +40,14 @@ namespace Zhu.ViewModels.Pages
             get { return _seenMedias; }
         }
 
-        public virtual async Task LoadMediasAsync()
+        public virtual async Task LoadMediasAsync(bool isRefresh = false)
         {
+            if (isRefresh)
+            {
+                PageIndex = 0;
+                SeenMedias.Clear();
+            }
+
             var watch = Stopwatch.StartNew();
 
             PageIndex++;
@@ -54,7 +62,7 @@ namespace Zhu.ViewModels.Pages
                     var loadDataWatcher = new Stopwatch();
                     loadDataWatcher.Start();
 
-                    var data = await _seenService.GetEntitiesForPagingAsync(PageIndex, PageSize, SearchOrderField, false, SearchQueryModel);
+                    var data = await _seenService.GetEntitiesForPagingAsync(PageIndex, PageSize, OrderField, false, SearchQueryModel);
                     var dataItems = new List<Tuple<SeenListItemViewModel, int>>();
                     for (var i = 0; i < data.Item1.Count(); i++)
                     {
@@ -82,7 +90,7 @@ namespace Zhu.ViewModels.Pages
                         SeenMedias.AddRange(dataItems);
                         IsDataLoading = false;
                         IsDataFound = SeenMedias.Any();
-                        CurrentNumberOfData = SeenMedias.Count;
+                        TotalNumberOfData = SeenMedias.Count;
                         MaxNumberOfData = data.Item2;
                     });
                 });
@@ -99,6 +107,30 @@ namespace Zhu.ViewModels.Pages
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info($"Loaded page {PageIndex} in {elapsedMs} milliseconds.");
+            }
+        }
+
+        private bool? _isSelectedAll;
+
+        public bool? IsSelectedAll
+        {
+            get { return _isSelectedAll; }
+            set
+            {
+                Set(() => IsSelectedAll, ref _isSelectedAll, value);
+
+                if (_isSelectedAll.HasValue)
+                {
+                    SelectAll(_isSelectedAll.Value, _seenMedias);
+                }
+            }
+        }
+
+        private static void SelectAll(bool select, IEnumerable<Tuple<SeenListItemViewModel, int>> models)
+        {
+            foreach (var model in models)
+            {
+                model.Item1.IsSelected = select;
             }
         }
     }

@@ -14,7 +14,7 @@ namespace Zhu.ViewModels.Pages
     {
         protected QueryModel SearchQueryModel = new QueryModel();
 
-        protected int PageSize { get; set; } = Constants.LoadMoviesPageSize;
+        protected int PageSize { get; set; } = Constants.LoadDataPageSize;
 
         private int _pageIndex;
         protected int PageIndex
@@ -44,11 +44,11 @@ namespace Zhu.ViewModels.Pages
             set { Set(() => IsDataFound, ref _isDataFound, value); }
         }
 
-        private int _currentNumberOfData;
-        public int CurrentNumberOfData
+        private int _totalNumberOfData;
+        public int TotalNumberOfData
         {
-            get { return _currentNumberOfData; }
-            set { Set(() => CurrentNumberOfData, ref _currentNumberOfData, value); }
+            get { return _totalNumberOfData; }
+            set { Set(() => TotalNumberOfData, ref _totalNumberOfData, value); }
         }
 
         private int _maxNumberOfData;
@@ -58,11 +58,11 @@ namespace Zhu.ViewModels.Pages
             set { Set(() => MaxNumberOfData, ref _maxNumberOfData, value); }
         }
 
-        private string _searchOrderField;
-        public string SearchOrderField
+        private string _orderField;
+        public string OrderField
         {
-            get { return _searchOrderField; }
-            set { Set(() => SearchOrderField, ref _searchOrderField, value); }
+            get { return _orderField; }
+            set { Set(() => OrderField, ref _orderField, value); }
         }
     }
 }

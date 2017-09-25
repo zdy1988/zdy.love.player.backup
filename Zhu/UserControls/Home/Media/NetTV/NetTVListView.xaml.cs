@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +22,8 @@ namespace Zhu.UserControls.Home.Media.NetTV
     /// </summary>
     public partial class NetTVListView : UserControl
     {
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
         public NetTVListView()
         {
             InitializeComponent();
@@ -30,26 +33,45 @@ namespace Zhu.UserControls.Home.Media.NetTV
 
         private bool isLoaded = false;
 
-        private void NetTVListView_Loaded(object sender, RoutedEventArgs e)
+        private async void NetTVListView_Loaded(object sender, RoutedEventArgs e)
         {
             if (!isLoaded)
             {
                 isLoaded = true;
 
                 var vm = DataContext as NetTVListViewModel;
-                vm.SearchOrderField = "ID";
-                vm.LoadMediasAsync().ConfigureAwait(false);
+                vm.OrderField = "ID";
+                await vm.LoadMediasAsync().ConfigureAwait(false);
             }
         }
 
-        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             var totalHeight = e.VerticalOffset + e.ViewportHeight;
-            if (!totalHeight.Equals(e.ExtentHeight)) return;
+            if (e.VerticalChange < 0 || totalHeight < 2d / 3d * e.ExtentHeight)
+            {
+                return;
+            }
 
+            if (_semaphore.CurrentCount == 0)
+            {
+                return;
+            }
+
+            await _semaphore.WaitAsync();
             var vm = DataContext as NetTVListViewModel;
-            if (vm != null && !vm.IsDataLoading)
-                vm.LoadMediasAsync().ConfigureAwait(false);
+            if (vm == null)
+            {
+                _semaphore.Release();
+                return;
+            }
+
+            if (!vm.IsDataLoading)
+            {
+                await vm.LoadMediasAsync().ConfigureAwait(false);
+            }
+
+            _semaphore.Release();
 
         }
 

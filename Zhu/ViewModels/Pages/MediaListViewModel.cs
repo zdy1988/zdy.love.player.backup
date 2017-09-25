@@ -36,8 +36,8 @@ namespace Zhu.ViewModels.Pages
             RegisterCommands();
         }
 
-        private ObservableCollection<Tuple<Media, int>> _medias = new ObservableCollection<Tuple<Media, int>>();
-        public ObservableCollection<Tuple<Media, int>> Medias
+        private AsyncObservableCollection<Tuple<Media, int>> _medias = new AsyncObservableCollection<Tuple<Media, int>>();
+        public AsyncObservableCollection<Tuple<Media, int>> Medias
         {
             get { return _medias; }
         }
@@ -49,8 +49,14 @@ namespace Zhu.ViewModels.Pages
             set { Set(() => SearchText, ref _searchText, value); }
         }
 
-        public virtual async Task LoadMediasAsync()
+        public virtual async Task LoadMediasAsync(bool isRefresh = false)
         {
+            if (isRefresh)
+            {
+                PageIndex = 0;
+                Medias.Clear();
+            }
+
             MediaBeforeLoad?.Invoke(this, new EventArgs());
 
             var watch = Stopwatch.StartNew();
@@ -67,7 +73,7 @@ namespace Zhu.ViewModels.Pages
                     var loadDataWatcher = new Stopwatch();
                     loadDataWatcher.Start();
 
-                    var medias = await _mediaService.GetMediasForPagingAsync(PageIndex, PageSize, SearchOrderField, false, SearchQueryModel);
+                    var medias = await _mediaService.GetMediasForPagingAsync(PageIndex, PageSize, OrderField, false, SearchQueryModel);
                     var mediaItems = new List<Tuple<Media, int>>();
                     for (var i = 0; i < medias.Item1.Count(); i++)
                     {
@@ -86,7 +92,7 @@ namespace Zhu.ViewModels.Pages
                         Medias.AddRange(mediaItems);
                         IsDataLoading = false;
                         IsDataFound = Medias.Any();
-                        CurrentNumberOfData = Medias.Count;
+                        TotalNumberOfData = Medias.Count;
                         MaxNumberOfData = medias.Item2;
                     });
                 });

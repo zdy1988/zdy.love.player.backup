@@ -66,14 +66,17 @@ namespace Zhu.ViewModels.Pages
             set { Set(() => SelectImageQuality, ref _selectImageQuality, value); }
         }
 
-        public override Task LoadMediasAsync()
+        public override Task LoadMediasAsync(bool isRefresh = false)
         {
-            this.SearchQueryModel.Items.Add(new ConditionItem("MediaType", QueryMethod.LessThanOrEqual, (int)PubilcEnum.MediaType.Movie));
+            if (!this.SearchQueryModel.Items.Any(t => t.Field == "MediaType"))
+            {
+                this.SearchQueryModel.Items.Add(new ConditionItem("MediaType", QueryMethod.LessThanOrEqual, (int)PubilcEnum.MediaType.Movie));
+            }
             if (!string.IsNullOrEmpty(SelectCountry) && SelectCountry != "不限")
             {
                 this.SearchQueryModel.Items.Add(new ConditionItem("Countries", QueryMethod.Equal, SelectCountry));
             }
-            return base.LoadMediasAsync();
+            return base.LoadMediasAsync(isRefresh);
         }
 
         private void RegisterCommands()

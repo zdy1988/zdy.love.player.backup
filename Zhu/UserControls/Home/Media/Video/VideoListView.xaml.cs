@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,11 +17,10 @@ using Zhu.ViewModels.Pages;
 
 namespace Zhu.UserControls.Home.Media.Video
 {
-    /// <summary>
-    /// VideoListView.xaml 的交互逻辑
-    /// </summary>
     public partial class VideoListView : UserControl
     {
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
         public VideoListView()
         {
             InitializeComponent();
@@ -30,7 +30,7 @@ namespace Zhu.UserControls.Home.Media.Video
 
         private bool isLoaded = false;
 
-        private void MovieLibrary_Loaded(object sender, RoutedEventArgs e)
+        private async void MovieLibrary_Loaded(object sender, RoutedEventArgs e)
         {
             if (!isLoaded)
             {
@@ -41,19 +41,37 @@ namespace Zhu.UserControls.Home.Media.Video
                 this.ListBox_SelectMediaLength.SelectedIndex = 0;
 
                 var vm = DataContext as MovieListViewModel;
-                vm.LoadMediasAsync().ConfigureAwait(false);
+                await vm.LoadMediasAsync().ConfigureAwait(false);
             }
         }
 
-        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             var totalHeight = e.VerticalOffset + e.ViewportHeight;
-            if (!totalHeight.Equals(e.ExtentHeight)) return;
+            if (e.VerticalChange < 0 || totalHeight < 2d / 3d * e.ExtentHeight)
+            {
+                return;
+            }
 
+            if (_semaphore.CurrentCount == 0)
+            {
+                return;
+            }
+
+            await _semaphore.WaitAsync();
             var vm = DataContext as MovieListViewModel;
-            if (vm != null && !vm.IsDataLoading)
-                vm.LoadMediasAsync().ConfigureAwait(false);
+            if (vm == null)
+            {
+                _semaphore.Release();
+                return;
+            }
 
+            if (!vm.IsDataLoading)
+            {
+                await vm.LoadMediasAsync().ConfigureAwait(false);
+            }
+
+            _semaphore.Release();
         }
 
         private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)

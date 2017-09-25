@@ -17,12 +17,12 @@ namespace Zhu.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            return Untils.Constants.MovieCoverDictionary + value.ToString();
+
             if (string.IsNullOrEmpty(value?.ToString()))
             {
-                return Untils.BitmapImageHelper.GetBitmapImage("/Resources/Contact.png");
+                return Untils.BitmapImageHelper.GetBitmapImage("/Resources/Images/ProfilePic.jpg");
             }
-
-            return Untils.Constants.MovieCoverDictionary + value.ToString();
 
             var path = value.ToString();
             if (path.StartsWith("http"))

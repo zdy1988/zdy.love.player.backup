@@ -288,7 +288,7 @@
                         </Controls:AnimatedScrollViewer>
                     </Grid>
 
-                    <ContentControl Content="{Binding ElementName=CatgoryItemsListBox, Path=SelectedItem.Content}" Grid.RowSpan="2" Grid.Column="1"/>
+                    <ContentControl Content="{Binding ElementName=CatgoryItemsListBox, Path=SelectedItem.Content}" Grid.RowSpan="2" Grid.Column="1"></ContentControl>
                     <MaterialDesign:Snackbar MessageQueue="{MaterialDesign:MessageQueue}" x:Name="MainSnackbar" Margin="402,0" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
                     <MaterialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
                                              Background="{DynamicResource SecondaryAccentBrush}"
