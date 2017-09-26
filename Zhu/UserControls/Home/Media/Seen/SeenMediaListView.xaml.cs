@@ -33,6 +33,8 @@ namespace Zhu.UserControls.Home.Media.Seen
 
         private async void SeenMediaListView_Loaded(object sender, RoutedEventArgs e)
         {
+            this.CheckBox_SelectAll.IsChecked = false;
+
             var vm = DataContext as SeenListViewModel;
             vm.OrderField = "ID";
             await vm.LoadMediasAsync(true).ConfigureAwait(false);
@@ -41,7 +43,7 @@ namespace Zhu.UserControls.Home.Media.Seen
         private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             var totalHeight = e.VerticalOffset + e.ViewportHeight;
-            if (e.VerticalChange < 0 || totalHeight < 2d / 3d * e.ExtentHeight)
+            if (e.VerticalChange <= 0 || totalHeight < 2d / 3d * e.ExtentHeight)
             {
                 return;
             }

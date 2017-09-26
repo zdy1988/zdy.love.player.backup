@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:validationRules="clr-namespace:Zhu.ValidationRules"
+             xmlns:MaterialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:Controls="clr-namespace:Zhu.Controls"
+             xmlns:Converters="clr-namespace:Zhu.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -21,41 +21,62 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" FontSize="16">导入网络媒体：</TextBlock>
-        <materialDesign:PackIcon Grid.Row="1" Grid.Column="0" 
-                                 Kind="FileMultiple" 
-                                 VerticalAlignment="Bottom"
-                                 Margin="0 6 6 6"
-                                 Foreground="{Binding ElementName=FilePathTextBox, Path=BorderBrush}" />
-        <TextBox wpf:HintAssist.Hint="媒体文件" x:Name="FilePathTextBox"
-                 PreviewMouseLeftButtonUp="FilePathTextBox_PreviewMouseLeftButtonUp"
-                 Style="{DynamicResource MaterialDesignFloatingHintTextBox}"                 
-                 Margin="0 6 0 0"
-                 FontSize="16" Grid.Row="1" Grid.Column="1">
-            <TextBox.Text>
-                <Binding Path="FilePath" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <validationRules:FileExistsValidationRule ValidatesOnTargetUpdated="True" />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-        <StackPanel Orientation="Horizontal" Grid.Row="2"  Grid.ColumnSpan="2" HorizontalAlignment="Right"
+        <Grid.Resources>
+            <Style TargetType="{x:Type MaterialDesign:PackIcon}">
+                <Setter Property="Margin" Value="0 4 12 4"></Setter>
+                <Setter Property="VerticalAlignment" Value="Bottom"></Setter>
+                <Setter Property="Foreground" Value="{Binding ElementName=FilePathTextBox, Path=BorderBrush}"></Setter>
+            </Style>
+            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+                <Setter Property="Margin" Value="0 6 0 0"></Setter>
+            </Style>
+        </Grid.Resources>
+        <Border Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="0 0 0 1" BorderBrush="{StaticResource MaterialDesignDivider}">
+            <TextBlock Style="{StaticResource MaterialDesignTitleTextBlock}" Margin="0 0 0 10">导入网络媒体</TextBlock>
+        </Border>
+        <Controls:AnimatedScrollViewer x:Name="ScrollView" Grid.Row="2"  Grid.ColumnSpan="2" Margin="0 16 0 0"
+                                       Focusable="False"
+                                       CanKeyboardScroll="True"
+                                       HorizontalAlignment="Stretch" 
+                                       Height="360"
+                                       TargetVerticalOffset="{Binding VerticalScroll, Mode=TwoWay}">
+            <ItemsControl ItemsSource="{Binding Medias}"
+                          Grid.IsSharedSizeScope="True"
+                          Margin="12 0 12 0">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border x:Name="Border" Padding="8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock FontWeight="Bold" Text="{Binding Item1.Title}" Grid.Column="0" Margin="5 0 0 0"/>
+                                <TextBlock Text="{Binding Item1.MediaSource}" Grid.Column="1" Margin="5 0 0 0"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Controls:AnimatedScrollViewer>
+        <StackPanel Orientation="Horizontal" Grid.Row="3"  Grid.ColumnSpan="2" HorizontalAlignment="Right"
                     Margin="0 16 0 0">
-            <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}"
-                    Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
-                <Button.CommandParameter>
-                    <system:Boolean>True</system:Boolean>
-                </Button.CommandParameter>
+            <Button IsDefault="True" Style="{StaticResource MaterialDesignFlatButton}" Visibility="{Binding IsHasData, Converter={Converters:BoolToVisibilityConverter}}"
+                    Command="{Binding ReadMediaSourceFileCommand}">
+                选择文件
+            </Button>
+            <Button IsDefault="True" Style="{StaticResource MaterialDesignFlatButton}" Visibility="{Binding IsHasData, Converter={Converters:BoolToInverseVisibilityConverter}}" IsEnabled="{Binding IsImported, Converter={Converters:BoolToInverseBoolConverter}}"
+                    Command="{Binding ImportMediaSourceCommand}">
                 导入
             </Button>
             <Button IsCancel="True" Margin="8 0 0 0" Style="{DynamicResource MaterialDesignFlatButton}"
-                    Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
+                    Command="{x:Static MaterialDesign:DialogHost.CloseDialogCommand}">
                 <Button.CommandParameter>
                     <system:Boolean>False</system:Boolean>
                 </Button.CommandParameter>

@@ -25,15 +25,5 @@ namespace Zhu.UserControls.Main
         {
             InitializeComponent();
         }
-
-        private void FilePathTextBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.Filter = Constants.TxtFilters;
-            if (dialog.ShowDialog() == true)
-            {
-                FilePathTextBox.Text = dialog.FileName;
-            }
-        }
     }
 }

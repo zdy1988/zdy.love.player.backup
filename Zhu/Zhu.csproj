@@ -141,6 +141,8 @@
     <Compile Include="Converters\BoolToInverseBoolConverter.cs" />
     <Compile Include="Converters\BoolToInverseVisibilityConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\ListCountToInverseVisibilityConverter.cs" />
+    <Compile Include="Converters\ListCountToVisibilityConverter.cs" />
     <Compile Include="Converters\MediaListItemWidthConverter.cs" />
     <Compile Include="Converters\MultiBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\RandomColorSwatchesConverter.cs" />
@@ -154,7 +156,7 @@
     <Compile Include="Converters\WindowStateTooltipConverter.cs" />
     <Compile Include="Converters\WindowStateIconConverter.cs" />
     <Compile Include="Converters\WindowStateToBooleanConverter.cs" />
-    <Compile Include="Messaging\SelectMediaFileDialogOpenMessage.cs" />
+    <Compile Include="Messaging\MediaSourcePlayDialogOpenMessage.cs" />
     <Compile Include="PubilcEnum\MediaSourceType.cs" />
     <Compile Include="PubilcEnum\MediaType.cs" />
     <Compile Include="Infrastructure\EntityFramework\EntityFrameworkRepository.cs" />
@@ -209,8 +211,8 @@
     <Compile Include="Messaging\MediaFlyoutOpenMessage.cs" />
     <Compile Include="Messaging\WindowStateChangeMessage.cs" />
     <Compile Include="Models\Actor.cs" />
-    <Compile Include="Models\ApplicationState\ApplicationState.cs" />
-    <Compile Include="Models\ApplicationState\IApplicationState.cs" />
+    <Compile Include="Services\Application\ApplicationState.cs" />
+    <Compile Include="Services\Application\IApplicationState.cs" />
     <Compile Include="Models\Image.cs" />
     <Compile Include="Models\Media.cs" />
     <Compile Include="Models\Tag.cs" />
@@ -273,8 +275,8 @@
     <Compile Include="UserControls\Player\MediaPlayer.xaml.cs">
       <DependentUpon>MediaPlayer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Main\SelectMediaFileDialog.xaml.cs">
-      <DependentUpon>SelectMediaFileDialog.xaml</DependentUpon>
+    <Compile Include="UserControls\Main\MediaSourcePlayDialog.xaml.cs">
+      <DependentUpon>MediaSourcePlayDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Reused\PlayerMasker.xaml.cs">
       <DependentUpon>PlayerMasker.xaml</DependentUpon>
@@ -301,7 +303,7 @@
     <Compile Include="ViewModels\Pages\SeenListItemViewModel.cs" />
     <Compile Include="ViewModels\Pages\SeenListViewModel.cs" />
     <Compile Include="ViewModels\Player\MediaPlayerViewModel.cs" />
-    <Compile Include="ViewModels\Main\SelectMediaFileDialogViewModel.cs" />
+    <Compile Include="ViewModels\Main\MediaSourcePlayDialogViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Windows\SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
@@ -410,7 +412,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Main\SelectMediaFileDialog.xaml">
+    <Page Include="UserControls\Main\MediaSourcePlayDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

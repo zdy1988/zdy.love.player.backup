@@ -6,7 +6,6 @@ using NLog;
 using Zhu.Untils;
 using Zhu.Messaging;
 using Zhu.Models;
-using Zhu.Models.ApplicationState;
 using Zhu.Services;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Zhu.Untils.Extension;
 using GalaSoft.MvvmLight.Threading;
-
+using GalaSoft.MvvmLight.Ioc;
 
 namespace Zhu.ViewModels.Pages
 {
@@ -36,8 +35,8 @@ namespace Zhu.ViewModels.Pages
             RegisterCommands();
         }
 
-        private AsyncObservableCollection<Tuple<Media, int>> _medias = new AsyncObservableCollection<Tuple<Media, int>>();
-        public AsyncObservableCollection<Tuple<Media, int>> Medias
+        private ObservableCollection<Tuple<Media, int>> _medias = new ObservableCollection<Tuple<Media, int>>();
+        public ObservableCollection<Tuple<Media, int>> Medias
         {
             get { return _medias; }
         }
@@ -71,16 +70,11 @@ namespace Zhu.ViewModels.Pages
                 await Task.Run(async () =>
                 {
                     var loadDataWatcher = new Stopwatch();
+
                     loadDataWatcher.Start();
-
                     var medias = await _mediaService.GetMediasForPagingAsync(PageIndex, PageSize, OrderField, false, SearchQueryModel);
-                    var mediaItems = new List<Tuple<Media, int>>();
-                    for (var i = 0; i < medias.Item1.Count(); i++)
-                    {
-                        mediaItems.Add(new Tuple<Media, int>(medias.Item1[i], i + 1));
-                    }
-
                     loadDataWatcher.Stop();
+
                     var elapsedMs = loadDataWatcher.ElapsedMilliseconds;
                     if (elapsedMs < 500)
                     {
@@ -89,7 +83,10 @@ namespace Zhu.ViewModels.Pages
 
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
-                        Medias.AddRange(mediaItems);
+                        for (var i = 0; i < medias.Item1.Count(); i++)
+                        {
+                            Medias.Add(new Tuple<Media, int>(medias.Item1[i], i + 1));
+                        }
                         IsDataLoading = false;
                         IsDataFound = Medias.Any();
                         TotalNumberOfData = Medias.Count;
@@ -126,6 +123,11 @@ namespace Zhu.ViewModels.Pages
 
         private void RegisterCommands()
         {
+            PlayMediaCommand = new RelayCommand<Media>((media) =>
+            {
+                Messenger.Default.Send(new LoadMediaMessage(media));
+            });
+
             SetMediaRatingCommand = new RelayCommand<Media>(async (media) =>
             {
                 var entity = _mediaService.GetEntity(t => t.ID == media.ID);

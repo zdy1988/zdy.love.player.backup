@@ -17,9 +17,6 @@ using GalaSoft.MvvmLight.Threading;
 
 namespace Zhu.UserControls
 {
-    /// <summary>
-    /// MovieZhu.xaml 的交互逻辑
-    /// </summary>
     public partial class MediaPlayer : UserControl, IDisposable
     {
         public MediaPlayer()
@@ -49,68 +46,15 @@ namespace Zhu.UserControls
 
             InputManager.Current.PreProcessInput += OnActivity;
 
-            Player.VlcMediaPlayer.TimeChanged += VlcMediaPlayer_TimeChanged;
-            Player.VlcMediaPlayer.Playing += VlcMediaPlayer_Playing;
-            Player.VlcMediaPlayer.Stoped += VlcMediaPlayer_Stoped;
-            Player.VlcMediaPlayer.EndReached += VlcMediaPlayer_EndReached;
-            Player.VlcMediaPlayer.EncounteredError += VlcMediaPlayer_EncounteredError;
+            InitializeVlcPlayer();
         }
-
-        #region VlcPlayer
-
-        private void VlcMediaPlayer_TimeChanged(object sender, EventArgs e)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                if ((Player == null) || (UserIsDraggingMediaPlayerSlider)) return;
-                MediaPlayerSliderProgress.Value = Player.Time.TotalSeconds;
-            });
-        }
-
-        private void VlcMediaPlayer_Playing(object sender, Meta.Vlc.ObjectEventArgs<Meta.Vlc.Interop.Media.MediaState> e)
-        {
-            MediaPlayerIsPlaying = true;
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                MediaPlayerSliderProgress.Minimum = 0;
-                MediaPlayerSliderProgress.Maximum = Player.Length.TotalSeconds;
-            });
-        }
-
-        private void VlcMediaPlayer_Stoped(object sender, Meta.Vlc.ObjectEventArgs<Meta.Vlc.Interop.Media.MediaState> e)
-        {
-            MediaPlayerIsPlaying = false;
-            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
-            {
-                Messenger.Default.Send(new MediaFlyoutCloseMessage());
-                var vm = DataContext as MediaPlayerViewModel;
-                await vm.HasSeenMovie();
-            });
-        }
-
-        private void VlcMediaPlayer_EndReached(object sender, EventArgs e)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                MediaPlayerIsPlaying = false;
-            });
-        }
-
-        private void VlcMediaPlayer_EncounteredError(object sender, EventArgs e)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                Messenger.Default.Send(new ManageExceptionMessage(new Exception("媒体错误或者媒体地址未找到！")));
-                Messenger.Default.Send(new MediaFlyoutCloseMessage());
-            });
-        }
-
-        #endregion
 
         private void OnStartPlayingMedia(object sender, EventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
+                Messenger.Default.Send(new MediaFlyoutOpenMessage());
+
                 var vm = DataContext as MediaPlayerViewModel;
                 if (vm == null) return;
                 if (vm.Media == null) return;
@@ -141,6 +85,89 @@ namespace Zhu.UserControls
                 }
             });
         }
+
+        #region VlcPlayer
+
+        protected VlcPlayer Player = new VlcPlayer(true);
+
+        private void InitializeVlcPlayer()
+        {
+            string[] vlcOptions = new string[] { "-I", "--dummy-quiet", "--avi-index=1", "--ignore-config", "--no-video-title", "--no-sub-autodetect-file" };
+            string vlcPath = @"..\..\libvlc";
+            Player.Initialize(vlcPath, vlcOptions);
+            MediaShower.Source = Player.VideoSource;
+            Player.VideoSourceChanged += Player_VideoSourceChanged;
+            Player.TimeChanged += Player_TimeChanged;
+            Player.VlcMediaPlayer.Playing += VlcMediaPlayer_Playing;
+            Player.VlcMediaPlayer.Stoped += VlcMediaPlayer_Stoped;
+            Player.VlcMediaPlayer.EndReached += VlcMediaPlayer_EndReached;
+            Player.VlcMediaPlayer.EncounteredError += VlcMediaPlayer_EncounteredError;
+        }
+
+        private void Player_TimeChanged(object sender, EventArgs e)
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {   
+                if ((Player == null) || (UserIsDraggingMediaPlayerSlider)) return;
+                MediaPlayerSliderProgress.Value = Player.Time.TotalSeconds;
+            });
+        }
+
+        private void Player_VideoSourceChanged(object sender, VideoSourceChangedEventArgs e)
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                MediaShower.Source = e.NewVideoSource;
+            });
+        }
+
+        private void VlcMediaPlayer_Playing(object sender, Meta.Vlc.ObjectEventArgs<Meta.Vlc.Interop.Media.MediaState> e)
+        {
+            MediaPlayerIsPlaying = true;
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                MediaPlayerSliderProgress.Minimum = 0;
+                MediaPlayerSliderProgress.Maximum = Player.Length.TotalSeconds;
+            });
+        }
+
+        private async void VlcMediaPlayer_Stoped(object sender, Meta.Vlc.ObjectEventArgs<Meta.Vlc.Interop.Media.MediaState> e)
+        {
+            MediaPlayerIsPlaying = false;
+            var vm = DataContext as MediaPlayerViewModel;
+            await vm.HasSeenMovie();
+        }
+
+        private void VlcMediaPlayer_EndReached(object sender, EventArgs e)
+        {
+            MediaPlayerIsPlaying = false;
+        }
+
+        private void VlcMediaPlayer_EncounteredError(object sender, EventArgs e)
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                MediaPlayerIsPlaying = false;
+                Messenger.Default.Send(new ManageExceptionMessage(new Exception("媒体错误或者媒体地址未找到！")));
+                Messenger.Default.Send(new MediaFlyoutCloseMessage());
+            });
+        }
+
+        private void DisposeVlcPlayer()
+        {
+            Player.VideoSourceChanged -= Player_VideoSourceChanged;
+            Player.TimeChanged -= Player_TimeChanged;
+            Player.VlcMediaPlayer.Playing -= VlcMediaPlayer_Playing;
+            Player.VlcMediaPlayer.Stoped -= VlcMediaPlayer_Stoped;
+            Player.VlcMediaPlayer.EndReached -= VlcMediaPlayer_EndReached;
+            Player.VlcMediaPlayer.EncounteredError -= VlcMediaPlayer_EncounteredError;
+            Player.Stop();
+            Player.Dispose();
+        }
+
+        #endregion
+
+        #region PlayerStatusBar
 
         protected DispatcherTimer ActivityTimer { get; set; }
 
@@ -214,7 +241,9 @@ namespace Zhu.UserControls
             _isMouseActivityCaptured = false;
         }
 
-        #region ChangeMediaVolume
+        #endregion
+
+        #region PlayerVolume
 
         public int Volume
         {
@@ -239,7 +268,7 @@ namespace Zhu.UserControls
 
         private void ChangeMediaVolume(int newValue) => Player.Volume = newValue;
 
-        private void PlayerContainer_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void PlayerVolumeSlider_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if ((Volume <= 190 && e.Delta > 0) || (Volume >= 10 && e.Delta < 0))
                 Volume += (e.Delta > 0) ? 10 : -10;
@@ -247,7 +276,7 @@ namespace Zhu.UserControls
 
         #endregion
 
-        #region MediaSliderProgressValueChanged
+        #region PlayerProgress
 
         protected bool UserIsDraggingMediaPlayerSlider { get; set; }
 
@@ -272,14 +301,24 @@ namespace Zhu.UserControls
         }
 
         private void MediaPlayerSliderProgress_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            Player.Time = TimeSpan.FromSeconds(MediaPlayerSliderProgress.Value);
+        {                      
+            Player.Time = TimeSpan.FromSeconds(((Slider)sender).Value);
         }
 
         private void MediaPlayerSliderProgress_MouseMove(object sender, MouseEventArgs e)
         {
             var rate = e.GetPosition(MediaPlayerSliderProgress).X / MediaPlayerSliderProgress.ActualWidth;
             MediaPlayerSliderProgress.ToolTip = TimeSpan.FromSeconds(MediaPlayerSliderProgress.Maximum * rate).ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture);
+        }
+
+        private void MediaPlayerSliderProgress_MouseEnter(object sender, MouseEventArgs e)
+        {
+            UserIsDraggingMediaPlayerSlider = true;
+        }
+
+        private void MediaPlayerSliderProgress_MouseLeave(object sender, MouseEventArgs e)
+        {
+            UserIsDraggingMediaPlayerSlider = false;
         }
 
         #endregion
@@ -298,7 +337,7 @@ namespace Zhu.UserControls
             }
             else
             {
-                Messenger.Default.Send(new SelectMediaFileDialogOpenMessage());
+                Messenger.Default.Send(new MediaSourcePlayDialogOpenMessage());
             }
         }
 
@@ -378,13 +417,7 @@ namespace Zhu.UserControls
 
             MediaPlayerIsPlaying = false;
 
-            Player.VlcMediaPlayer.TimeChanged -= VlcMediaPlayer_TimeChanged;
-            Player.VlcMediaPlayer.Playing -= VlcMediaPlayer_Playing;
-            Player.VlcMediaPlayer.Stoped -= VlcMediaPlayer_Stoped;
-            Player.VlcMediaPlayer.EndReached -= VlcMediaPlayer_EndReached;
-            Player.VlcMediaPlayer.EncounteredError -= VlcMediaPlayer_EncounteredError;
-            Player.Stop();
-            Player.Dispose();
+            DisposeVlcPlayer();
 
             var vm = DataContext as MediaPlayerViewModel;
             if (vm != null)
@@ -400,28 +433,5 @@ namespace Zhu.UserControls
         public void Dispose() => Dispose(true);
 
         #endregion
-
-        #region FullScreen
-
-        private void Player_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var vm = this.DataContext as MediaPlayerViewModel;
-            if (vm != null)
-            {
-                vm._applicationState.IsFullScreen = !vm._applicationState.IsFullScreen;
-            }
-        }
-
-        #endregion
-
-        private void MediaPlayerSliderProgress_MouseEnter(object sender, MouseEventArgs e)
-        {
-            UserIsDraggingMediaPlayerSlider = true;
-        }
-
-        private void MediaPlayerSliderProgress_MouseLeave(object sender, MouseEventArgs e)
-        {
-            UserIsDraggingMediaPlayerSlider = false;
-        }
     }
 }

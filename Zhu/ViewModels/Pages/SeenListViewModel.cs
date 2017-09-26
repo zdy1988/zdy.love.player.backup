@@ -11,9 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Zhu.Messaging;
 using Zhu.Models;
-using Zhu.Models.ApplicationState;
 using Zhu.Untils.Extension;
 using Zhu.Services;
+using GalaSoft.MvvmLight.Command;
 
 namespace Zhu.ViewModels.Pages
 {
@@ -32,6 +32,8 @@ namespace Zhu.ViewModels.Pages
             this._seenService = seenService;
 
             this.PageSize = 100;
+
+            RegisterCommands();
         }
 
         private ObservableCollection<Tuple<SeenListItemViewModel, int>> _seenMedias = new ObservableCollection<Tuple<SeenListItemViewModel, int>>();
@@ -60,25 +62,11 @@ namespace Zhu.ViewModels.Pages
                 await Task.Run(async () =>
                 {
                     var loadDataWatcher = new Stopwatch();
+
                     loadDataWatcher.Start();
-
                     var data = await _seenService.GetEntitiesForPagingAsync(PageIndex, PageSize, OrderField, false, SearchQueryModel);
-                    var dataItems = new List<Tuple<SeenListItemViewModel, int>>();
-                    for (var i = 0; i < data.Item1.Count(); i++)
-                    {
-                        var item = new SeenListItemViewModel
-                        {
-                            IsSelected = false,
-                            ID = data.Item1[i].ID,
-                            SeenDate = data.Item1[i].SeenDate,
-                            Title = data.Item1[i].Title,
-                            MediaSource = data.Item1[i].MediaSource,
-                            MediaID = data.Item1[i].MediaID
-                        };
-                        dataItems.Add(new Tuple<SeenListItemViewModel, int>(item, i + 1));
-                    }
-
                     loadDataWatcher.Stop();
+
                     var elapsedMs = loadDataWatcher.ElapsedMilliseconds;
                     if (elapsedMs < 500)
                     {
@@ -87,7 +75,19 @@ namespace Zhu.ViewModels.Pages
 
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
-                        SeenMedias.AddRange(dataItems);
+                        for (var i = 0; i < data.Item1.Count(); i++)
+                        {
+                            var item = new SeenListItemViewModel
+                            {
+                                IsSelected = false,
+                                ID = data.Item1[i].ID,
+                                SeenDate = data.Item1[i].SeenDate,
+                                Title = data.Item1[i].Title,
+                                MediaSource = data.Item1[i].MediaSource,
+                                MediaID = data.Item1[i].MediaID
+                            };
+                            SeenMedias.Add(new Tuple<SeenListItemViewModel, int>(item, i + 1));
+                        }
                         IsDataLoading = false;
                         IsDataFound = SeenMedias.Any();
                         TotalNumberOfData = SeenMedias.Count;
@@ -132,6 +132,21 @@ namespace Zhu.ViewModels.Pages
             {
                 model.Item1.IsSelected = select;
             }
+        }
+
+        public RelayCommand<SeenListItemViewModel> RepalySeenMediaCommand { get; private set; }
+
+        private void RegisterCommands()
+        {
+            RepalySeenMediaCommand = new RelayCommand<SeenListItemViewModel>((seen) =>
+            {
+                Messenger.Default.Send(new LoadMediaMessage(new Media
+                {
+                    ID = seen.MediaID,
+                    Title = seen.Title,
+                    MediaSource = seen.MediaSource
+                }));
+            });
         }
     }
 }

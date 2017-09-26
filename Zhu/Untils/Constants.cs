@@ -46,6 +46,6 @@ namespace Zhu.Untils
         /// <summary>
         /// 文本格式
         /// </summary>
-        public static string TxtFilters = "(可用视频格式)|*.txt";
+        public static string TxtFilters = "(可用文件格式)|*.txt";
     }
 }

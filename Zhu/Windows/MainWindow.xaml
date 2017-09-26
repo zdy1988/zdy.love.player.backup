@@ -54,8 +54,11 @@
             </ContextMenu>
         </ResourceDictionary>
     </Window.Resources>
-    <MaterialDesign:DialogHost Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" 
-                               x:Name="PlayerMain" 
+    <MaterialDesign:DialogHost x:Name="PlayerMain" 
+                               Identifier="RootDialog"
+                               DialogContent="{Binding ApplicationState.RootDialogContent}"
+                               IsOpen="{Binding ApplicationState.IsRootDialogOpen}"
+                               SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" 
                                AllowDrop="True"
                                DragEnter="PlayerMain_DragEnter" 
                                Drop="PlayerMain_Drop">
@@ -128,8 +131,8 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ListBoxItem">
                                             <Border Background="{TemplateBinding Background}" Cursor="Hand" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
-                                                <MaterialDesign:Ripple x:Name="Ripple" 
-                                                                       Padding="14 10"
+                                                <MaterialDesign:Ripple x:Name="Ripple"
+                                                                       Padding="{TemplateBinding Padding}"
                                                                        Feedback="{TemplateBinding Foreground, Converter={StaticResource BrushRoundConverter}}"
                                                                        Focusable="False"
                                                                        Content="{TemplateBinding Content}"
@@ -143,8 +146,10 @@
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
+                                <Setter Property="Padding" Value="14 10"></Setter>
                                 <Style.Triggers>
                                     <Trigger Property="IsSelected" Value="true">
+                                        <Setter Property="Padding" Value="11 10 14 10"></Setter>
                                         <Setter Property="BorderThickness" Value="3 0 0 0"></Setter>
                                         <Setter Property="BorderBrush" Value="Red"></Setter>
                                         <Setter Property="Background" Value="#EAD7DB"/>
@@ -188,20 +193,21 @@
                         <ListBox x:Name="CatgoryItemsListBox"  Grid.Row="3"
                                  Padding="0 0 0 20" 
                                  SelectedIndex="0" 
+                                 SelectedItem="{Binding SelectTabItem}"
                                  ItemTemplate="{StaticResource ListItemTemplate}">
-                            <MainType:TabItem Title="电影院" Icon="Movie">
+                            <MainType:TabItem Title="影视时光" Icon="Movie">
                                 <MainType:TabItem.Content>
                                     <HomePage:Index />
-                                </MainType:TabItem.Content>
-                            </MainType:TabItem>
-                            <MainType:TabItem Title="我的电影" Icon="Movie">
-                                <MainType:TabItem.Content>
-                                    <MediaPage:MyMoives />
                                 </MainType:TabItem.Content>
                             </MainType:TabItem>
                             <MainType:TabItem Title="我的视频" Icon="AirPlay">
                                 <MainType:TabItem.Content>
                                     <MediaPage:MyVideos />
+                                </MainType:TabItem.Content>
+                            </MainType:TabItem>
+                            <MainType:TabItem Title="我的电影" Icon="Movie">
+                                <MainType:TabItem.Content>
+                                    <MediaPage:MyMoives />
                                 </MainType:TabItem.Content>
                             </MainType:TabItem>
                             <MainType:TabItem Title="网络电视" Icon="Cast">
@@ -217,11 +223,6 @@
                             <MainType:TabItem Title="我喜欢的" Icon="HeartPulse">
                                 <MainType:TabItem.Content>
                                     <HomePage:Index />
-                                </MainType:TabItem.Content>
-                            </MainType:TabItem>
-                            <MainType:TabItem Title="文件管理" Icon="BriefcaseCheck">
-                                <MainType:TabItem.Content>
-                                    <UserControls:FileExplorer />
                                 </MainType:TabItem.Content>
                             </MainType:TabItem>
                         </ListBox>
@@ -288,7 +289,7 @@
                         </Controls:AnimatedScrollViewer>
                     </Grid>
 
-                    <ContentControl Content="{Binding ElementName=CatgoryItemsListBox, Path=SelectedItem.Content}" Grid.RowSpan="2" Grid.Column="1"></ContentControl>
+                    <ContentControl Content="{Binding SelectTabItem.Content, IsAsync=True, Delay=1500}" Grid.RowSpan="2" Grid.Column="1"></ContentControl>
                     <MaterialDesign:Snackbar MessageQueue="{MaterialDesign:MessageQueue}" x:Name="MainSnackbar" Margin="402,0" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
                     <MaterialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
                                              Background="{DynamicResource SecondaryAccentBrush}"
@@ -298,7 +299,7 @@
                         <StackPanel>
                             <Button ToolTip="打开媒体" 
                                     BorderBrush="Transparent" 
-                                    Command="{Binding SelectMediaDialogOpenCommand}">
+                                    Command="{Binding MediaSourcePlayDialogOpenCommand}">
                                 <MaterialDesign:PackIcon Kind="OpenInNew" Height="20" Width="20" />
                             </Button>
                             <Button ToolTip="导入网媒"

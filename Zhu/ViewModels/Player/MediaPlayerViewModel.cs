@@ -6,7 +6,6 @@ using NLog;
 using Zhu.Controls;
 using Zhu.Messaging;
 using Zhu.Models;
-using Zhu.Models.ApplicationState;
 using Zhu.UserControls;
 using System;
 using System.Threading;
@@ -70,34 +69,40 @@ namespace Zhu.ViewModels.Player
         {
             StopPlayingMediaCommand = new RelayCommand(async () =>
             {
-                await DialogHost.Show(new SampleLoading(), "RootDialog", (object sender, DialogOpenedEventArgs eventArgs) =>
+                _applicationState.ShowLoadingDialog();
+
+                await Task.Delay(TimeSpan.FromSeconds(3)).ContinueWith(t =>
                 {
-                    Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(t =>
-                    {
-                        StoppedPlayingMedia?.Invoke(this, new EventArgs());
-                        eventArgs.Session.Close(false);
-                        Messenger.Default.Send(new MediaFlyoutCloseMessage());
-                    }, TaskScheduler.FromCurrentSynchronizationContext());
-                }, (object sender, DialogClosingEventArgs eventArgs) => { });
+                    _applicationState.HideLoadingDialog();
+
+                    StoppedPlayingMedia?.Invoke(this, new EventArgs());
+                    Messenger.Default.Send(new MediaFlyoutCloseMessage());
+                }, TaskScheduler.FromCurrentSynchronizationContext());
             });
         }
 
         private void RegisterMessages()
         {
-            Messenger.Default.Register<LoadMediaMessage>(this, e =>
-            {
-                if (e.Media == null) return;
-                if (string.IsNullOrEmpty(e.Media.MediaSource))
-                {
-                    Messenger.Default.Send(new MediaFlyoutCloseMessage());
-                    Messenger.Default.Send(new ManageExceptionMessage(new Exception("未获取媒体！")));
-                    return;
-                }
+            Messenger.Default.Register<LoadMediaMessage>(this, async (e) =>
+             {
+                 _applicationState.ShowLoadingDialog();
 
-                Media = e.Media;
-                StartPlayingMedia?.Invoke(this, new EventArgs());
-                Messenger.Default.Send(new MediaFlyoutOpenMessage());
-            });
+                 await Task.Delay(TimeSpan.FromSeconds(3)).ContinueWith((t) =>
+                 {
+                     _applicationState.HideLoadingDialog();
+
+                     //检测媒体
+                     if (e.Media == null || string.IsNullOrEmpty(e.Media.MediaSource))
+                     {
+                         Messenger.Default.Send(new MediaFlyoutCloseMessage());
+                         Messenger.Default.Send(new ManageExceptionMessage(new Exception("未找到网络地址或媒体文件！")));
+                         return;
+                     }
+                     Media = e.Media;
+                     //触发播放
+                     StartPlayingMedia?.Invoke(this, new EventArgs());
+                 }, TaskScheduler.FromCurrentSynchronizationContext());
+             });
         }
     }
 }

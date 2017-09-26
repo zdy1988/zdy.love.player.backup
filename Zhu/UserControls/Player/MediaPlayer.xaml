@@ -4,9 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Zhu.UserControls"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:vlc="clr-namespace:Meta.Vlc.Wpf;assembly=Meta.Vlc.Wpf"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
+             xmlns:MaterialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vlc="clr-namespace:Meta.Vlc.Wpf;assembly=Meta.Vlc.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding MediaPlayer, Source={StaticResource Locator}}"
@@ -32,12 +34,12 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
                             <Grid>
-                                <materialDesign:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
+                                <MaterialDesign:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
                                                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                             Padding="{TemplateBinding Padding}" 
                                                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                </materialDesign:Ripple>
+                                </MaterialDesign:Ripple>
                             </Grid>
                         </ControlTemplate>
                     </Setter.Value>
@@ -56,32 +58,12 @@
             Executed="MediaPlayerPauseExecuted" />
     </UserControl.CommandBindings>
 
-    <Grid x:Name="PlayerContainer"
-          Background="Black"
-          MouseWheel="PlayerContainer_MouseWheel">
-        <Grid.Resources>
-            <x:Array Type="{x:Type system:String}" x:Key="VlcOptions">
-                <system:String>-I</system:String>
-                <system:String>--dummy-quiet</system:String>
-                <system:String>--avi-index=1</system:String>
-                <system:String>--ignore-config</system:String>
-                <system:String>--no-video-title</system:String>
-                <system:String>--no-sub-autodetect-file</system:String>
-            </x:Array>
-        </Grid.Resources>
+    <Grid x:Name="PlayerContainer" Background="Black">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <vlc:VlcPlayer 
-            x:Name="Player" 
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            VlcOption="{StaticResource VlcOptions}" 
-            LibVlcPath="..\..\libvlc" 
-            EndBehavior="Nothing"
-            MouseDoubleClick="Player_MouseDoubleClick"
-            Stretch="Fill"/>
+        <vlc:ThreadSeparatedImage Grid.Row="0" Grid.RowSpan="2" Stretch="Fill" x:Name="MediaShower"></vlc:ThreadSeparatedImage>
         <StatusBar 
             x:Name="PlayerStatusBar"
             Grid.Row="1"
@@ -159,12 +141,13 @@
                     ValueChanged="MediaPlayerSliderProgress_ValueChanged" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
-                <Slider
+                <Slider x:Name="PlayerVolumeSlider"
                     Width="100"
                     Margin="0 0 0 38"
                     HorizontalAlignment="Stretch"
                     Maximum="100"
                     Minimum="0"
+                    MouseWheel="PlayerVolumeSlider_MouseWheel"
                     Style="{DynamicResource MaterialDesignDiscreteSlider}"
                     Value="{Binding Path=Volume, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
             </StatusBarItem>
@@ -189,7 +172,7 @@
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top">
             <Button.Resources>
-                <Style TargetType="materialDesign:PackIcon">
+                <Style TargetType="{x:Type MaterialDesign:PackIcon}">
                     <Setter Property="Width" Value="32" />
                     <Setter Property="Height" Value="32" />
                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -198,7 +181,7 @@
                     <Setter Property="Foreground" Value="White"/>
                 </Style>
             </Button.Resources>
-            <materialDesign:PackIcon Kind="ArrowRight" />
+            <MaterialDesign:PackIcon Kind="ArrowRight" />
         </Button>
     </Grid>
 </UserControl>

@@ -19,9 +19,9 @@ namespace Zhu.UserControls.Main
     /// <summary>
     /// MovieSelectDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class SelectMediaFileDialog : UserControl
+    public partial class MediaSourcePlayDialog : UserControl
     {
-        public SelectMediaFileDialog()
+        public MediaSourcePlayDialog()
         {
             InitializeComponent();
         }
@@ -32,7 +32,7 @@ namespace Zhu.UserControls.Main
             dialog.Filter = Constants.VedioFilters;
             if (dialog.ShowDialog() == true)
             {
-                FilePathTextBox.Text = dialog.FileName;
+                TextBox_FilePath.Text = dialog.FileName;
             }
         }
     }

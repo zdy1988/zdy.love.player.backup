@@ -17,7 +17,14 @@ namespace Zhu.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Untils.Constants.MovieCoverDictionary + value.ToString();
+            if (value == null)
+            {
+                return value;
+            }
+            else
+            {
+                return Untils.Constants.MovieCoverDictionary + value.ToString();
+            }
 
             if (string.IsNullOrEmpty(value?.ToString()))
             {

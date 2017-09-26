@@ -41,6 +41,9 @@
                           AutoGenerateColumns="False"
                           MaterialDesign:DataGridAssist.CellPadding="8 12 8 12" MaterialDesign:DataGridAssist.ColumnHeaderPadding="8">
                     <DataGrid.Resources>
+                        <Style BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}" TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="TextBlock.FontSize" Value="14" />
+                        </Style>
                         <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="{x:Type DataGridCell}">
                             <Setter Property="IsSelected" Value="False"></Setter>
                             <Setter Property="IsEditing" Value="False"></Setter>
@@ -51,9 +54,8 @@
                         <DataGridTemplateColumn>
                             <DataGridTemplateColumn.Header>
                                 <Border Background="Transparent" Padding="5 0 5 0" HorizontalAlignment="Center">
-                                    <CheckBox HorizontalAlignment="Center" 
-                                              DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext}"
-                                              IsChecked="{Binding IsSelectedAll}"/>
+                                    <CheckBox HorizontalAlignment="Center" x:Name="CheckBox_SelectAll" 
+                                              IsChecked="{Binding SeenList.IsSelectedAll, Source={StaticResource Locator}}"/>
                                 </Border>
                             </DataGridTemplateColumn.Header>
                             <DataGridTemplateColumn.CellTemplate>
@@ -92,7 +94,7 @@
                                                 <Setter Property="Height" Value="20"></Setter>
                                             </Style>
                                         </StackPanel.Resources>
-                                        <Button ToolTip="播放">
+                                        <Button ToolTip="播放" Command="{Binding SeenList.RepalySeenMediaCommand,Source={StaticResource Locator}}" CommandParameter="{Binding Item1}">
                                             <MaterialDesign:PackIcon Kind="Play"></MaterialDesign:PackIcon>
                                         </Button>
                                         <Button ToolTip="添加到">

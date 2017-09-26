@@ -15,7 +15,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
-using Zhu.Models.ApplicationState;
 using Zhu.Services;
 using Zhu.ViewModels.FileExplorer;
 using Zhu.ViewModels.Main;

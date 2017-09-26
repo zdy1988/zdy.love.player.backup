@@ -16,6 +16,8 @@ using System.ComponentModel;
 using Zhu.Controls;
 using Zhu.Models;
 using Zhu.UserControls.Reused;
+using GalaSoft.MvvmLight.Ioc;
+using Zhu.Services;
 
 namespace Zhu.Windows
 {
@@ -100,13 +102,9 @@ namespace Zhu.Windows
         {
             string fileName = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
 
-            Task.Factory.StartNew(async () =>
-            {
-                await DialogHost.Show(new SampleLoading(), "RootDialog");
-            }).ContinueWith(t =>
-            {
-                Messenger.Default.Send(new LoadMediaMessage(new Media { MediaSource = fileName }));
-            });
+            SimpleIoc.Default.GetInstance<IApplicationState>().ShowLoadingDialog();
+
+            Messenger.Default.Send(new LoadMediaMessage(new Media { MediaSource = fileName }));
         }
 
         #endregion

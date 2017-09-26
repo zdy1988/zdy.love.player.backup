@@ -2,7 +2,6 @@
 using GalaSoft.MvvmLight.Messaging;
 using NLog;
 using Zhu.Messaging;
-using Zhu.Models.ApplicationState;
 using Zhu.Services;
 using Zhu.Models;
 using System;
@@ -48,18 +47,7 @@ namespace Zhu.ViewModels.Pages
 
         private void RegisterCommands()
         {
-            PlayMediaCommand = new RelayCommand<Media>(async (media) =>
-            {
-                await DialogHost.Show(new SampleLoading(), "RootDialog", (object sender, DialogOpenedEventArgs eventArgs) =>
-                {
-                    Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(async(t) =>
-                    {
-                        var netTV = await SimpleIoc.Default.GetInstance<IMediaService>().GetEntityAsync(e => e.ID == media.ID);
-                        Messenger.Default.Send(new LoadMediaMessage(netTV));
-                        eventArgs.Session.Close(false);
-                    }, TaskScheduler.FromCurrentSynchronizationContext());
-                }, (object sender, DialogClosingEventArgs eventArgs) => { });
-            });
+            
         }
     }
 }

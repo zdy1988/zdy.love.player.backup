@@ -116,7 +116,6 @@ D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Reused\PlayerMasker.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\Windows\MainWindow.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Main\ImportNetworkMediaDialog.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Player\MediaPlayer.g.cs
-D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Main\SelectMediaFileDialog.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\Windows\SplashScreen.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\App.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\Zhu_Content.g.cs
@@ -195,7 +194,6 @@ D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Reused\PlayerMasker.baml
 D:\Work\zhu.player\Zhu\obj\Debug\Windows\MainWindow.baml
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Main\ImportNetworkMediaDialog.baml
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Player\MediaPlayer.baml
-D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Main\SelectMediaFileDialog.baml
 D:\Work\zhu.player\Zhu\obj\Debug\Zhu.g.resources
 D:\Work\zhu.player\Zhu\obj\Debug\Zhu.Properties.Resources.resources
 D:\Work\zhu.player\Zhu\obj\Debug\Zhu.csproj.GenerateResource.Cache
@@ -209,3 +207,5 @@ D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Reused\SampleLoading.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Reused\SampleMessage.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Reused\SampleLoading.baml
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Reused\SampleMessage.baml
+D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Main\MediaSourcePlayDialog.g.cs
+D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Main\MediaSourcePlayDialog.baml

@@ -48,7 +48,7 @@ namespace Zhu.UserControls.Home.Media.Video
         private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             var totalHeight = e.VerticalOffset + e.ViewportHeight;
-            if (e.VerticalChange < 0 || totalHeight < 2d / 3d * e.ExtentHeight)
+            if (e.VerticalChange <= 0 || totalHeight < 2d / 3d * e.ExtentHeight)
             {
                 return;
             }
