@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Zhu.UserControls.Main
+namespace Zhu.UserControls.Home.Dialogs
 {
     /// <summary>
     /// MovieSelectDialog.xaml 的交互逻辑

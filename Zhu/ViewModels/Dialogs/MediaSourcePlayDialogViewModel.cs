@@ -11,7 +11,7 @@ using Zhu.Messaging;
 using Zhu.Models;
 using Zhu.Services;
 
-namespace Zhu.ViewModels.Main
+namespace Zhu.ViewModels.Dialogs
 {
     public class MediaSourcePlayDialogViewModel : ViewModelBase
     {

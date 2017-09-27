@@ -87,6 +87,6 @@ D:\Work\zhu.player\FFMpegSharp\bin\Debug\FFMPEG\bin\presets\libx264-veryslow.ffp
 D:\Work\zhu.player\FFMpegSharp\bin\Debug\FFMPEG\bin\presets\libx264-veryslow_firstpass.ffpreset
 D:\Work\zhu.player\FFMpegSharp\bin\Debug\FFMpegSharp.dll
 D:\Work\zhu.player\FFMpegSharp\bin\Debug\FFMpegSharp.pdb
-D:\Work\zhu.player\FFMpegSharp\obj\Debug\FFMpegSharp.csprojResolveAssemblyReference.cache
 D:\Work\zhu.player\FFMpegSharp\obj\Debug\FFMpegSharp.dll
 D:\Work\zhu.player\FFMpegSharp\obj\Debug\FFMpegSharp.pdb
+D:\Work\zhu.player\FFMpegSharp\obj\Debug\FFMpegSharp.csprojResolveAssemblyReference.cache

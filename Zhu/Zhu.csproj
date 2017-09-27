@@ -271,13 +271,16 @@
     </Compile>
     <Compile Include="UserControls\Layout\ContentPane.cs" />
     <Compile Include="UserControls\Layout\DialogPane.cs" />
-    <Compile Include="UserControls\Main\ImportNetworkMediaDialog.xaml.cs">
+    <Compile Include="UserControls\Home\Dialogs\ImportNetworkMediaDialog.xaml.cs">
       <DependentUpon>ImportNetworkMediaDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Home\Dialogs\ScanMediaFileDialog.xaml.cs">
+      <DependentUpon>ScanMediaFileDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Player\MediaPlayer.xaml.cs">
       <DependentUpon>MediaPlayer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Main\MediaSourcePlayDialog.xaml.cs">
+    <Compile Include="UserControls\Home\Dialogs\MediaSourcePlayDialog.xaml.cs">
       <DependentUpon>MediaSourcePlayDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Reused\PlayerMasker.xaml.cs">
@@ -295,17 +298,19 @@
     <Compile Include="ViewModels\FileExplorer\FileExplorerViewModel.cs" />
     <Compile Include="ViewModels\FileExplorer\LocalDirectoryInfo.cs" />
     <Compile Include="ViewModels\FileExplorer\LocalFileInfo.cs" />
-    <Compile Include="ViewModels\Main\ImportNetworkMediaDialogViewModel.cs" />
-    <Compile Include="ViewModels\Main\TabItem.cs" />
-    <Compile Include="ViewModels\Main\MainViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\ImportNetworkMediaDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\ScanMediaFileDialogViewModel.cs" />
+    <Compile Include="ViewModels\Main\TabItemViewModel.cs" />
+    <Compile Include="ViewModels\Main\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\Pages\MovieListViewModel.cs" />
     <Compile Include="ViewModels\Pages\NetTVListViewModel.cs" />
     <Compile Include="ViewModels\Pages\MediaListViewModel.cs" />
     <Compile Include="ViewModels\Pages\BasePagingViewModel.cs" />
     <Compile Include="ViewModels\Pages\SeenListItemViewModel.cs" />
     <Compile Include="ViewModels\Pages\SeenListViewModel.cs" />
+    <Compile Include="ViewModels\Pages\VideoListViewModel.cs" />
     <Compile Include="ViewModels\Player\MediaPlayerViewModel.cs" />
-    <Compile Include="ViewModels\Main\MediaSourcePlayDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\MediaSourcePlayDialogViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Windows\SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
@@ -386,6 +391,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UserControls\Home\Dialogs\ScanMediaFileDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\Reused\PlayerMasker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -410,7 +419,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UserControls\Main\ImportNetworkMediaDialog.xaml">
+    <Page Include="UserControls\Home\Dialogs\ImportNetworkMediaDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -418,7 +427,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Main\MediaSourcePlayDialog.xaml">
+    <Page Include="UserControls\Home\Dialogs\MediaSourcePlayDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -35,12 +35,9 @@ namespace Zhu.UserControls.Home.Media.Video
             if (!isLoaded)
             {
                 isLoaded = true;
-                this.ComboBox_MediaSort.SelectedIndex = 0;
-                this.ListBox_SelectCountry.SelectedIndex = 0;
-                this.ListBox_SelectImageQuality.SelectedIndex = 0;
-                this.ListBox_SelectMediaLength.SelectedIndex = 0;
 
-                var vm = DataContext as MovieListViewModel;
+                var vm = DataContext as VideoListViewModel;
+                vm.OrderField = "ID";
                 await vm.LoadMediasAsync().ConfigureAwait(false);
             }
         }
@@ -59,7 +56,7 @@ namespace Zhu.UserControls.Home.Media.Video
             }
 
             await _semaphore.WaitAsync();
-            var vm = DataContext as MovieListViewModel;
+            var vm = DataContext as VideoListViewModel;
             if (vm == null)
             {
                 _semaphore.Release();
@@ -78,7 +75,7 @@ namespace Zhu.UserControls.Home.Media.Video
         {
             if (e.Key == Key.Enter)
             {
-                var vm = DataContext as MovieListViewModel;
+                var vm = DataContext as VideoListViewModel;
                 vm.SearchText = ((TextBox)sender).Text.Trim();
                 vm.SearchMediaCommand.Execute(null);
             }
@@ -89,7 +86,7 @@ namespace Zhu.UserControls.Home.Media.Video
             var ratingBar = (MaterialDesignThemes.Wpf.RatingBar)sender;
             var media = (Models.Media)ratingBar.Tag;
             media.Rating = ratingBar.Value;
-            var vm = DataContext as MovieListViewModel;
+            var vm = DataContext as VideoListViewModel;
             if (vm != null)
                 vm.SetMediaRatingCommand.Execute(media);
         }

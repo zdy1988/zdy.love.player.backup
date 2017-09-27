@@ -6,7 +6,6 @@ using NLog;
 using Zhu.Messaging;
 using Zhu.Models;
 using Zhu.Services;
-using Zhu.UserControls.Main;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,10 +16,12 @@ using System.Threading.Tasks;
 using Zhu.ViewModels.Pages;
 using Zhu.UserControls.Reused;
 using GalaSoft.MvvmLight.Threading;
+using Zhu.ViewModels.Dialogs;
+using Zhu.UserControls.Home.Dialogs;
 
 namespace Zhu.ViewModels.Main
 {
-    public class MainViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -33,7 +34,7 @@ namespace Zhu.ViewModels.Main
 
         private IMediaService _mediaService;
 
-        public MainViewModel(IApplicationState applicationState,
+        public MainWindowViewModel(IApplicationState applicationState,
             IMediaService mediaService)
         {
             _applicationState = applicationState;
@@ -50,8 +51,8 @@ namespace Zhu.ViewModels.Main
             set { Set(() => IsMovieFlyoutOpen, ref _isMovieFlyoutOpen, value); }
         }
 
-        private TabItem _selectTabItem;
-        public TabItem SelectTabItem
+        private TabItemViewModel _selectTabItem;
+        public TabItemViewModel SelectTabItem
         {
             get { return _selectTabItem; }
             set { Set(() => SelectTabItem, ref _selectTabItem, value); }

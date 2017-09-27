@@ -12,75 +12,40 @@
              xmlns:AttachedProperties="clr-namespace:Zhu.AttachedProperties"
              xmlns:Reused="clr-namespace:Zhu.UserControls.Reused"
              mc:Ignorable="d"
-             DataContext="{Binding MovieList, Source={StaticResource Locator}}"
+             DataContext="{Binding VideoList, Source={StaticResource Locator}}"
              d:DesignHeight="300" d:DesignWidth="300">
     <Layout:ContentPane HeadingText="我的视频">
         <Layout:ContentPane.HeaderContent>
             <StackPanel Margin="0 12 0 0">
-                <StackPanel.Resources>
-                    <Style TargetType="ListBox" BasedOn="{StaticResource MaterialDesignToolToggleFlatListBox}">
-                        <Setter Property="Margin" Value="0 10 0 0"></Setter>
-                        <Setter Property="Effect">
-                            <Setter.Value>
-                                <DropShadowEffect ShadowDepth="0" BlurRadius="0" Opacity="0" Color="#00000000" />
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="ItemContainerStyle">
-                            <Setter.Value>
-                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
-                                    <Setter Property="TextBlock.FontWeight" Value="DemiBold"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                    <Setter Property="Background" Value="White"/>
-                                    <Setter Property="Opacity" Value="1"/>
-                                    <Setter Property="FontWeight" Value="Normal"/>
-                                    <Setter Property="BorderThickness" Value="0"></Setter>
-                                </Style>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </StackPanel.Resources>
-                <ListBox x:Name="ListBox_SelectCountry" ItemsSource="{Binding CountryCollection}" SelectedValue="{Binding SelectCountry}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding SearchMediaCommand}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </ListBox>
-                <ListBox x:Name="ListBox_SelectMediaLength" ItemsSource="{Binding MediaLengthCollection}" SelectedValue="{Binding SelectMediaLength}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding SearchMediaCommand}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </ListBox>
-                <ListBox x:Name="ListBox_SelectImageQuality" ItemsSource="{Binding ImageQualityCollection}" SelectedValue="{Binding SelectImageQuality}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding SearchMediaCommand}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </ListBox>
-                <DockPanel Margin="0 10 0 0">
-                    <DockPanel.Resources>
-                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
-                            <Setter Property="Margin" Value="0 0 0 0" />
-                        </Style>
-                        <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MaterialDesignComboBox}">
-                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                        </Style>
-                    </DockPanel.Resources>
-                    <MaterialDesign:PackIcon Kind="Keyboard" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" Margin="0 10 10 0"/>
-                    <TextBox MaterialDesign:HintAssist.Hint="输入需要查找的关键词..." Width="300" Text="{Binding SearchText,Mode=TwoWay}" KeyDown="SearchTextBox_KeyDown"></TextBox>
-                    <MaterialDesign:PackIcon Kind="Sort" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" Margin="10 10 10 0"/>
-                    <ComboBox x:Name="ComboBox_MediaSort" ItemsSource="{Binding SortFields}" SelectedValue="{Binding OrderField}" Width="300" DisplayMemberPath="Key" SelectedValuePath="Value">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding SearchMediaCommand}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <TextBlock></TextBlock>
-                </DockPanel>
+                <Grid Margin="0 10 0 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Margin="2 0 0 10" Text="{Binding MaxNumberOfData,Converter={Converters:MaxNumberOfListConverter}}"></TextBlock>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 5 0 0">
+                        <StackPanel.Resources>
+                            <Style BasedOn="{StaticResource MaterialDesignFlatOutlineButton}" TargetType="Button">
+                                <Setter Property="Margin" Value="0 0 10 0"></Setter>
+                            </Style>
+                            <Style TargetType="MaterialDesign:PackIcon">
+                                <Setter Property="Margin" Value="0 2 2 0"></Setter>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button>
+                            <StackPanel Orientation="Horizontal">
+                                <MaterialDesign:PackIcon Kind="Bullseye"></MaterialDesign:PackIcon>
+                                <TextBlock>扫描添加</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button>
+                            <StackPanel Orientation="Horizontal">
+                                <MaterialDesign:PackIcon Kind="PlaylistRemove"></MaterialDesign:PackIcon>
+                                <TextBlock>清空历史</TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </Layout:ContentPane.HeaderContent>
         <Layout:ContentPane.InnerContent>

@@ -2,7 +2,7 @@
 
 namespace Zhu.ViewModels.Main
 {
-    public class TabItem : ViewModelBase
+    public class TabItemViewModel : ViewModelBase
     {
         private string _title;
         private object _content;

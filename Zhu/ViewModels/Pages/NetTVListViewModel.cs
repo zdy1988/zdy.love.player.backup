@@ -26,14 +26,8 @@ namespace Zhu.ViewModels.Pages
         public NetTVListViewModel(IApplicationState applicationState, IMediaService mediaService)
             : base(applicationState, mediaService)
         {
-            SortFields = new Dictionary<string, string>();
-            SortFields.Add("加入顺序", "ID");
-            SortFields.Add("星级评分", "Rating");
-
             RegisterCommands();
         }
-
-        public Dictionary<string, string> SortFields { get; set; }
 
         public override Task LoadMediasAsync(bool isRefresh = false)
         {

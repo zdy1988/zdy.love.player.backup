@@ -53,7 +53,7 @@ namespace Zhu.Windows
 
         public void InitializeMessageNotice()
         {
-            var vm = DataContext as MainViewModel;
+            var vm = DataContext as MainWindowViewModel;
             if (vm == null) return;
             vm.MessageNotice += Vm_MessageNotice;
         }
@@ -190,7 +190,7 @@ namespace Zhu.Windows
 
         private void SetWindowFullScreen()
         {
-            MainViewModel vm = this.DataContext as MainViewModel;
+            MainWindowViewModel vm = this.DataContext as MainWindowViewModel;
             if (vm != null)
             {
                 vm.ApplicationState.IsFullScreen = !vm.ApplicationState.IsFullScreen;

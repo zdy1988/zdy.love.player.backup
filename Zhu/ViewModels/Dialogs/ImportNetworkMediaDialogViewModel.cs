@@ -15,7 +15,7 @@ using Zhu.Models;
 using Zhu.Services;
 using Zhu.Untils;
 
-namespace Zhu.ViewModels.Main
+namespace Zhu.ViewModels.Dialogs
 {
     public class ImportNetworkMediaDialogViewModel : ViewModelBase
     {
