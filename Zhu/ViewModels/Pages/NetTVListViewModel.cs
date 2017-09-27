@@ -45,9 +45,14 @@ namespace Zhu.ViewModels.Pages
             return base.LoadMediasAsync(isRefresh);
         }
 
+        public RelayCommand ImportNetworkMediaDialogOpenCommand { get; private set; }
+
         private void RegisterCommands()
         {
-            
+            ImportNetworkMediaDialogOpenCommand = new RelayCommand(() =>
+            {
+                Messenger.Default.Send(new ImportNetworkMediaDialogOpenMessage());
+            });
         }
     }
 }

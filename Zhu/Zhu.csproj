@@ -143,6 +143,7 @@
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ListCountToInverseVisibilityConverter.cs" />
     <Compile Include="Converters\ListCountToVisibilityConverter.cs" />
+    <Compile Include="Converters\MaxNumberOfListConverter.cs" />
     <Compile Include="Converters\MediaListItemWidthConverter.cs" />
     <Compile Include="Converters\MultiBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\RandomColorSwatchesConverter.cs" />
@@ -269,6 +270,7 @@
       <DependentUpon>VideoListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Layout\ContentPane.cs" />
+    <Compile Include="UserControls\Layout\DialogPane.cs" />
     <Compile Include="UserControls\Main\ImportNetworkMediaDialog.xaml.cs">
       <DependentUpon>ImportNetworkMediaDialog.xaml</DependentUpon>
     </Compile>
@@ -376,6 +378,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\Layout\Resources\DialogPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\Layout\Resources\ContentPane.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -461,6 +467,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FFMpegSharp\FFMpegSharp.csproj">
+      <Project>{5cec6504-bd25-45d0-830c-a2162f4aad12}</Project>
+      <Name>FFMpegSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MaterialDesignColors\MaterialDesignColors.csproj">
       <Project>{90b53209-c60c-4655-b28d-a1b3e1044ba3}</Project>
       <Name>MaterialDesignColors</Name>

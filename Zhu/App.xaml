@@ -29,14 +29,15 @@
                 <ResourceDictionary Source="pack://application:,,,/Zhu;component/Resources/AnimatedScrollViewer.xaml" />
                 <!--Layout Resources-->
                 <ResourceDictionary Source="pack://application:,,,/Zhu;component/UserControls/Layout/Resources/ContentPane.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhu;component/UserControls/Layout/Resources/DialogPane.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:Zhu.ViewModels" />
 
             <Style x:Key="MaterialDesignFlatOutlineButton" BasedOn="{StaticResource MaterialDesignFlatButton}" TargetType="{x:Type Button}">
-                <Setter Property="BorderBrush" Value="LightGray"></Setter>
+                <Setter Property="BorderBrush" Value="DarkGray"></Setter>
                 <Setter Property="BorderThickness" Value="1"></Setter>
                 <Setter Property="Background" Value="White"></Setter>
-                <Setter Property="Foreground" Value="Gray"></Setter>
+                <Setter Property="Foreground" Value="Black"></Setter>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

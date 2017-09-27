@@ -13,18 +13,35 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Layout:ContentPane HeadingText="播放历史">
         <Layout:ContentPane.HeaderContent>
-            <StackPanel Orientation="Horizontal" Margin="0 20 0 0">
-                <MaterialDesign:Badged Margin="0 12 16 4" Badge="{MaterialDesign:PackIcon PlaylistCheck}" BadgeColorZoneMode="Light">
-                    <Button Style="{StaticResource MaterialDesignFlatOutlineButton}">
-                        批量操作
+            <Grid Margin="0 10 0 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Margin="2 0 0 10" Text="{Binding MaxNumberOfData,Converter={Converters:MaxNumberOfListConverter}}"></TextBlock>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 5 0 0">
+                    <StackPanel.Resources>
+                        <Style BasedOn="{StaticResource MaterialDesignFlatOutlineButton}" TargetType="Button">
+                            <Setter Property="Margin" Value="0 0 10 0"></Setter>
+                        </Style>
+                        <Style TargetType="MaterialDesign:PackIcon">
+                            <Setter Property="Margin" Value="0 2 2 0"></Setter>
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button>
+                        <StackPanel Orientation="Horizontal">
+                            <MaterialDesign:PackIcon Kind="PlaylistCheck"></MaterialDesign:PackIcon>
+                            <TextBlock>批量操作</TextBlock>
+                        </StackPanel>
                     </Button>
-                </MaterialDesign:Badged>
-                <MaterialDesign:Badged Margin="0 12 16 4" Badge="{MaterialDesign:PackIcon PlaylistRemove}" BadgeColorZoneMode="Light">
-                    <Button Style="{StaticResource MaterialDesignFlatOutlineButton}">
-                        清空历史
+                    <Button>
+                        <StackPanel Orientation="Horizontal">
+                            <MaterialDesign:PackIcon Kind="PlaylistRemove"></MaterialDesign:PackIcon>
+                            <TextBlock>清空历史</TextBlock>
+                        </StackPanel>
                     </Button>
-                </MaterialDesign:Badged>
-            </StackPanel>
+                </StackPanel>
+            </Grid>
         </Layout:ContentPane.HeaderContent>
         <Layout:ContentPane.InnerContent>
             <Controls:AnimatedScrollViewer x:Name="ScrollView" Padding="15 0 0 0"

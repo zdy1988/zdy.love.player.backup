@@ -97,8 +97,6 @@ namespace Zhu.ViewModels.Main
 
         public RelayCommand MediaSourcePlayDialogOpenCommand { get; private set; }
 
-        public RelayCommand ImportNetworkMediaDialogOpenCommand { get; private set; }
-
         private void RegisterCommands()
         {
             ToggleMoviePalyerCommand = new RelayCommand(() => {
@@ -108,11 +106,6 @@ namespace Zhu.ViewModels.Main
             MediaSourcePlayDialogOpenCommand = new RelayCommand(() =>
             {
                 Messenger.Default.Send(new MediaSourcePlayDialogOpenMessage());
-            });
-
-            ImportNetworkMediaDialogOpenCommand = new RelayCommand(() =>
-            {
-                Messenger.Default.Send(new ImportNetworkMediaDialogOpenMessage());
             });
         }
     }

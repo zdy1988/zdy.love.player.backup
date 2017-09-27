@@ -90,7 +90,7 @@ namespace Zhu.ViewModels.Pages
                         }
                         IsDataLoading = false;
                         IsDataFound = SeenMedias.Any();
-                        TotalNumberOfData = SeenMedias.Count;
+                        CurrentNumberOfData = SeenMedias.Count;
                         MaxNumberOfData = data.Item2;
                     });
                 });

@@ -44,11 +44,11 @@ namespace Zhu.ViewModels.Pages
             set { Set(() => IsDataFound, ref _isDataFound, value); }
         }
 
-        private int _totalNumberOfData;
-        public int TotalNumberOfData
+        private int _currentNumberOfData;
+        public int CurrentNumberOfData
         {
-            get { return _totalNumberOfData; }
-            set { Set(() => TotalNumberOfData, ref _totalNumberOfData, value); }
+            get { return _currentNumberOfData; }
+            set { Set(() => CurrentNumberOfData, ref _currentNumberOfData, value); }
         }
 
         private int _maxNumberOfData;

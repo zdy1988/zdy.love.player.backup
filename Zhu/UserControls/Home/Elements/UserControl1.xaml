@@ -5,13 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Zhu.UserControls.Home.Elements"
              xmlns:MaterialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:Controls="clr-namespace:Zhu.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <MaterialDesign:ColorZone Mode="Light" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <StackPanel VerticalAlignment="Center">
                 <TextBlock>Welcome to the transitions showcase!  Take the red pill to begin...</TextBlock>
-
                 <!-- you can easily use the move next, previous, first and last commands -->
                 <Button Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="64"
                 Command="{x:Static MaterialDesign:Transitioner.MoveNextCommand}">
