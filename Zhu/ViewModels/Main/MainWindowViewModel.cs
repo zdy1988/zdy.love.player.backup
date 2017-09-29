@@ -51,13 +51,6 @@ namespace Zhu.ViewModels.Main
             set { Set(() => IsMovieFlyoutOpen, ref _isMovieFlyoutOpen, value); }
         }
 
-        private TabItemViewModel _selectTabItem;
-        public TabItemViewModel SelectTabItem
-        {
-            get { return _selectTabItem; }
-            set { Set(() => SelectTabItem, ref _selectTabItem, value); }
-        }
-
         public event EventHandler<string> MessageNotice;
 
         private void RegisterMessages()
@@ -74,6 +67,7 @@ namespace Zhu.ViewModels.Main
             {
                 MessageNotice?.Invoke(this, e.UnHandledException.Message);
             });
+            //Dialog Message
             Messenger.Default.Register<MediaSourcePlayDialogOpenMessage>(this, (e) =>
             {
                 var dialog = new MediaSourcePlayDialog
@@ -88,6 +82,15 @@ namespace Zhu.ViewModels.Main
                 var dialog = new ImportNetworkMediaDialog
                 {
                     DataContext = new ImportNetworkMediaDialogViewModel(_applicationState, _mediaService)
+                };
+
+                _applicationState.ShowDialog(dialog);
+            });
+            Messenger.Default.Register<ScanMediaFileDialogOpenMessage>(this, (e) =>
+            {
+                var dialog = new ScanMediaFileDialog
+                {
+                    DataContext = new ScanMediaFileDialogViewModel(_applicationState, _mediaService)
                 };
 
                 _applicationState.ShowDialog(dialog);
@@ -108,6 +111,24 @@ namespace Zhu.ViewModels.Main
             {
                 Messenger.Default.Send(new MediaSourcePlayDialogOpenMessage());
             });
+        }
+    }
+
+    public class TabItem : ViewModelBase
+    {
+        private string _title;
+        private string _icon;
+
+        public string Title
+        {
+            get { return _title; }
+            set { Set(() => Title, ref _title, value); }
+        }
+
+        public string Icon
+        {
+            get { return _icon; }
+            set { Set(() => Icon, ref _icon, value); }
         }
     }
 }

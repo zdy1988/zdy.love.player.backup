@@ -20,21 +20,15 @@ namespace Zhu.UserControls.Home.Media.Moive
             this.Loaded += MovieLibrary_Loaded;
         }
 
-        private bool isLoaded = false;
-
         private async void MovieLibrary_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!isLoaded)
-            {
-                isLoaded = true;
-                this.ComboBox_MediaSort.SelectedIndex = 0;
-                this.ListBox_SelectCountry.SelectedIndex = 0;
-                this.ListBox_SelectImageQuality.SelectedIndex = 0;
-                this.ListBox_SelectMediaLength.SelectedIndex = 0;
+            this.ComboBox_MediaSort.SelectedIndex = 0;
+            this.ListBox_SelectCountry.SelectedIndex = 0;
+            this.ListBox_SelectImageQuality.SelectedIndex = 0;
+            this.ListBox_SelectMediaLength.SelectedIndex = 0;
 
-                var vm = DataContext as MovieListViewModel;
-                await vm.LoadMediasAsync().ConfigureAwait(false);
-            }
+            var vm = DataContext as MovieListViewModel;
+            await vm.LoadMediasAsync().ConfigureAwait(false);
         }
 
         private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)

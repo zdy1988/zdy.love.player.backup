@@ -1,9 +1,12 @@
-﻿using Infrastructure.SearchModel.Model;
+﻿using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using Infrastructure.SearchModel.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Zhu.Messaging;
 using Zhu.Services;
 
 namespace Zhu.ViewModels.Pages
@@ -14,6 +17,7 @@ namespace Zhu.ViewModels.Pages
             : base(applicationState, mediaService)
         {
             RegisterCommands();
+            RegisterMessages();
         }
 
         public override Task LoadMediasAsync(bool isRefresh = false)
@@ -26,8 +30,22 @@ namespace Zhu.ViewModels.Pages
             return base.LoadMediasAsync(isRefresh);
         }
 
+        public RelayCommand ScanMediaFileDialogOpenCommand { get; private set; }
+
         private void RegisterCommands()
         {
+            ScanMediaFileDialogOpenCommand = new RelayCommand(() =>
+            {
+                Messenger.Default.Send(new ScanMediaFileDialogOpenMessage());
+            });
+        }
+
+        private void RegisterMessages()
+        {
+            Messenger.Default.Register<RefreshVideoListMessage>(this, async (e) =>
+            {
+                await LoadMediasAsync(e.IsRefresh).ConfigureAwait(false);
+            });
         }
     }
 }

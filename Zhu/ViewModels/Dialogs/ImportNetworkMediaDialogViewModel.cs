@@ -25,11 +25,18 @@ namespace Zhu.ViewModels.Dialogs
 
         public IMediaService _mediaService { get; set; }
 
-        private bool _isImported;
-        public bool IsImported
+        private int _transitionerIndex;
+        public int TransitionerIndex
         {
-            get { return _isImported; }
-            set { Set(() => IsImported, ref _isImported, value); }
+            get { return _transitionerIndex; }
+            set { Set(() => TransitionerIndex, ref _transitionerIndex, value); }
+        }
+
+        private string _scaningTootips;
+        public string ScaningTootips
+        {
+            get { return _scaningTootips; }
+            set { Set(() => ScaningTootips, ref _scaningTootips, value); }
         }
 
         private bool _isHasData;
@@ -39,8 +46,8 @@ namespace Zhu.ViewModels.Dialogs
             set { Set(() => IsHasData, ref _isHasData, value); }
         }
 
-        private ObservableCollection<Tuple<Media, bool>> _medias = new ObservableCollection<Tuple<Media, bool>>();
-        public ObservableCollection<Tuple<Media, bool>> Medias
+        private List<Media> _medias = new List<Media>();
+        public List<Media> Medias
         {
             get { return _medias; }
             set { Set(() => Medias, ref _medias, value); }
@@ -69,45 +76,49 @@ namespace Zhu.ViewModels.Dialogs
                 {
                     string filePath = dialog.FileName;
 
-                    if (!File.Exists(filePath))
+                    TransitionerIndex = 1;
+
+                    Medias = await Task.Run(async () =>
                     {
-                        Messenger.Default.Send(new ManageExceptionMessage(new Exception("未找到导入文件！")));
-                    }
-                    else
-                    {
-                        await Task.Run(async () =>
+                        List<Media> medias = new List<Media>();
+
+                        StreamReader sr = new StreamReader(filePath, Encoding.Default);
+                        string line;
+                        while ((line = await sr.ReadLineAsync()) != null)
                         {
-                            StreamReader sr = new StreamReader(filePath, Encoding.Default);
-                            string line;
-                            while ((line = await sr.ReadLineAsync()) != null)
+                            if (line.IndexOf(",") != -1)
                             {
-                                if (line.IndexOf(",") != -1)
+                                string[] item = line.Split(',');
+
+                                await Task.Delay(100);
+
+                                var media = new Media
                                 {
-                                    string[] item = line.Split(',');
-                                    var media = new Media
-                                    {
-                                        Title = item[0],
-                                        MediaType = (int)PubilcEnum.MediaType.NetTV,
-                                        MediaSource = item[1],
-                                        MediaSourceType = (int)PubilcEnum.MediaSourceType.NetworkAddress,
-                                        IsFavorite = false,
-                                        EnterDate = DateTime.Now,
-                                        UpdateDate = DateTime.Now
-                                    };
+                                    Title = item[0],
+                                    MediaType = (int)PubilcEnum.MediaType.NetTV,
+                                    MediaSource = item[1],
+                                    MediaSourceType = (int)PubilcEnum.MediaSourceType.NetworkAddress,
+                                    IsFavorite = false,
+                                    EnterDate = DateTime.Now,
+                                    UpdateDate = DateTime.Now
+                                };
 
-                                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                                    {
-                                        Medias.Add(new Tuple<Media, bool>(media, false));
-                                    });
-                                }
+                                medias.Add(media);
+
+                                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                                {
+                                    ScaningTootips = item[0];
+                                });
                             }
-                        });
-
-                        if (Medias.Count > 0)
-                        {
-                            IsHasData = true;
                         }
-                    }
+
+                        return medias;
+                    }).ConfigureAwait(false);
+
+                    ScaningTootips = "";
+                    TransitionerIndex = 2;
+
+                    IsHasData = Medias.Any();
                 }
             });
 
@@ -121,15 +132,13 @@ namespace Zhu.ViewModels.Dialogs
                     {
                         foreach (var media in Medias)
                         {
-                            await _mediaService.InsertAsync(media.Item1);
+                            await _mediaService.InsertAsync(media);
                         }
                     });
 
-                    IsImported = true;
-
                     _applicationState.HideLoadingDialog();
 
-                    Messenger.Default.Send(new ManageExceptionMessage(new Exception($"成功导入 {Medias.Count} 条网络视频数据！")));
+                    Messenger.Default.Send(new ManageExceptionMessage(new Exception($"成功导入 {Medias.Count} 条网络视频源！")));
                 }
             });
         }

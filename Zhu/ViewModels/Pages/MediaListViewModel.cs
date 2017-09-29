@@ -92,7 +92,7 @@ namespace Zhu.ViewModels.Pages
                         CurrentNumberOfData = Medias.Count;
                         MaxNumberOfData = medias.Item2;
                     });
-                });
+                }).ConfigureAwait(false);
             }
             catch (Exception exception)
             {

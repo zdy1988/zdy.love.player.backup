@@ -16,7 +16,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using Zhu.Services;
-using Zhu.ViewModels.FileExplorer;
 using Zhu.ViewModels.Main;
 using Zhu.ViewModels.Player;
 using Zhu.ViewModels.Pages;
@@ -46,7 +45,6 @@ namespace Zhu.ViewModels
 
             #region ViewModels
             SimpleIoc.Default.Register<MainWindowViewModel>();
-            SimpleIoc.Default.Register<FileExplorerViewModel>();
             SimpleIoc.Default.Register<MediaPlayerViewModel>();
             SimpleIoc.Default.Register<MovieListViewModel>();
             SimpleIoc.Default.Register<NetTVListViewModel>();
@@ -56,7 +54,6 @@ namespace Zhu.ViewModels
         }
 
         public MainWindowViewModel Main => ServiceLocator.Current.GetInstance<MainWindowViewModel>();
-        public FileExplorerViewModel FileExplorer => ServiceLocator.Current.GetInstance<FileExplorerViewModel>();
         public MediaPlayerViewModel MediaPlayer => ServiceLocator.Current.GetInstance<MediaPlayerViewModel>();
         public MovieListViewModel MovieList => ServiceLocator.Current.GetInstance<MovieListViewModel>();
         public NetTVListViewModel NetTVList => ServiceLocator.Current.GetInstance<NetTVListViewModel>();

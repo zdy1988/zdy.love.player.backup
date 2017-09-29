@@ -193,38 +193,13 @@
                         <ListBox x:Name="CatgoryItemsListBox"  Grid.Row="3"
                                  Padding="0 0 0 20" 
                                  SelectedIndex="0" 
-                                 SelectedItem="{Binding SelectTabItem}"
                                  ItemTemplate="{StaticResource ListItemTemplate}">
-                            <MainType:TabItemViewModel Title="影视时光" Icon="Movie">
-                                <MainType:TabItemViewModel.Content>
-                                    <HomePage:Index />
-                                </MainType:TabItemViewModel.Content>
-                            </MainType:TabItemViewModel>
-                            <MainType:TabItemViewModel Title="我的视频" Icon="AirPlay">
-                                <MainType:TabItemViewModel.Content>
-                                    <MediaPage:MyVideos />
-                                </MainType:TabItemViewModel.Content>
-                            </MainType:TabItemViewModel>
-                            <MainType:TabItemViewModel Title="我的电影" Icon="Movie">
-                                <MainType:TabItemViewModel.Content>
-                                    <MediaPage:MyMoives />
-                                </MainType:TabItemViewModel.Content>
-                            </MainType:TabItemViewModel>
-                            <MainType:TabItemViewModel Title="网络电视" Icon="Cast">
-                                <MainType:TabItemViewModel.Content>
-                                    <MediaPage:MyNetTV />
-                                </MainType:TabItemViewModel.Content>
-                            </MainType:TabItemViewModel>
-                            <MainType:TabItemViewModel Title="播放历史" Icon="CameraTimer">
-                                <MainType:TabItemViewModel.Content>
-                                    <MediaPage:SeenHistory />
-                                </MainType:TabItemViewModel.Content>
-                            </MainType:TabItemViewModel>
-                            <MainType:TabItemViewModel Title="我喜欢的" Icon="HeartPulse">
-                                <MainType:TabItemViewModel.Content>
-                                    <HomePage:Index />
-                                </MainType:TabItemViewModel.Content>
-                            </MainType:TabItemViewModel>
+                            <MainType:TabItem Title="影视时光" Icon="Movie"/>
+                            <MainType:TabItem Title="我的视频" Icon="AirPlay"/>
+                            <MainType:TabItem Title="我的电影" Icon="Movie"/>
+                            <MainType:TabItem Title="网络电视" Icon="Cast"/>
+                            <MainType:TabItem Title="播放历史" Icon="CameraTimer"/>
+                            <MainType:TabItem Title="我喜欢的" Icon="HeartPulse"/>
                         </ListBox>
                         <Border BorderThickness="0 1 0 0" Grid.Row="4" BorderBrush="{DynamicResource MaterialDesignDivider}" />
                         <DockPanel Margin="36 20" Grid.Row="5">
@@ -288,8 +263,15 @@
                             </ListView>
                         </Controls:AnimatedScrollViewer>
                     </Grid>
-
-                    <ContentControl Content="{Binding SelectTabItem.Content, IsAsync=True, Delay=1500}" Grid.RowSpan="2" Grid.Column="1"></ContentControl>
+                    <MaterialDesign:Transitioner SelectedIndex="{Binding ElementName=CatgoryItemsListBox,Path=SelectedIndex}" AutoApplyTransitionOrigins="True" Grid.RowSpan="2" Grid.Column="1">
+                        <HomePage:Index/>
+                        <MediaPage:MyVideos />
+                        <MediaPage:MyMoives />
+                        <MediaPage:MyNetTV />
+                        <MediaPage:SeenHistory />
+                        <HomePage:Index />
+                    </MaterialDesign:Transitioner>
+                    <!--<ContentControl Content="{Binding SelectTabItem.Content, IsAsync=True, Delay=1500}" Grid.RowSpan="2" Grid.Column="1"></ContentControl>-->
                     <MaterialDesign:Snackbar MessageQueue="{MaterialDesign:MessageQueue}" x:Name="MainSnackbar" Margin="402,0" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
                     <MaterialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
                                              Background="{DynamicResource SecondaryAccentBrush}"

@@ -139,9 +139,10 @@
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
                                     <Image x:Name="ThumbnailImage" Grid.Row="0"
-                                           AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1.Cover,Converter={Converters:UriToCachedImageConverter}, Mode=OneTime}"
+                                           AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1.Cover,Converter={Converters:ImagePathConverter}, ConverterParameter='Thumbnail\\Movie', Mode=OneTime}"
                                            AttachedProperties:ImageAsyncHelper.ImageType="Thumbnail"
-                                           AttachedProperties:ImageAsyncHelper.ThumbnailSize="Movie"
+                                           AttachedProperties:ImageAsyncHelper.ImageSubType="Movie"
+                                           AttachedProperties:ImageAsyncHelper.MediaSource="{Binding Item1.MediaSource, Mode=OneTime}"
                                            Stretch="UniformToFill" 
                                            Cursor="Hand">
                                     </Image>

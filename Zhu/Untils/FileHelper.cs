@@ -2,83 +2,221 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Zhu.Untils
 {
+    /// <summary>  
+    ///     文件辅助类  
+    /// </summary>  
     public class FileHelper
     {
-        /// <summary>
-        /// 计算文件的 MD5 值
-        /// </summary>
-        /// <param name="fileName">要计算 MD5 值的文件名和路径</param>
-        /// <returns>MD5 值16进制字符串</returns>
-        public static string MD5File(string fileName)
+        /// <summary>  
+        /// 编码方式  
+        /// </summary>  
+        private static readonly Encoding Encoding = Encoding.UTF8;
+
+        /// <summary>  
+        ///     递归取得文件夹下文件  
+        /// </summary>  
+        /// <param name="dir"></param>  
+        /// <param name="list"></param>  
+        public static void GetFiles(string dir, List<string> list)
         {
-            return HashFile(fileName, "md5");
+            GetFiles(dir, list, new List<string>());
         }
 
-        /// <summary>
-        /// 计算文件的哈希值
-        /// </summary>
-        /// <param name="fileName">要计算哈希值的文件名和路径</param>
-        /// <param name="algName">算法:sha1,md5</param>
-        /// <returns>哈希值16进制字符串</returns>
-        public static string HashFile(string fileName, string algName)
+        /// <summary>  
+        /// 递归取得文件夹下文件  
+        /// </summary>  
+        /// <param name="dir"></param>  
+        /// <param name="list"></param>  
+        /// <param name="fileExtsions"></param>  
+        public static void GetFiles(string dir, List<string> list, List<string> fileExtsions)
         {
-            if (!System.IO.File.Exists(fileName))
-                return string.Empty;
-
-            FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-            byte[] hashBytes = HashData(fs, algName);
-            fs.Close();
-            return ByteArrayToHexString(hashBytes);
-        }
-
-        /// <summary>
-        /// 计算哈希值
-        /// </summary>
-        /// <param name="stream">要计算哈希值的 Stream</param>
-        /// <param name="algName">算法:sha1,md5</param>
-        /// <returns>哈希值字节数组</returns>
-        public static byte[] HashData(Stream stream, string algName)
-        {
-            HashAlgorithm algorithm;
-            if (algName == null)
+            //添加文件   
+            string[] files = Directory.GetFiles(dir);
+            if (fileExtsions.Count > 0)
             {
-                throw new ArgumentNullException("algName 不能为 null");
-            }
-            if (string.Compare(algName, "sha1", true) == 0)
-            {
-                algorithm = SHA1.Create();
+                foreach (string file in files)
+                {
+                    string extension = Path.GetExtension(file);
+                    if (extension != null && fileExtsions.Contains(extension))
+                    {
+                        list.Add(file);
+                    }
+                }
             }
             else
             {
-                if (string.Compare(algName, "md5", true) != 0)
-                {
-                    throw new Exception("algName 只能使用 sha1 或 md5");
-                }
-                algorithm = MD5.Create();
+                list.AddRange(files);
             }
-            return algorithm.ComputeHash(stream);
+            //如果是目录，则递归  
+            DirectoryInfo[] directories = new DirectoryInfo(dir).GetDirectories();
+            foreach (DirectoryInfo item in directories)
+            {
+                GetFiles(item.FullName, list, fileExtsions);
+            }
         }
 
-        /// <summary>
-        /// 字节数组转换为16进制表示的字符串
-        /// </summary>
-        public static string ByteArrayToHexString(byte[] buf)
+        /// <summary>  
+        /// 写入文件  
+        /// </summary>  
+        /// <param name="filePath">文件名</param>  
+        /// <param name="content">文件内容</param>  
+        public static void WriteFile(string filePath, string content)
         {
-            string returnStr = "";
-            if (buf != null)
+            try
             {
-                for (int i = 0; i < buf.Length; i++)
+                var fs = new FileStream(filePath, FileMode.Create);
+                Encoding encode = Encoding;
+                //获得字节数组  
+                byte[] data = encode.GetBytes(content);
+                //开始写入  
+                fs.Write(data, 0, data.Length);
+                //清空缓冲区、关闭流  
+                fs.Flush();
+                fs.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        /// <summary>  
+        /// 读取文件  
+        /// </summary>  
+        /// <param name="filePath"></param>  
+        /// <returns></returns>  
+        public static string ReadFile(string filePath)
+        {
+            return ReadFile(filePath, Encoding);
+        }
+
+        /// <summary>  
+        /// 读取文件  
+        /// </summary>  
+        /// <param name="filePath"></param>  
+        /// <param name="encoding"></param>  
+        /// <returns></returns>  
+        public static string ReadFile(string filePath, Encoding encoding)
+        {
+            using (var sr = new StreamReader(filePath, encoding))
+            {
+                return sr.ReadToEnd();
+            }
+        }
+
+        /// <summary>  
+        /// 读取文件  
+        /// </summary>  
+        /// <param name="filePath"></param>  
+        /// <returns></returns>  
+        public static List<string> ReadFileLines(string filePath)
+        {
+            var str = new List<string>();
+            using (var sr = new StreamReader(filePath, Encoding))
+            {
+                String input;
+                while ((input = sr.ReadLine()) != null)
                 {
-                    returnStr += buf[i].ToString("X2");
+                    str.Add(input);
                 }
             }
-            return returnStr;
+            return str;
+        }
+
+        /// <summary>  
+        /// 复制文件夹（及文件夹下所有子文件夹和文件）  
+        /// </summary>  
+        /// <param name="sourcePath">待复制的文件夹路径</param>  
+        /// <param name="destinationPath">目标路径</param>  
+        public static void CopyDirectory(String sourcePath, String destinationPath)
+        {
+            var info = new DirectoryInfo(sourcePath);
+            Directory.CreateDirectory(destinationPath);
+            foreach (FileSystemInfo fsi in info.GetFileSystemInfos())
+            {
+                String destName = Path.Combine(destinationPath, fsi.Name);
+
+                if (fsi is FileInfo) //如果是文件，复制文件  
+                    File.Copy(fsi.FullName, destName);
+                else //如果是文件夹，新建文件夹，递归  
+                {
+                    Directory.CreateDirectory(destName);
+                    CopyDirectory(fsi.FullName, destName);
+                }
+            }
+        }
+
+        /// <summary>  
+        /// 删除文件夹（及文件夹下所有子文件夹和文件）  
+        /// </summary>  
+        /// <param name="directoryPath"></param>  
+        public static void DeleteFolder(string directoryPath)
+        {
+            foreach (string d in Directory.GetFileSystemEntries(directoryPath))
+            {
+                if (File.Exists(d))
+                {
+                    var fi = new FileInfo(d);
+                    if (fi.Attributes.ToString().IndexOf("ReadOnly", StringComparison.Ordinal) != -1)
+                        fi.Attributes = FileAttributes.Normal;
+                    File.Delete(d); //删除文件     
+                }
+                else
+                    DeleteFolder(d); //删除文件夹  
+            }
+            Directory.Delete(directoryPath); //删除空文件夹  
+        }
+
+        /// <summary>  
+        /// 清空文件夹（及文件夹下所有子文件夹和文件）  
+        /// </summary>  
+        /// <param name="directoryPath"></param>  
+        public static void ClearFolder(string directoryPath)
+        {
+            foreach (string d in Directory.GetFileSystemEntries(directoryPath))
+            {
+                if (File.Exists(d))
+                {
+                    var fi = new FileInfo(d);
+                    if (fi.Attributes.ToString().IndexOf("ReadOnly", StringComparison.Ordinal) != -1)
+                        fi.Attributes = FileAttributes.Normal;
+                    File.Delete(d); //删除文件     
+                }
+                else
+                    DeleteFolder(d); //删除文件夹  
+            }
+        }
+
+        /// <summary>  
+        /// 取得文件大小，按适当单位转换  
+        /// </summary>  
+        /// <param name="filepath"></param>  
+        /// <returns></returns>  
+        public static string GetFileSize(string filepath)
+        {
+            string result = "0KB";
+            if (File.Exists(filepath))
+            {
+                var size = new FileInfo(filepath).Length;
+                int filelength = size.ToString().Length;
+                if (filelength < 4)
+                    result = size + "byte";
+                else if (filelength < 7)
+                    result = Math.Round(Convert.ToDouble(size / 1024d), 2) + "KB";
+                else if (filelength < 10)
+                    result = Math.Round(Convert.ToDouble(size / 1024d / 1024), 2) + "MB";
+                else if (filelength < 13)
+                    result = Math.Round(Convert.ToDouble(size / 1024d / 1024 / 1024), 2) + "GB";
+                else
+                    result = Math.Round(Convert.ToDouble(size / 1024d / 1024 / 1024 / 1024), 2) + "TB";
+                return result;
+            }
+            return result;
         }
     }
 }

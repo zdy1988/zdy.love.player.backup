@@ -102,9 +102,9 @@
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
                                     <Image x:Name="ThumbnailImage" Grid.Row="0"
-                                           AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1.Cover,Converter={Converters:UriToCachedImageConverter}, Mode=OneTime}"
+                                           AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1.Cover,Converter={Converters:ImagePathConverter}, ConverterParameter='Thumbnail\\NetTV', Mode=OneTime}"
                                            AttachedProperties:ImageAsyncHelper.ImageType="Thumbnail"
-                                           AttachedProperties:ImageAsyncHelper.ThumbnailSize="NetTV"
+                                           AttachedProperties:ImageAsyncHelper.ImageSubType="NetTV"
                                            Stretch="UniformToFill" 
                                            Cursor="Hand">
                                     </Image>

@@ -4,10 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Zhu.UserControls.Reused"
+             xmlns:Converters="clr-namespace:Zhu.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <ProgressBar Width="24" Height="24" Margin="16"
-                 Style="{DynamicResource MaterialDesignCircularProgressBar}"
-                 IsIndeterminate="True"
-                 Value="33"/>
+
+    <StackPanel Margin="16">
+        <ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" HorizontalAlignment="Center" Margin="16" IsIndeterminate="True" Value="0" />
+        <TextBlock Text="{Binding LoadingMessage}" Visibility="{Binding LoadingMessage, Converter={Converters:IsNullOrEmptyStringToVisibilityConverter}}"></TextBlock>
+    </StackPanel>
 </UserControl>

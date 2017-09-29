@@ -23,16 +23,40 @@ namespace Zhu.AttachedProperties
         Backdrop
     }
 
-    public enum ThumbnailSize
+    public enum ImageSubType
     {
         Movie,
         Video,
-        NetTV
+        NetTV,
+        Actor
     }
 
     public class ImageAsyncHelper : DependencyObject
     {
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
+
+        #region Resource
+
+        private static ResourceDictionary imageStateResourceDictionary = new ResourceDictionary
+        {
+            Source = new Uri("Zhu;component/Resources/ImageLoading.xaml", UriKind.Relative)
+        };
+
+        public static ImageSource GetLoadingImageResource()
+        {
+            var loadingImage = imageStateResourceDictionary["ImageLoading"] as DrawingImage;
+            loadingImage.Freeze();
+            return loadingImage;
+        }
+
+        public static ImageSource GetErrorImageResource()
+        {
+            var errorThumbnail = imageStateResourceDictionary["ImageError"] as DrawingImage;
+            errorThumbnail.Freeze();
+            return errorThumbnail;
+        }
+
+        #endregion
 
         public static ImageType GetImageType(DependencyObject obj)
         {
@@ -50,21 +74,37 @@ namespace Zhu.AttachedProperties
                 typeof(ImageAsyncHelper),
                 new PropertyMetadata(ImageType.Backdrop));
 
-        public static ThumbnailSize GetThumbnailSize(DependencyObject obj)
+        public static ImageSubType GetImageSubType(DependencyObject obj)
         {
-            return (ThumbnailSize)obj.GetValue(ThumbnailSizeProperty);
+            return (ImageSubType)obj.GetValue(ImageSubTypeProperty);
         }
 
-        public static void SetThumbnailSize(DependencyObject obj, ThumbnailSize value)
+        public static void SetImageSubType(DependencyObject obj, ImageSubType value)
         {
-            obj.SetValue(ThumbnailSizeProperty, value);
+            obj.SetValue(ImageSubTypeProperty, value);
         }
 
-        public static readonly DependencyProperty ThumbnailSizeProperty =
-            DependencyProperty.RegisterAttached("ThumbnailSize",
-                typeof(ThumbnailSize),
+        public static readonly DependencyProperty ImageSubTypeProperty =
+            DependencyProperty.RegisterAttached("ImageSubType",
+                typeof(ImageSubType),
                 typeof(ImageAsyncHelper),
-                new PropertyMetadata(ThumbnailSize.Movie));
+                new PropertyMetadata(ImageSubType.Movie));
+
+        public static string GetMediaSource(DependencyObject obj)
+        {
+            return (string)obj.GetValue(MediaSourceProperty);
+        }
+
+        public static void SetMediaSource(DependencyObject obj, Uri value)
+        {
+            obj.SetValue(MediaSourceProperty, value);
+        }
+
+        public static readonly DependencyProperty MediaSourceProperty =
+            DependencyProperty.RegisterAttached("MediaSource",
+                typeof(string),
+                typeof(ImageAsyncHelper),
+                new PropertyMetadata(""));
 
         public static string GetImagePath(DependencyObject obj)
         {
@@ -76,204 +116,206 @@ namespace Zhu.AttachedProperties
             obj.SetValue(ImagePathProperty, value);
         }
 
-        public static readonly DependencyProperty ImagePathProperty = DependencyProperty.RegisterAttached("ImagePath", typeof(string), typeof(ImageAsyncHelper), new PropertyMetadata
+        public static readonly DependencyProperty ImagePathProperty =
+            DependencyProperty.RegisterAttached("ImagePath",
+                typeof(string),
+                typeof(ImageAsyncHelper),
+                new PropertyMetadata(new PropertyChangedCallback(OnImagePathPropertyChangedCallback)));
+
+        private static async void OnImagePathPropertyChangedCallback(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            PropertyChangedCallback = async (obj, e) =>
+            var image = (Image)obj;
+            var imageType = GetImageType(obj);
+            var imageSubType = GetImageSubType(obj);
+            var mediaSource = GetMediaSource(obj);
+            var imageSize = image.GetImageSize(imageType, imageSubType);
+
+            image.SetImageLoading();
+
+            var path = e.NewValue as string;
+            if (string.IsNullOrEmpty(path))
             {
-                var image = (Image)obj;
-                var imageType = GetImageType(obj);
-                var thumbnailSize = GetThumbnailSize(obj);
-                var resourceDictionary = new ResourceDictionary
+                image.SetImageError(imageType);
+                return;
+            }
+
+            await Task.Run(async () =>
+            {
+
+                var hash = Convert.ToBase64String(Encoding.UTF8.GetBytes(path));
+                var imageTempDirectory = $"{Constants.ImageTempDirectory}{imageType}\\{imageSubType}\\";
+                if (!Directory.Exists(imageTempDirectory))
                 {
-                    Source = new Uri("Zhu;component/Resources/ImageLoading.xaml", UriKind.Relative)
-                };
-
-                #region LoadImage
-
-                var loadingImage = resourceDictionary["ImageLoading"] as DrawingImage;
-                loadingImage.Freeze();
-
-                #region Create Loading Animation
-
-                var scaleTransform = new ScaleTransform(0.5, 0.5);
-                var rotateTransform = new RotateTransform(0);
-
-                var group = new TransformGroup();
-                group.Children.Add(scaleTransform);
-                group.Children.Add(rotateTransform);
-
-                var doubleAnimation = new DoubleAnimation(0, 359, new TimeSpan(0, 0, 0, 1))
+                    Directory.CreateDirectory(imageTempDirectory);
+                }
+                var imageTempPath = imageTempDirectory + hash;
+                var isNeedCreate = File.Exists(imageTempPath) ? false : true;
+                try
                 {
-                    RepeatBehavior = RepeatBehavior.Forever
-                };
-
-                rotateTransform.BeginAnimation(RotateTransform.AngleProperty, doubleAnimation);
-
-                var loadingAnimationTransform = group;
-
-                #endregion
-
-                image.Source = loadingImage;
-                image.Stretch = Stretch.Uniform;
-                image.RenderTransformOrigin = new Point(0.5, 0.5);
-                image.RenderTransform = loadingAnimationTransform;
-
-                #endregion
-
-                await Task.Run(async () =>
-                {
-                    try
+                    if (isNeedCreate)
                     {
-                        var path = e.NewValue as string;
-                        if (string.IsNullOrEmpty(path))
+                        if (!path.IsLocalPath())
                         {
-                            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                            using (var client = new HttpClient())
                             {
-                                if (imageType == ImageType.Thumbnail)
+                                using (var ms = await client.GetStreamAsync(path).ConfigureAwait(false))
                                 {
-                                    var errorThumbnail = resourceDictionary["ImageError"] as DrawingImage;
-                                    errorThumbnail.Freeze();
-                                    image.RenderTransformOrigin = new Point(0.5d, 0.5d);
-                                    image.Stretch = Stretch.None;
-                                    image.Source = errorThumbnail;
-                                }
-                                else
-                                {
-                                    image.Source = new BitmapImage();
-                                }
-                            });
-                            return;
-                        }
-
-                        string localFile;
-                        var hash = Convert.ToBase64String(Encoding.UTF8.GetBytes(path));
-                        var mustDownload = false;
-                        if (File.Exists(Constants.TempDictionary + hash))
-                        {
-                            localFile = Constants.TempDictionary + hash;
-                        }
-                        else
-                        {
-                            mustDownload = true;
-                            localFile = Constants.TempDictionary + hash;
-                        }
-
-                        try
-                        {
-                            if (mustDownload)
-                            {
-                                if (path.StartsWith("http") || path.StartsWith("https"))
-                                {
-                                    using (var client = new HttpClient())
+                                    using (var stream = new MemoryStream())
                                     {
-                                        using (var ms = await client.GetStreamAsync(path).ConfigureAwait(false))
+                                        await ms.CopyToAsync(stream).ConfigureAwait(false);
+                                        if (!File.Exists(imageTempPath))
                                         {
-                                            using (var stream = new MemoryStream())
+                                            using (var fs = new FileStream(imageTempPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true))
                                             {
-                                                await ms.CopyToAsync(stream).ConfigureAwait(false);
-                                                if (!File.Exists(Constants.TempDictionary + hash))
-                                                {
-                                                    using (var fs = new FileStream(Constants.TempDictionary + hash, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true))
-                                                    {
-                                                        var writeAsync = stream.ToArray();
-                                                        await fs.WriteAsync(writeAsync, 0, writeAsync.Length).ConfigureAwait(false);
-                                                    }
-                                                }
+                                                var writeAsync = stream.ToArray();
+                                                await fs.WriteAsync(writeAsync, 0, writeAsync.Length).ConfigureAwait(false);
                                             }
                                         }
                                     }
                                 }
-                                else
+                            }
+                        }
+                        else
+                        {
+                            if (File.Exists(path))
+                            {
+                                using (var fs = new FileStream(imageTempPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true))
                                 {
-                                    if (File.Exists(path))
+                                    var writeAsync = File.ReadAllBytes(path);
+                                    await fs.WriteAsync(writeAsync, 0, writeAsync.Length).ConfigureAwait(false);
+                                }
+                            }
+                            else
+                            {
+                                if (imageSubType == ImageSubType.Video || imageSubType == ImageSubType.Movie)
+                                {
+                                    if (!string.IsNullOrEmpty(mediaSource))
                                     {
-                                        using (var fs = new FileStream(Constants.TempDictionary + hash, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true))
+                                        if (File.Exists(mediaSource))
                                         {
-                                            var writeAsync = BitmapImageHelper.BitmapImageToByteArray(path);
-                                            await fs.WriteAsync(writeAsync, 0, writeAsync.Length).ConfigureAwait(false);
+                                            var video = FFMpegSharp.VideoInfo.FromPath(mediaSource);
+                                            var bmp = video.Snapshot(imageSize, TimeSpan.FromMinutes(1));
+                                            bmp.Save(imageTempPath);
                                         }
                                     }
                                 }
                             }
-
-                            using (var fs = new FileStream(localFile, FileMode.Open, FileAccess.Read))
-                            {
-                                var bitmapImage = new BitmapImage();
-                                bitmapImage.BeginInit();
-                                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                                if (imageType == ImageType.Thumbnail)
-                                {
-                                    if (thumbnailSize == ThumbnailSize.Movie)
-                                    {
-                                        bitmapImage.DecodePixelWidth = 400;
-                                        bitmapImage.DecodePixelHeight = 600;
-                                    }
-                                    else if (thumbnailSize == ThumbnailSize.Video)
-                                    {
-                                        bitmapImage.DecodePixelWidth = 600;
-                                        bitmapImage.DecodePixelHeight = 338;
-                                    }
-                                    else
-                                    {
-                                        bitmapImage.DecodePixelWidth = 500;
-                                        bitmapImage.DecodePixelHeight = 500;
-                                    }
-                                }
-                                else if (imageType == ImageType.Poster)
-                                {
-                                    bitmapImage.DecodePixelWidth = 800;
-                                    bitmapImage.DecodePixelHeight = 1200;
-                                }
-                                else
-                                {
-                                    bitmapImage.DecodePixelWidth = 1920;
-                                    bitmapImage.DecodePixelHeight = 1080;
-                                }
-
-                                bitmapImage.StreamSource = fs;
-                                bitmapImage.EndInit();
-                                bitmapImage.Freeze();
-                                DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                                {
-                                    image.RenderTransformOrigin = new Point(0, 0);
-                                    if (imageType != ImageType.Poster)
-                                    {
-                                        image.Stretch = Stretch.UniformToFill;
-                                    }
-
-                                    image.RenderTransform = new TransformGroup();
-                                    RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.Unspecified);
-                                    image.Source = bitmapImage;
-                                });
-                            }
                         }
-                        catch (Exception ex)
-                        {
-                            Logger.Error(ex);
-                        }
-
                     }
-                    catch (Exception ex)
+
+                    using (var fs = new FileStream(imageTempPath, FileMode.Open, FileAccess.Read))
                     {
-                        Logger.Error(ex);
+                        var bitmapImage = new BitmapImage();
+                        bitmapImage.BeginInit();
+                        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmapImage.DecodePixelWidth = (int)imageSize.Width;
+                        bitmapImage.DecodePixelHeight = (int)imageSize.Height;
+                        bitmapImage.StreamSource = fs;
+                        bitmapImage.EndInit();
+                        bitmapImage.Freeze();
                         DispatcherHelper.CheckBeginInvokeOnUI(() =>
                         {
-                            if (imageType == ImageType.Thumbnail)
+                            image.RenderTransformOrigin = new Point(0, 0);
+                            if (imageType != ImageType.Poster)
                             {
-                                var errorThumbnail = resourceDictionary["ImageError"] as DrawingImage;
-                                errorThumbnail.Freeze();
-                                image.RenderTransformOrigin = new Point(0.5d, 0.5d);
-                                image.Stretch = Stretch.None;
-                                image.Source = errorThumbnail;
+                                image.Stretch = Stretch.UniformToFill;
                             }
-                            else
-                            {
-                                image.Source = new BitmapImage();
-                            }
+
+                            image.RenderTransform = new TransformGroup();
+                            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.Unspecified);
+                            image.Source = bitmapImage;
                         });
                     }
-                }).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                    {
+                        image.SetImageError(imageType);
+                    });
+                }
+
+            }).ConfigureAwait(false);
+        }
+    }
+
+    public static class Extension
+    {
+        public static void SetImageLoading(this Image image)
+        {
+            var loadingImage = ImageAsyncHelper.GetLoadingImageResource();
+
+            #region Create Loading Animation
+
+            var scaleTransform = new ScaleTransform(0.5, 0.5);
+            var rotateTransform = new RotateTransform(0);
+
+            var group = new TransformGroup();
+            group.Children.Add(scaleTransform);
+            group.Children.Add(rotateTransform);
+
+            var doubleAnimation = new DoubleAnimation(0, 359, new TimeSpan(0, 0, 0, 1))
+            {
+                RepeatBehavior = RepeatBehavior.Forever
+            };
+
+            rotateTransform.BeginAnimation(RotateTransform.AngleProperty, doubleAnimation);
+
+            var loadingAnimationTransform = group;
+
+            #endregion
+
+            image.Source = loadingImage;
+            image.Stretch = Stretch.Uniform;
+            image.RenderTransformOrigin = new Point(0.5, 0.5);
+            image.RenderTransform = loadingAnimationTransform;
+        }
+
+        public static void SetImageError(this Image image, ImageType imageType)
+        {
+            if (imageType == ImageType.Thumbnail)
+            {
+                var errorImage = ImageAsyncHelper.GetErrorImageResource();
+                image.RenderTransformOrigin = new Point(0.5d, 0.5d);
+                image.Stretch = Stretch.None;
+                image.Source = errorImage;
             }
-        });
+            else
+            {
+                image.Source = new BitmapImage();
+            }
+        }
+
+        public static bool IsLocalPath(this string path)
+        {
+            return !(path.StartsWith("http") || path.StartsWith("https"));
+        }
+
+        public static System.Drawing.Size GetImageSize(this Image image, ImageType imageType, ImageSubType imageSubType)
+        {
+            if (imageType == ImageType.Thumbnail)
+            {
+                switch (imageSubType)
+                {
+                    case ImageSubType.Movie:
+                        return new System.Drawing.Size(400, 600);
+                    case ImageSubType.Video:
+                        return new System.Drawing.Size(600, 338);
+                    case ImageSubType.NetTV:
+                        return new System.Drawing.Size(500, 500);
+                }
+            }
+            else if (imageType == ImageType.Poster)
+            {
+                return new System.Drawing.Size(800, 1200);
+            }
+            else
+            {
+                return new System.Drawing.Size(1920, 1080);
+            }
+
+            return new System.Drawing.Size();
+        }
     }
 }

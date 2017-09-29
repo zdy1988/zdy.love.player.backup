@@ -3,13 +3,12 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using Zhu.Messaging;
 using Zhu.UserControls.Reused;
+using Zhu.ViewModels.Reused;
 
 namespace Zhu.Services
 {
     public class ApplicationState : ObservableObject, IApplicationState
     {
-        SampleLoading loading = new SampleLoading();
-
         public ApplicationState()
         {
             
@@ -70,8 +69,15 @@ namespace Zhu.Services
             IsRootDialogOpen = false;
         }
 
-        public void ShowLoadingDialog()
+        public void ShowLoadingDialog(string message = null)
         {
+            SampleLoading loading = new SampleLoading
+            {
+                DataContext = new SampleLoadingViewModel
+                {
+                    LoadingMessage = message
+                }
+            };
             RootDialogContent = loading;
             IsRootDialogOpen = true;
         }

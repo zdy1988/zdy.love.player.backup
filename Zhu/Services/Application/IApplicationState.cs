@@ -16,7 +16,7 @@
 
         void HideDialog();
 
-        void ShowLoadingDialog();
+        void ShowLoadingDialog(string message = null);
 
         void HideLoadingDialog();
     }

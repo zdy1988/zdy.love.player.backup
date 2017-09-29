@@ -99,7 +99,6 @@ D:\Work\zhu.player\Zhu\obj\Debug\Resources\ImageLoading.baml
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Media\Moive\MoiveDetailView.baml
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Media\Video\VideoDetailView.baml
 D:\Work\zhu.player\Zhu\obj\Debug\Windows\SplashScreen.baml
-D:\Work\zhu.player\Zhu\obj\Debug\UserControls\FileExplorer.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Elements\UserControl1.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Elements\UserControl2.g.cs
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Index.g.cs
@@ -228,7 +227,6 @@ D:\Work\zhu.player\Zhu\bin\Debug\zh-Hans\Microsoft.Expression.Interactions.resou
 D:\Work\zhu.player\Zhu\bin\Debug\zh-Hant\Microsoft.Expression.Interactions.resources.dll
 D:\Work\zhu.player\Zhu\obj\Debug\App.baml
 D:\Work\zhu.player\Zhu\obj\Debug\Resources\AnimatedScrollViewer.baml
-D:\Work\zhu.player\Zhu\obj\Debug\UserControls\FileExplorer.baml
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Elements\UserControl1.baml
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Elements\UserControl2.baml
 D:\Work\zhu.player\Zhu\obj\Debug\UserControls\Home\Index.baml

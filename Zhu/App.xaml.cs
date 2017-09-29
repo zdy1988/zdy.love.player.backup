@@ -31,10 +31,6 @@ namespace Zhu
             WatchStart = Stopwatch.StartNew();
             Logger.Info("Application Starting...");
             DispatcherHelper.Initialize();
-            if (!Directory.Exists(Constants.TempDictionary))
-            {
-                Directory.CreateDirectory(Constants.TempDictionary);
-            }
         }
 
         public App()
@@ -96,21 +92,19 @@ namespace Zhu
             splashScreenThread.SetApartmentState(ApartmentState.STA);
             splashScreenThread.Start();
 
-            var mainWindow = new MainWindow();
-            MainWindow = mainWindow;
-            mainWindow.Loaded += async (sender2, e2) =>
+            MainWindow = new MainWindow();
+            MainWindow.Loaded += async (sender2, e2) =>
             {
-                await mainWindow.Dispatcher.InvokeAsync(() =>
+                await MainWindow.Dispatcher.InvokeAsync(() =>
                 {
                     _splashScreenDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
-                    mainWindow.Activate();
+                    MainWindow.Activate();
                     WatchStart.Stop();
                     var elapsedStartMs = WatchStart.ElapsedMilliseconds;
                     Logger.Info($"Application Started In {elapsedStartMs} Milliseconds.");
                 });
             };
-
-            mainWindow.Show();
+            MainWindow.Show();
         }
     }
 }

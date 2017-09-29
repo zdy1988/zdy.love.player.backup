@@ -36,7 +36,7 @@
             <Style x:Key="MaterialDesignFlatOutlineButton" BasedOn="{StaticResource MaterialDesignFlatButton}" TargetType="{x:Type Button}">
                 <Setter Property="BorderBrush" Value="DarkGray"></Setter>
                 <Setter Property="BorderThickness" Value="1"></Setter>
-                <Setter Property="Background" Value="White"></Setter>
+                <Setter Property="Background" Value="Transparent"></Setter>
                 <Setter Property="Foreground" Value="Black"></Setter>
             </Style>
         </ResourceDictionary>

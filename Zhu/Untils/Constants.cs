@@ -12,26 +12,18 @@ namespace Zhu.Untils
         /// <summary>
         /// 程序名称
         /// </summary>
-        public const string ApplicationName = "Zhu Player";
+        public static string ApplicationName { get; } = "Zhu Player";
 
         /// <summary>
-        /// 资源目录
+        /// 图片数据源地址
         /// </summary>
-        public static string TempDictionary { get; } = Path.GetTempPath() + "Zhu\\Assets\\";
-        //public static string Assets { get; } = Path.GetTempPath() + "Popcorn\\Assets\\";
-
-        //F:\照片  E:\vedio
-        public const string DictionaryRoot = @"E:\vedio";
+        public static string ImageSourcePath { get; } = @"D:\\MovieImage\\";
 
         /// <summary>
-        /// 影片封面文件夹
+        /// 图片临时目录
         /// </summary>
-        public const string MovieCoverDictionary = @"D:\\MovieImage\\Movies\\";
-
-        /// <summary>
-        /// 演员封面文件夹
-        /// </summary>
-        public const string ActorCoverDictionary = @"D:\\MovieImage\\Actors\\";
+        public static string ImageTempDirectory { get; } = Path.GetTempPath() + "ZhuPlayer\\Image\\";
+        //public static string ResourceDictionary { get; } = "D:\\MovieImage\\";
 
         /// <summary>
         /// 加载影片数据条数
@@ -41,11 +33,16 @@ namespace Zhu.Untils
         /// <summary>
         /// 支持的视频格式
         /// </summary>
-        public static string VedioFilters = "(可用视频格式)|*.asf;*.avi;*.divx;*.dv;*.flv;*.gxf;*.m1v;*.m2v;*.m2ts;*.m4v;*.mkv;*.mov;*.mp2;*.mp4;*.mpeg;*.mpeg1;*.mpeg2;*.mpeg4;*.mpg;*.mts;*.mxf;*.ogg;*.ogm;*.ps;*.ts;*.vob;*.wmv;*.a52;*.aac;*.ac3;*.dts;*.flac;*.m4a;*.m4p;*.mka;*.mod;*.mp1;*.mp2;*.mp3;*.ogg";
+        public static string VedioFilters { get; } = "(可用视频格式)|*.asf;*.avi;*.divx;*.dv;*.flv;*.gxf;*.m1v;*.m2v;*.m2ts;*.m4v;*.mkv;*.mov;*.mp2;*.mp4;*.mpeg;*.mpeg1;*.mpeg2;*.mpeg4;*.mpg;*.mts;*.mxf;*.ogg;*.ogm;*.ps;*.ts;*.vob;*.wmv;*.a52;*.aac;*.ac3;*.dts;*.flac;*.m4a;*.m4p;*.mka;*.mod;*.mp1;*.mp2;*.mp3;*.ogg;";
+
+        public static bool IsValidVedioFormat(string extension)
+        {
+            return VedioFilters.IndexOf($"*{extension};") != -1;
+        }
 
         /// <summary>
         /// 文本格式
         /// </summary>
-        public static string TxtFilters = "(可用文件格式)|*.txt";
+        public static string TxtFilters { get; } = "(可用文件格式)|*.txt;";
     }
 }

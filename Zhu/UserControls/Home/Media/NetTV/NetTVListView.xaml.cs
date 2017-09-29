@@ -31,18 +31,11 @@ namespace Zhu.UserControls.Home.Media.NetTV
             this.Loaded += NetTVListView_Loaded;
         }
 
-        private bool isLoaded = false;
-
         private async void NetTVListView_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!isLoaded)
-            {
-                isLoaded = true;
-
-                var vm = DataContext as NetTVListViewModel;
-                vm.OrderField = "ID";
-                await vm.LoadMediasAsync().ConfigureAwait(false);
-            }
+            var vm = DataContext as NetTVListViewModel;
+            vm.OrderField = "ID";
+            await vm.LoadMediasAsync().ConfigureAwait(false);
         }
 
         private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)

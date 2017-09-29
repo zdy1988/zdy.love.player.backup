@@ -141,6 +141,7 @@
     <Compile Include="Converters\BoolToInverseBoolConverter.cs" />
     <Compile Include="Converters\BoolToInverseVisibilityConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\IsNullOrEmptyStringToVisibilityConverter.cs" />
     <Compile Include="Converters\ListCountToInverseVisibilityConverter.cs" />
     <Compile Include="Converters\ListCountToVisibilityConverter.cs" />
     <Compile Include="Converters\MaxNumberOfListConverter.cs" />
@@ -153,11 +154,13 @@
     <Compile Include="Converters\FileSizeConverter.cs" />
     <Compile Include="Converters\IconConverter.cs" />
     <Compile Include="Converters\RatioConverter.cs" />
-    <Compile Include="Converters\UriToCachedImageConverter.cs" />
+    <Compile Include="Converters\ImagePathConverter.cs" />
     <Compile Include="Converters\WindowStateTooltipConverter.cs" />
     <Compile Include="Converters\WindowStateIconConverter.cs" />
     <Compile Include="Converters\WindowStateToBooleanConverter.cs" />
-    <Compile Include="Messaging\MediaSourcePlayDialogOpenMessage.cs" />
+    <Compile Include="Messaging\Dialog\MediaSourcePlayDialogOpenMessage.cs" />
+    <Compile Include="Messaging\Dialog\ScanMediaFileDialogOpenMessage.cs" />
+    <Compile Include="Messaging\RefreshVideoListMessage.cs" />
     <Compile Include="PubilcEnum\MediaSourceType.cs" />
     <Compile Include="PubilcEnum\MediaType.cs" />
     <Compile Include="Infrastructure\EntityFramework\EntityFrameworkRepository.cs" />
@@ -200,12 +203,13 @@
     <Compile Include="Untils\Extension\AsyncObservableCollection.cs" />
     <Compile Include="Untils\Extension\LinqExtensions.cs" />
     <Compile Include="Untils\Extension\ObservableRangeCollection.cs" />
+    <Compile Include="Untils\FileHashHelper.cs" />
     <Compile Include="Untils\FileHelper.cs" />
     <Compile Include="Untils\ImageHelper.cs" />
     <Compile Include="Untils\SearchMethod\SearchModel.cs" />
     <Compile Include="Untils\SQLiteDatabase.cs" />
     <Compile Include="Untils\SearchMethod\SqlToolkit.cs" />
-    <Compile Include="Messaging\ImportNetworkMediaDialogOpenMessage.cs" />
+    <Compile Include="Messaging\Dialog\ImportNetworkMediaDialogOpenMessage.cs" />
     <Compile Include="Messaging\MediaFlyoutCloseMessage.cs" />
     <Compile Include="Messaging\LoadMediaMessage.cs" />
     <Compile Include="Messaging\ManageExceptionMessage.cs" />
@@ -224,9 +228,6 @@
     <Compile Include="Services\Tag\ITagService.cs" />
     <Compile Include="Services\Base\PlayerDataContext.cs" />
     <Compile Include="Services\Tag\TagService.cs" />
-    <Compile Include="UserControls\FileExplorer.xaml.cs">
-      <DependentUpon>FileExplorer.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\Home\Elements\UserControl1.xaml.cs">
       <DependentUpon>UserControl1.xaml</DependentUpon>
     </Compile>
@@ -295,12 +296,8 @@
     <Compile Include="ValidationRules\FileExistsValidationRule.cs" />
     <Compile Include="ValidationRules\IsUriValidationRule.cs" />
     <Compile Include="ValidationRules\NotEmptyValidationRule.cs" />
-    <Compile Include="ViewModels\FileExplorer\FileExplorerViewModel.cs" />
-    <Compile Include="ViewModels\FileExplorer\LocalDirectoryInfo.cs" />
-    <Compile Include="ViewModels\FileExplorer\LocalFileInfo.cs" />
     <Compile Include="ViewModels\Dialogs\ImportNetworkMediaDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\ScanMediaFileDialogViewModel.cs" />
-    <Compile Include="ViewModels\Main\TabItemViewModel.cs" />
     <Compile Include="ViewModels\Main\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\Pages\MovieListViewModel.cs" />
     <Compile Include="ViewModels\Pages\NetTVListViewModel.cs" />
@@ -311,6 +308,7 @@
     <Compile Include="ViewModels\Pages\VideoListViewModel.cs" />
     <Compile Include="ViewModels\Player\MediaPlayerViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\MediaSourcePlayDialogViewModel.cs" />
+    <Compile Include="ViewModels\Reused\SampleLoadingViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Windows\SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
@@ -322,10 +320,6 @@
     <Page Include="Resources\ImageLoading.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\FileExplorer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Home\Elements\UserControl1.xaml">
       <SubType>Designer</SubType>

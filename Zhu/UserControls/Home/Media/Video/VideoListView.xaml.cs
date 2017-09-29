@@ -28,18 +28,11 @@ namespace Zhu.UserControls.Home.Media.Video
             this.Loaded += MovieLibrary_Loaded;
         }
 
-        private bool isLoaded = false;
-
         private async void MovieLibrary_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!isLoaded)
-            {
-                isLoaded = true;
-
-                var vm = DataContext as VideoListViewModel;
-                vm.OrderField = "ID";
-                await vm.LoadMediasAsync().ConfigureAwait(false);
-            }
+            var vm = DataContext as VideoListViewModel;
+            vm.OrderField = "ID";
+            await vm.LoadMediasAsync().ConfigureAwait(false);
         }
 
         private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
