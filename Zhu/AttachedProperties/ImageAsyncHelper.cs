@@ -193,9 +193,15 @@ namespace Zhu.AttachedProperties
                                     {
                                         if (File.Exists(mediaSource))
                                         {
-                                            var video = FFMpegSharp.VideoInfo.FromPath(mediaSource);
-                                            var bmp = video.Snapshot(imageSize, TimeSpan.FromMinutes(1));
-                                            bmp.Save(imageTempPath);
+                                            try
+                                            {
+                                                FFmpeg.FFmpegWrapper.GetSnapshot(mediaSource, imageTempPath, imageSize.Width, imageSize.Height);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                          
+                                            }
+
                                         }
                                     }
                                 }

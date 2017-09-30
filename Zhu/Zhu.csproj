@@ -17,6 +17,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -31,7 +32,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -158,6 +158,7 @@
     <Compile Include="Converters\WindowStateTooltipConverter.cs" />
     <Compile Include="Converters\WindowStateIconConverter.cs" />
     <Compile Include="Converters\WindowStateToBooleanConverter.cs" />
+    <Compile Include="FFmpeg\FFmpegWrapper.cs" />
     <Compile Include="Messaging\Dialog\MediaSourcePlayDialogOpenMessage.cs" />
     <Compile Include="Messaging\Dialog\ScanMediaFileDialogOpenMessage.cs" />
     <Compile Include="Messaging\RefreshVideoListMessage.cs" />
@@ -470,10 +471,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FFMpegSharp\FFMpegSharp.csproj">
-      <Project>{5cec6504-bd25-45d0-830c-a2162f4aad12}</Project>
-      <Name>FFMpegSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MaterialDesignColors\MaterialDesignColors.csproj">
       <Project>{90b53209-c60c-4655-b28d-a1b3e1044ba3}</Project>
       <Name>MaterialDesignColors</Name>
@@ -481,6 +478,10 @@
     <ProjectReference Include="..\MaterialDesignThemes\MaterialDesignThemes.csproj">
       <Project>{f079fb0a-a8ed-4216-b6a5-345756751a04}</Project>
       <Name>MaterialDesignThemes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SaarFFmpeg\SaarFFmpeg.csproj">
+      <Project>{ab4caba1-06e4-4a32-8a15-1fbe20ed5bc6}</Project>
+      <Name>SaarFFmpeg</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

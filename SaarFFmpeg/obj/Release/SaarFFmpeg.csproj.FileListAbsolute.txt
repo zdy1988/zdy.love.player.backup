@@ -1,0 +1,12 @@
+D:\Work\zhu.player\SaarFFmpeg\bin\Release\avcodec-57.dll
+D:\Work\zhu.player\SaarFFmpeg\bin\Release\avformat-57.dll
+D:\Work\zhu.player\SaarFFmpeg\bin\Release\avutil-55.dll
+D:\Work\zhu.player\SaarFFmpeg\bin\Release\libfftw3-3.dll
+D:\Work\zhu.player\SaarFFmpeg\bin\Release\libfftw3f-3.dll
+D:\Work\zhu.player\SaarFFmpeg\bin\Release\swresample-2.dll
+D:\Work\zhu.player\SaarFFmpeg\bin\Release\swscale-4.dll
+D:\Work\zhu.player\SaarFFmpeg\bin\Release\Saar.FFmpeg.dll
+D:\Work\zhu.player\SaarFFmpeg\bin\Release\Saar.FFmpeg.pdb
+D:\Work\zhu.player\SaarFFmpeg\obj\Release\SaarFFmpeg.csprojResolveAssemblyReference.cache
+D:\Work\zhu.player\SaarFFmpeg\obj\Release\Saar.FFmpeg.dll
+D:\Work\zhu.player\SaarFFmpeg\obj\Release\Saar.FFmpeg.pdb

@@ -29,7 +29,6 @@ namespace Zhu.Windows
         public MainWindow()
         {
             InitializeComponent();
-
             Loaded += MainWindow_Loaded;
         }
 
