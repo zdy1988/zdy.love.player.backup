@@ -33,11 +33,11 @@ namespace Zhu.Untils
         /// <summary>
         /// 支持的视频格式
         /// </summary>
-        public static string VedioFilters { get; } = "(可用视频格式)|*.asf;*.avi;*.divx;*.dv;*.flv;*.gxf;*.m1v;*.m2v;*.m2ts;*.m4v;*.mkv;*.mov;*.mp2;*.mp4;*.mpeg;*.mpeg1;*.mpeg2;*.mpeg4;*.mpg;*.mts;*.mxf;*.ogg;*.ogm;*.ps;*.ts;*.vob;*.wmv;*.a52;*.aac;*.ac3;*.dts;*.flac;*.m4a;*.m4p;*.mka;*.mod;*.mp1;*.mp2;*.mp3;*.ogg;";
+        public static string VedioFilters { get; } = "(可用视频格式)|*.asf;*.avi;*.rmvb;*.divx;*.dv;*.flv;*.gxf;*.m1v;*.m2v;*.m2ts;*.m4v;*.mkv;*.mov;*.mp2;*.mp4;*.mpeg;*.mpeg1;*.mpeg2;*.mpeg4;*.mpg;*.mts;*.mxf;*.ogg;*.ogm;*.ps;*.ts;*.vob;*.wmv;*.a52;*.aac;*.ac3;*.dts;*.flac;*.m4a;*.m4p;*.mka;*.mod;*.mp1;*.mp2;*.mp3;*.ogg;";
 
         public static bool IsValidVedioFormat(string extension)
         {
-            return VedioFilters.IndexOf($"*{extension};") != -1;
+            return VedioFilters.IndexOf($"*{extension.ToLower()};") != -1;
         }
 
         /// <summary>

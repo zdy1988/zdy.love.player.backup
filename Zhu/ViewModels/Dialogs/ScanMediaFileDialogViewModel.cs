@@ -78,8 +78,6 @@ namespace Zhu.ViewModels.Dialogs
 
                     TransitionerIndex = 1;
 
-
-
                     Medias = await Task.Run(async () =>
                     {
                         DirectoryInfo theFolder = new DirectoryInfo(foldPath);
@@ -104,8 +102,6 @@ namespace Zhu.ViewModels.Dialogs
                                 //    return Untils.FileHelper.MD5File(file.FullName);
                                 //}).ConfigureAwait(false);
 
-                                await Task.Delay(100);
-
                                 var media = new Media
                                 {
                                     //MD5 = md5,
@@ -127,6 +123,8 @@ namespace Zhu.ViewModels.Dialogs
                                 });
                             }
                         }
+
+                        await Task.Delay(1000);
 
                         return medias;
                     }).ConfigureAwait(false);

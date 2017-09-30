@@ -280,6 +280,7 @@ namespace Zhu.AttachedProperties
 
         public static void SetImageError(this Image image, ImageType imageType)
         {
+            image.RenderTransform = new TransformGroup();
             if (imageType == ImageType.Thumbnail)
             {
                 var errorImage = ImageAsyncHelper.GetErrorImageResource();

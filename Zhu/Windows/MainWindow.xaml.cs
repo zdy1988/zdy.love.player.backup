@@ -18,6 +18,7 @@ using Zhu.Models;
 using Zhu.UserControls.Reused;
 using GalaSoft.MvvmLight.Ioc;
 using Zhu.Services;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Zhu.Windows
 {
@@ -44,7 +45,9 @@ namespace Zhu.Windows
             .ContinueWith(t => SQLiteDatabase.Initialize())
             .ContinueWith(t =>
             {
-                MainSnackbar.MessageQueue.Enqueue("Welcome to WantChaPlayer！");
+                DispatcherHelper.CheckBeginInvokeOnUI(() => {
+                    MainSnackbar.MessageQueue.Enqueue("Welcome to WantChaPlayer！");
+                });
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
@@ -59,7 +62,9 @@ namespace Zhu.Windows
 
         private void Vm_MessageNotice(object sender, string message)
         {
-            MainSnackbar.MessageQueue.Enqueue(message);
+            DispatcherHelper.CheckBeginInvokeOnUI(() => {
+                MainSnackbar.MessageQueue.Enqueue(message);
+            });
         }
 
         #endregion
