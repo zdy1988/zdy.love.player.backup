@@ -63,25 +63,5 @@ namespace Zhu.UserControls.Home.Media.Video
 
             _semaphore.Release();
         }
-
-        private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                var vm = DataContext as VideoListViewModel;
-                vm.SearchText = ((TextBox)sender).Text.Trim();
-                vm.SearchMediaCommand.Execute(null);
-            }
-        }
-
-        private void RatingBar_ValueChanged(object sender, EventArgs e)
-        {
-            var ratingBar = (MaterialDesignThemes.Wpf.RatingBar)sender;
-            var media = (Models.Media)ratingBar.Tag;
-            media.Rating = ratingBar.Value;
-            var vm = DataContext as VideoListViewModel;
-            if (vm != null)
-                vm.SetMediaRatingCommand.Execute(media);
-        }
     }
 }

@@ -135,7 +135,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AttachedProperties\ImageAsyncHelper.cs" />
-    <Compile Include="AttachedProperties\TabContent.cs" />
     <Compile Include="Comparers\MediaFileComparer.cs" />
     <Compile Include="Controls\AnimatedScrollViewer.cs" />
     <Compile Include="Converters\BoolToInverseBoolConverter.cs" />
@@ -155,13 +154,19 @@
     <Compile Include="Converters\IconConverter.cs" />
     <Compile Include="Converters\RatioConverter.cs" />
     <Compile Include="Converters\ImagePathConverter.cs" />
+    <Compile Include="Converters\TimeSpanInWordsConverter.cs" />
     <Compile Include="Converters\WindowStateTooltipConverter.cs" />
     <Compile Include="Converters\WindowStateIconConverter.cs" />
     <Compile Include="Converters\WindowStateToBooleanConverter.cs" />
-    <Compile Include="FFmpeg\FFmpegWrapper.cs" />
+    <Compile Include="FFmpeg\FFmpegHelper.cs" />
     <Compile Include="Messaging\Dialog\MediaSourcePlayDialogOpenMessage.cs" />
     <Compile Include="Messaging\Dialog\ScanMediaFileDialogOpenMessage.cs" />
+    <Compile Include="Messaging\RefreshMediaGroupListMessage.cs" />
+    <Compile Include="Messaging\RefreshMediaGroupMembersMessage.cs" />
     <Compile Include="Messaging\RefreshVideoListMessage.cs" />
+    <Compile Include="Models\Group.cs" />
+    <Compile Include="Models\GroupMember.cs" />
+    <Compile Include="Models\IMedia.cs" />
     <Compile Include="PubilcEnum\MediaSourceType.cs" />
     <Compile Include="PubilcEnum\MediaType.cs" />
     <Compile Include="Infrastructure\EntityFramework\EntityFrameworkRepository.cs" />
@@ -196,6 +201,10 @@
     <Compile Include="Infrastructure\SearchModel\TypeUtil.cs" />
     <Compile Include="Infrastructure\SearchModel\UnixTime.cs" />
     <Compile Include="Models\Seen.cs" />
+    <Compile Include="Services\GroupMember\GroupMemberService.cs" />
+    <Compile Include="Services\GroupMember\IGroupMemberService.cs" />
+    <Compile Include="Services\Group\GroupService.cs" />
+    <Compile Include="Services\Group\IGroupService.cs" />
     <Compile Include="Services\Media\MediaService.cs" />
     <Compile Include="Services\Seen\ISeenService.cs" />
     <Compile Include="Services\Seen\SeenService.cs" />
@@ -229,6 +238,13 @@
     <Compile Include="Services\Tag\ITagService.cs" />
     <Compile Include="Services\Base\PlayerDataContext.cs" />
     <Compile Include="Services\Tag\TagService.cs" />
+    <Compile Include="Untils\TimeSpanHelper.cs" />
+    <Compile Include="UserControls\Home\Dialogs\JoinTheMediaGroupDialog.xaml.cs">
+      <DependentUpon>JoinTheMediaGroupDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Home\Dialogs\MediaInfoDialog.xaml.cs">
+      <DependentUpon>MediaInfoDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Home\Elements\UserControl1.xaml.cs">
       <DependentUpon>UserControl1.xaml</DependentUpon>
     </Compile>
@@ -238,11 +254,23 @@
     <Compile Include="UserControls\Home\Index.xaml.cs">
       <DependentUpon>Index.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Home\Media\Favorite\FavoriteListView.xaml.cs">
+      <DependentUpon>FavoriteListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Home\Media\Group\MediaGroupMembersView.xaml.cs">
+      <DependentUpon>MediaGroupMembersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Home\Media\MediaGroup.xaml.cs">
+      <DependentUpon>MediaGroup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Home\Media\Moive\MoiveDetailView.xaml.cs">
       <DependentUpon>MoiveDetailView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Home\Media\Moive\MovieListView.xaml.cs">
       <DependentUpon>MovieListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Home\Media\MyFavorite.xaml.cs">
+      <DependentUpon>MyFavorite.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Home\Media\MyMoives.xaml.cs">
       <DependentUpon>MyMoives.xaml</DependentUpon>
@@ -264,9 +292,6 @@
     </Compile>
     <Compile Include="UserControls\Home\Media\Seen\SeenMediaListView.xaml.cs">
       <DependentUpon>SeenMediaListView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Home\Media\Video\VideoDetailView.xaml.cs">
-      <DependentUpon>VideoDetailView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Home\Media\Video\VideoListView.xaml.cs">
       <DependentUpon>VideoListView.xaml</DependentUpon>
@@ -298,8 +323,12 @@
     <Compile Include="ValidationRules\IsUriValidationRule.cs" />
     <Compile Include="ValidationRules\NotEmptyValidationRule.cs" />
     <Compile Include="ViewModels\Dialogs\ImportNetworkMediaDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\JoinTheMediaGroupDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\ScanMediaFileDialogViewModel.cs" />
     <Compile Include="ViewModels\Main\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\Pages\FavoriteListViewModel.cs" />
+    <Compile Include="ViewModels\Pages\MediaGroupMembersViewModel.cs" />
+    <Compile Include="ViewModels\Pages\MediaListItemViewModel.cs" />
     <Compile Include="ViewModels\Pages\MovieListViewModel.cs" />
     <Compile Include="ViewModels\Pages\NetTVListViewModel.cs" />
     <Compile Include="ViewModels\Pages\MediaListViewModel.cs" />
@@ -309,6 +338,7 @@
     <Compile Include="ViewModels\Pages\VideoListViewModel.cs" />
     <Compile Include="ViewModels\Player\MediaPlayerViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\MediaSourcePlayDialogViewModel.cs" />
+    <Compile Include="ViewModels\Reused\ListItemIsSelectViewModel.cs" />
     <Compile Include="ViewModels\Reused\SampleLoadingViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Windows\SplashScreen.xaml.cs">
@@ -322,6 +352,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UserControls\Home\Dialogs\JoinTheMediaGroupDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Home\Dialogs\MediaInfoDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\Home\Elements\UserControl1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -334,11 +372,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\Home\Media\Favorite\FavoriteListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Home\Media\Group\MediaGroupMembersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Home\Media\MediaGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\Home\Media\Moive\MoiveDetailView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Home\Media\Moive\MovieListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Home\Media\MyFavorite.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -367,10 +421,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Home\Media\Seen\SeenMediaListView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Home\Media\Video\VideoDetailView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -445,6 +495,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Resource Include="Resources\Images\1.jpg" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

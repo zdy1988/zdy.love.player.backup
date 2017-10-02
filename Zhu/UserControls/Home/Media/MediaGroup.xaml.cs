@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Zhu.UserControls.Home.Media.Video
+namespace Zhu.UserControls.Home.Media
 {
     /// <summary>
-    /// VideoDetailView.xaml 的交互逻辑
+    /// MediaGroup.xaml 的交互逻辑
     /// </summary>
-    public partial class VideoDetailView : UserControl
+    public partial class MediaGroup : UserControl
     {
-        public VideoDetailView()
+        public MediaGroup()
         {
             InitializeComponent();
         }

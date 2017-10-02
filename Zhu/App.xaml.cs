@@ -82,7 +82,7 @@ namespace Zhu
         {
             var splashScreenThread = new Thread(() =>
             {
-                var splashScreen = new Zhu.Windows.SplashScreen();
+                var splashScreen = new Windows.SplashScreen();
                 _splashScreenDispatcher = splashScreen.Dispatcher;
                 _splashScreenDispatcher.ShutdownStarted += (o, args) => splashScreen.Close();
                 splashScreen.Show();
@@ -93,7 +93,7 @@ namespace Zhu
             splashScreenThread.Start();
 
             MainWindow = new MainWindow();
-            MainWindow.Loaded += async (sender2, e2) =>
+            MainWindow.Initialized += async (sender2, e2) =>
             {
                 await MainWindow.Dispatcher.InvokeAsync(() =>
                 {

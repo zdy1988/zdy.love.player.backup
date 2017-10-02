@@ -97,11 +97,11 @@
                                                          To="0" />
                                     </Storyboard>
 								</VisualState>
-								<VisualState x:Name="Indeterminate">
+								<!--<VisualState x:Name="Indeterminate">
 									<Storyboard>
 										<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="IndeterminateCheck"/>
 									</Storyboard>
-								</VisualState>
+								</VisualState>-->
 							</VisualStateGroup>
 						</VisualStateManager.VisualStateGroups>
                         <Grid x:Name="OffGrid" RenderTransformOrigin=".5,.5" Background="{TemplateBinding Background}">

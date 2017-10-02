@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Zhu.Models
 {
-    public class Media : IEntity
+    public class Media : IMedia
     {   
         public int ID { get; set; }
         /// <summary>
@@ -61,7 +61,7 @@ namespace Zhu.Models
         /// <summary>
         /// 时长
         /// </summary>
-        public int? Durations { get; set; }
+        public long Duration { get; set; }
         /// <summary>
         /// 国家
         /// </summary>

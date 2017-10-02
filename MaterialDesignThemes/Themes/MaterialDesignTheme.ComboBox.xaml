@@ -44,9 +44,9 @@
                     BorderBrush="{DynamicResource MaterialDesignShadowBrush}"
                     BorderThickness="1"
                     CornerRadius="2">
-                <Border.Effect>
+                <!--<Border.Effect>
                     <BlurEffect Radius="6"/>
-                </Border.Effect>
+                </Border.Effect>-->
             </Border>
             <Grid Margin="1">
                 <Grid.RowDefinitions>
@@ -100,9 +100,9 @@
                     BorderBrush="{DynamicResource MaterialDesignShadowBrush}"
                     BorderThickness="1"
                     CornerRadius="2">
-                <Border.Effect>
+                <!--<Border.Effect>
                     <BlurEffect Radius="6"/>
-                </Border.Effect>
+                </Border.Effect>-->
             </Border>
             <Grid Margin="1"
                   SnapsToDevicePixels="True">
@@ -161,9 +161,9 @@
                     BorderBrush="{DynamicResource MaterialDesignShadowBrush}"
                     BorderThickness="1"
                     CornerRadius="2">
-                <Border.Effect>
+                <!--<Border.Effect>
                     <BlurEffect Radius="6"/>
-                </Border.Effect>
+                </Border.Effect>-->
             </Border>
             <Grid Margin="1">
                 <Grid.RowDefinitions>

@@ -19,6 +19,10 @@ namespace Zhu.Models
 
         public DbSet<Actor> Actor { get; set; }
 
+        public DbSet<Group> Group { get; set; }
+
+        public DbSet<GroupMember> GroupMember { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();

@@ -193,15 +193,7 @@ namespace Zhu.AttachedProperties
                                     {
                                         if (File.Exists(mediaSource))
                                         {
-                                            try
-                                            {
-                                                FFmpeg.FFmpegWrapper.GetSnapshot(mediaSource, imageTempPath, imageSize.Width, imageSize.Height);
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                          
-                                            }
-
+                                            FFmpeg.FFmpegHelper.GetSnapshot(mediaSource, imageTempPath, imageSize.Width, imageSize.Height);
                                         }
                                     }
                                 }
@@ -306,11 +298,11 @@ namespace Zhu.AttachedProperties
                 switch (imageSubType)
                 {
                     case ImageSubType.Movie:
-                        return new System.Drawing.Size(400, 600);
+                        return new System.Drawing.Size(200, 300);
                     case ImageSubType.Video:
-                        return new System.Drawing.Size(600, 338);
+                        return new System.Drawing.Size(300, 169);
                     case ImageSubType.NetTV:
-                        return new System.Drawing.Size(500, 500);
+                        return new System.Drawing.Size(200, 200);
                 }
             }
             else if (imageType == ImageType.Poster)

@@ -1,10 +1,16 @@
 ﻿
 FD:\Work\zhu.player\Zhu\App.xaml;;
 FD:\Work\zhu.player\Zhu\Resources\AnimatedScrollViewer.xaml;;
+FD:\Work\zhu.player\Zhu\UserControls\Home\Dialogs\JoinTheMediaGroupDialog.xaml;;
+FD:\Work\zhu.player\Zhu\UserControls\Home\Dialogs\MediaInfoDialog.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Elements\UserControl1.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Elements\UserControl2.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Index.xaml;;
+FD:\Work\zhu.player\Zhu\UserControls\Home\Media\Favorite\FavoriteListView.xaml;;
+FD:\Work\zhu.player\Zhu\UserControls\Home\Media\Group\MediaGroupMembersView.xaml;;
+FD:\Work\zhu.player\Zhu\UserControls\Home\Media\MediaGroup.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Media\Moive\MovieListView.xaml;;
+FD:\Work\zhu.player\Zhu\UserControls\Home\Media\MyFavorite.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Media\MyMoives.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Media\MyNetTV.xaml;;
 FD:\Work\zhu.player\Zhu\UserControls\Home\Media\MyVideos.xaml;;

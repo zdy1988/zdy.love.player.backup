@@ -21,7 +21,7 @@ namespace Zhu.ViewModels.Player
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public Media Media;
+        public IMedia Media;
 
         public IApplicationState _applicationState { get; set; }
 

@@ -39,6 +39,8 @@ namespace Zhu.ViewModels
             SimpleIoc.Default.Register<ITagService, TagService>();
             SimpleIoc.Default.Register<IMediaService, MediaService>();
             SimpleIoc.Default.Register<ISeenService, SeenService>();
+            SimpleIoc.Default.Register<IGroupService, GroupService>();
+            SimpleIoc.Default.Register<IGroupMemberService, GroupMemberService>();
             #endregion
 
             SimpleIoc.Default.Register<IApplicationState, ApplicationState>();
@@ -50,6 +52,8 @@ namespace Zhu.ViewModels
             SimpleIoc.Default.Register<NetTVListViewModel>();
             SimpleIoc.Default.Register<VideoListViewModel>();
             SimpleIoc.Default.Register<SeenListViewModel>();
+            SimpleIoc.Default.Register<FavoriteListViewModel>();
+            SimpleIoc.Default.Register<MediaGroupMembersViewModel>();
             #endregion
         }
 
@@ -59,5 +63,7 @@ namespace Zhu.ViewModels
         public NetTVListViewModel NetTVList => ServiceLocator.Current.GetInstance<NetTVListViewModel>();
         public VideoListViewModel VideoList => ServiceLocator.Current.GetInstance<VideoListViewModel>();
         public SeenListViewModel SeenList => ServiceLocator.Current.GetInstance<SeenListViewModel>();
+        public FavoriteListViewModel FavoriteList => ServiceLocator.Current.GetInstance<FavoriteListViewModel>();
+        public MediaGroupMembersViewModel MediaGroupMembers => ServiceLocator.Current.GetInstance<MediaGroupMembersViewModel>();
     }
 }

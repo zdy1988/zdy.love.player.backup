@@ -24,15 +24,15 @@ namespace Zhu.Untils
             {
                 conn.Open();
 
-                if (!await conn.ExistsTable("Movie"))
-                {
-                    await conn.CreateTableMovie();
-                }
+                //if (!await conn.ExistsTable("Movie"))
+                //{
+                //    await conn.CreateTableMovie();
+                //}
 
-                if (!await conn.ExistsTable("NetTV"))
-                {
-                    await conn.CreateTableNetTV();
-                }
+                //if (!await conn.ExistsTable("NetTV"))
+                //{
+                //    await conn.CreateTableNetTV();
+                //}
             }
         }
 

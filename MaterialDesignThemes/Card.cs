@@ -48,8 +48,10 @@ namespace MaterialDesignThemes.Wpf
             ContentClip = new RectangleGeometry(clipRect, UniformCornerRadius, UniformCornerRadius);
         }
 
+        //public static readonly DependencyProperty UniformCornerRadiusProperty = DependencyProperty.Register(
+        //    nameof(UniformCornerRadius), typeof (double), typeof (Card), new FrameworkPropertyMetadata(2.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
         public static readonly DependencyProperty UniformCornerRadiusProperty = DependencyProperty.Register(
-            nameof(UniformCornerRadius), typeof (double), typeof (Card), new FrameworkPropertyMetadata(2.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+              nameof(UniformCornerRadius), typeof(double), typeof(Card), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         public double UniformCornerRadius
         {

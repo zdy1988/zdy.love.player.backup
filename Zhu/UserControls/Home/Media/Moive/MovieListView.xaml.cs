@@ -22,12 +22,8 @@ namespace Zhu.UserControls.Home.Media.Moive
 
         private async void MovieLibrary_Loaded(object sender, RoutedEventArgs e)
         {
-            this.ComboBox_MediaSort.SelectedIndex = 0;
-            this.ListBox_SelectCountry.SelectedIndex = 0;
-            this.ListBox_SelectImageQuality.SelectedIndex = 0;
-            this.ListBox_SelectMediaLength.SelectedIndex = 0;
-
             var vm = DataContext as MovieListViewModel;
+            vm.OrderField = "ID";
             await vm.LoadMediasAsync().ConfigureAwait(false);
         }
 
@@ -68,16 +64,6 @@ namespace Zhu.UserControls.Home.Media.Moive
                 vm.SearchText = ((TextBox)sender).Text.Trim();
                 vm.SearchMediaCommand.Execute(null);
             }
-        }
-
-        private void RatingBar_ValueChanged(object sender, EventArgs e)
-        {
-            var ratingBar = (MaterialDesignThemes.Wpf.RatingBar)sender;
-            var media = (Models.Media)ratingBar.Tag;
-            media.Rating = ratingBar.Value;
-            var vm = DataContext as MovieListViewModel;
-            if (vm != null)
-                vm.SetMediaRatingCommand.Execute(media);
         }
     }
 }

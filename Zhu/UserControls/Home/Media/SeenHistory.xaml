@@ -7,5 +7,5 @@
              xmlns:Seen="clr-namespace:Zhu.UserControls.Home.Media.Seen"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Seen:SeenMediaListView></Seen:SeenMediaListView>
+    <Seen:SeenMediaListView/>
 </UserControl>

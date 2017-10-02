@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using Zhu.Untils.Extension;
 using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Ioc;
+using Zhu.ViewModels.Reused;
+using Zhu.UserControls.Home.Dialogs;
 
 namespace Zhu.ViewModels.Pages
 {
@@ -35,8 +37,8 @@ namespace Zhu.ViewModels.Pages
             RegisterCommands();
         }
 
-        private ObservableCollection<Tuple<Media, int>> _medias = new ObservableCollection<Tuple<Media, int>>();
-        public ObservableCollection<Tuple<Media, int>> Medias
+        private ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>> _medias = new ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>>();
+        public ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>> Medias
         {
             get { return _medias; }
         }
@@ -85,7 +87,10 @@ namespace Zhu.ViewModels.Pages
                     {
                         for (var i = 0; i < medias.Item1.Count(); i++)
                         {
-                            Medias.Add(new Tuple<Media, int>(medias.Item1[i], i + 1));
+                            var item = EmitMapper.ObjectMapperManager.DefaultInstance.GetMapper<Media, MediaListItemViewModel>().Map(medias.Item1[i]);
+                            var isSelect = new ListItemIsSelectViewModel { IsSelected = false };
+
+                            Medias.Add(new Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>(item, isSelect));
                         }
                         IsDataLoading = false;
                         IsDataFound = Medias.Any();
@@ -116,36 +121,15 @@ namespace Zhu.ViewModels.Pages
 
         #region Command
 
-        public RelayCommand<Media> PlayMediaCommand { get; set; }
-        public RelayCommand<Media> SetMediaRatingCommand { get; private set; }
-        public RelayCommand<Media> SetMediaFavoriteCommand { get; private set; }
-        public RelayCommand SearchMediaCommand { get; private set; }
+        public RelayCommand<IMedia> PlayMediaCommand { get; set; }
+        public RelayCommand SearchMediaCommand { get; set; }
+        public RelayCommand<IMedia> ShowMediaInfoCommand { get; set; }
 
         private void RegisterCommands()
         {
-            PlayMediaCommand = new RelayCommand<Media>((media) =>
+            PlayMediaCommand = new RelayCommand<IMedia>((media) =>
             {
                 Messenger.Default.Send(new LoadMediaMessage(media));
-            });
-
-            SetMediaRatingCommand = new RelayCommand<Media>(async (media) =>
-            {
-                var entity = _mediaService.GetEntity(t => t.ID == media.ID);
-                if (entity != null)
-                {
-                    entity.Rating = media.Rating;
-                    await _mediaService.UpdateAsync(entity);
-                }
-            });
-
-            SetMediaFavoriteCommand = new RelayCommand<Media>(async (media) =>
-            {
-                var entity = _mediaService.GetEntity(t => t.ID == media.ID);
-                if (entity != null)
-                {
-                    entity.IsFavorite = media.IsFavorite;
-                    await _mediaService.UpdateAsync(entity);
-                }
             });
 
             SearchMediaCommand = new RelayCommand(async () =>
@@ -161,6 +145,14 @@ namespace Zhu.ViewModels.Pages
                 Medias.Clear();
                 PageIndex = 0;
                 await LoadMediasAsync().ConfigureAwait(false);
+            });
+
+            ShowMediaInfoCommand = new RelayCommand<IMedia>((media) => {
+                MediaInfoDialog dialog = new MediaInfoDialog
+                {
+                    DataContext = media
+                };
+                _applicationState.ShowDialog(dialog);
             });
         }
 

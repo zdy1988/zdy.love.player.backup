@@ -28,7 +28,7 @@ namespace Zhu.Untils
         /// <summary>
         /// 加载影片数据条数
         /// </summary>
-        public static int LoadDataPageSize { get; } = 20;
+        public static int LoadDataPageSize { get; } = 25;
 
         /// <summary>
         /// 支持的视频格式

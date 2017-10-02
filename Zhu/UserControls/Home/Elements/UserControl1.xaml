@@ -17,7 +17,50 @@
                 Command="{x:Static MaterialDesign:Transitioner.MoveNextCommand}">
                     <MaterialDesign:PackIcon Kind="Pill" />
                 </Button>
+                <MaterialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+                                             Background="{DynamicResource SecondaryAccentBrush}"
+                                             BorderBrush="{DynamicResource SecondaryAccentBrush}"
+                                             HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                             Margin="32">
+                    <StackPanel>
+                        <Button ToolTip="打开媒体" 
+                                    BorderBrush="Transparent" 
+                                    Command="{Binding MediaSourcePlayDialogOpenCommand}">
+                            <MaterialDesign:PackIcon Kind="OpenInNew" Height="20" Width="20" />
+                        </Button>
+                        <Button ToolTip="导入网媒"
+                                    BorderBrush="Transparent"
+                                    Command="{Binding ImportNetworkMediaDialogOpenCommand}"
+                                    Background="{DynamicResource PrimaryHueMidBrush}"
+                                    Foreground="{DynamicResource PrimaryHueMidForegroundBrush}">
+                            <MaterialDesign:PackIcon Kind="FileImport" />
+                        </Button>
+                        <Button ToolTip="Chat"  BorderBrush="Transparent">
+                            <Button.Background>
+                                <SolidColorBrush Color="{StaticResource GreenPrimary500}" />
+                            </Button.Background>
+                            <Button.Foreground>
+                                <SolidColorBrush Color="{StaticResource GreenPrimary500Foreground}" />
+                            </Button.Foreground>
+                            <MaterialDesign:PackIcon Kind="FileFind" />
+                        </Button>
+                        <Button Background="{DynamicResource SecondaryAccentBrush}"  BorderBrush="Transparent"
+                                    Foreground="{DynamicResource SecondaryAccentForegroundBrush}">
+                            <MaterialDesign:PackIcon Kind="Email" />
+                        </Button>
+                        <Button BorderBrush="Transparent">
+                            <Button.Background>
+                                <SolidColorBrush Color="{StaticResource GreenPrimary200}" />
+                            </Button.Background>
+                            <Button.Foreground>
+                                <SolidColorBrush Color="{StaticResource GreenPrimary200Foreground}" />
+                            </Button.Foreground>
+                            <MaterialDesign:PackIcon Kind="Gift" />
+                        </Button>
+                    </StackPanel>
+                </MaterialDesign:PopupBox>
             </StackPanel>
+            
         </MaterialDesign:ColorZone>
     </Grid>
 </UserControl>

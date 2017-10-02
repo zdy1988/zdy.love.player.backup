@@ -100,11 +100,17 @@ namespace Zhu.ViewModels.Dialogs
                                 //var md5 = await Task.Run(() =>
                                 //{
                                 //    return Untils.FileHelper.MD5File(file.FullName);
-                                //}).ConfigureAwait(false);
+                                //}).ConfigureAwait(false)
+
+                                //大文件计算MD5太慢，暂用这个代替，之后用来检测文件唯一性
+
+                                var md5 = Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FullName));
+
+                                var mediaInfo = FFmpeg.FFmpegHelper.GetMediaInfo(file.FullName);
 
                                 var media = new Media
                                 {
-                                    //MD5 = md5,
+                                    MD5 = md5,
                                     Title = file.Name,
                                     Cover = $"{Guid.NewGuid().ToString()}.jpg",
                                     MediaType = (int)PubilcEnum.MediaType.Video,
@@ -112,7 +118,9 @@ namespace Zhu.ViewModels.Dialogs
                                     MediaSourceType = (int)PubilcEnum.MediaSourceType.LocalFile,
                                     IsFavorite = false,
                                     EnterDate = DateTime.Now,
-                                    UpdateDate = DateTime.Now
+                                    UpdateDate = DateTime.Now,
+
+                                    Duration = mediaInfo.Duration
                                 };
 
                                 medias.Add(media);
@@ -141,7 +149,7 @@ namespace Zhu.ViewModels.Dialogs
 
                 if (Medias.Count() > 0)
                 {
-                    _applicationState.ShowLoadingDialog("请稍等...");
+                    _applicationState.ShowLoadingDialog();
 
                     await Task.Run(async () =>
                     {

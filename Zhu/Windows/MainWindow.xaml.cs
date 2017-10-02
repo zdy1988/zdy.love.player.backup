@@ -19,6 +19,7 @@ using Zhu.UserControls.Reused;
 using GalaSoft.MvvmLight.Ioc;
 using Zhu.Services;
 using GalaSoft.MvvmLight.Threading;
+using System.Windows.Controls;
 
 namespace Zhu.Windows
 {
@@ -40,14 +41,18 @@ namespace Zhu.Windows
 
             Task.Factory.StartNew(() =>
             {
-                Thread.Sleep(2500);
-            })
-            .ContinueWith(t => SQLiteDatabase.Initialize())
-            .ContinueWith(t =>
-            {
-                DispatcherHelper.CheckBeginInvokeOnUI(() => {
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
                     MainSnackbar.MessageQueue.Enqueue("Welcome to WantChaPlayer！");
                 });
+            })
+            .ContinueWith(async (t) =>
+            {
+                var vm = this.DataContext as MainWindowViewModel;
+                if (vm != null)
+                {
+                    await vm.LoadMediaGroup();
+                }
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
@@ -209,5 +214,34 @@ namespace Zhu.Windows
             ApiManager.ReleaseAll();
             base.OnClosing(e);
         }
+
+        #region MediaGroupCreate
+
+        private void TextBox_CreateMediaGroup_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!TextBox_CreateMediaGroup.IsFocused)
+            {
+                TextBox_CreateMediaGroup.Focus();
+            }
+        }
+
+        private void TextBox_CreateMediaGroup_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var vm = this.DataContext as MainWindowViewModel;
+            if (vm != null)
+            {
+                vm.CreateOrCancelMediaGroupCommand.Execute(null);
+            }
+        }
+
+        private void TextBox_CreateMediaGroup_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Button_PreCreateMediaGroup.Focus();
+            }
+        }
+
+        #endregion
     }
 }

@@ -9,10 +9,5 @@
              mc:Ignorable="d"
              DataContext="{Binding MovieList, Source={StaticResource Locator}}"
              d:DesignHeight="300" d:DesignWidth="300">
-    <MaterialDesign:Transitioner Grid.Row="1" SelectedIndex="0" AutoApplyTransitionOrigins="True">
-
-        <Video:VideoListView />
-        <Video:VideoDetailView />
-
-    </MaterialDesign:Transitioner>
+    <Video:VideoListView />
 </UserControl>

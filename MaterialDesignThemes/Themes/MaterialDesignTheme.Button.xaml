@@ -46,7 +46,7 @@
                     <Grid>
                         <AdornerDecorator CacheMode="{Binding RelativeSource={RelativeSource Self}, Path=(wpf:ShadowAssist.CacheMode)}">
                             <Grid>
-                                <Border Background="{TemplateBinding Background}" CornerRadius="2"
+                                <Border Background="{TemplateBinding Background}" CornerRadius="0"
                                         BorderThickness="{TemplateBinding BorderThickness}"
                                         BorderBrush="{TemplateBinding BorderBrush}"                                    
                                         x:Name="border"
@@ -121,7 +121,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Grid>
-                        <Border Background="{TemplateBinding Background}" x:Name="border" CornerRadius="2"
+                        <Border Background="{TemplateBinding Background}" x:Name="border" CornerRadius="0"
                                 BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                             <wpf:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"    
                                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
