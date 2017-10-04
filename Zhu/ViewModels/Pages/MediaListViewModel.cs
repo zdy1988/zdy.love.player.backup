@@ -124,6 +124,7 @@ namespace Zhu.ViewModels.Pages
         public RelayCommand<IMedia> PlayMediaCommand { get; set; }
         public RelayCommand SearchMediaCommand { get; set; }
         public RelayCommand<IMedia> ShowMediaInfoCommand { get; set; }
+        public RelayCommand RefreshMediaListCommand { get; set; }
 
         private void RegisterCommands()
         {
@@ -147,12 +148,18 @@ namespace Zhu.ViewModels.Pages
                 await LoadMediasAsync().ConfigureAwait(false);
             });
 
-            ShowMediaInfoCommand = new RelayCommand<IMedia>((media) => {
+            ShowMediaInfoCommand = new RelayCommand<IMedia>((media) =>
+            {
                 MediaInfoDialog dialog = new MediaInfoDialog
                 {
                     DataContext = media
                 };
                 _applicationState.ShowDialog(dialog);
+            });
+
+            RefreshMediaListCommand = new RelayCommand(async () =>
+            {
+                await LoadMediasAsync(true).ConfigureAwait(false);
             });
         }
 

@@ -30,14 +30,8 @@ namespace Zhu.ViewModels.Pages
             return base.LoadMediasAsync(isRefresh);
         }
 
-        public RelayCommand ScanMediaFileDialogOpenCommand { get; private set; }
-
         private void RegisterCommands()
         {
-            ScanMediaFileDialogOpenCommand = new RelayCommand(() =>
-            {
-                Messenger.Default.Send(new ScanMediaFileDialogOpenMessage());
-            });
         }
 
         private void RegisterMessages()

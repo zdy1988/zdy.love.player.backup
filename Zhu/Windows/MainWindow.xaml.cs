@@ -46,6 +46,9 @@ namespace Zhu.Windows
                     MainSnackbar.MessageQueue.Enqueue("Welcome to WantChaPlayer！");
                 });
             })
+            .ContinueWith(async (t) => {
+               await Untils.SQLiteDatabase.Initialize();
+            })
             .ContinueWith(async (t) =>
             {
                 var vm = this.DataContext as MainWindowViewModel;

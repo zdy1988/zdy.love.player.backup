@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -22,6 +23,13 @@ namespace Zhu.Windows
         public SplashScreen()
         {
             InitializeComponent();
+        }
+
+        public event EventHandler<EventArgs> OnCompleted;
+
+        private void CountdownStoryboard_OnCompleted(object sender, EventArgs e)
+        {
+            OnCompleted?.Invoke(this, new EventArgs());
         }
     }
 }

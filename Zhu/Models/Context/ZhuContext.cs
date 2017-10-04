@@ -1,11 +1,13 @@
-﻿using System.Data.Entity;
+﻿using System.Data.Common;
+using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace Zhu.Models
 {
     public class ZhuContext : DbContext
     {
-        public ZhuContext() : base("WantCha") {
+        public ZhuContext() : base("conn")
+        {
             this.Configuration.LazyLoadingEnabled = false;
         }
 

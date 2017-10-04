@@ -15,6 +15,11 @@ namespace Zhu.Untils
         public static string ApplicationName { get; } = "Zhu Player";
 
         /// <summary>
+        /// 数据库地址
+        /// </summary>
+        public static string DatabasePath { get; } = Environment.CurrentDirectory + "/ZhuPlayer.db";
+
+        /// <summary>
         /// 图片数据源地址
         /// </summary>
         public static string ImageSourcePath { get; } = @"D:\\MovieImage\\";

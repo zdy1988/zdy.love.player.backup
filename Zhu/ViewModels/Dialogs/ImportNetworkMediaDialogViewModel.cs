@@ -139,6 +139,8 @@ namespace Zhu.ViewModels.Dialogs
                     _applicationState.HideLoadingDialog();
 
                     Messenger.Default.Send(new ManageExceptionMessage(new Exception($"成功导入 {Medias.Count} 条网络视频源！")));
+
+                    Messenger.Default.Send(new RefreshNetTVListMessage());
                 }
             });
         }

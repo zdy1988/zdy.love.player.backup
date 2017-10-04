@@ -159,10 +159,10 @@
     <Compile Include="Converters\WindowStateIconConverter.cs" />
     <Compile Include="Converters\WindowStateToBooleanConverter.cs" />
     <Compile Include="FFmpeg\FFmpegHelper.cs" />
-    <Compile Include="Messaging\Dialog\MediaSourcePlayDialogOpenMessage.cs" />
-    <Compile Include="Messaging\Dialog\ScanMediaFileDialogOpenMessage.cs" />
+    <Compile Include="Messaging\MediaSourcePlayDialogOpenMessage.cs" />
     <Compile Include="Messaging\RefreshMediaGroupListMessage.cs" />
     <Compile Include="Messaging\RefreshMediaGroupMembersMessage.cs" />
+    <Compile Include="Messaging\RefreshNetTVListMessage.cs" />
     <Compile Include="Messaging\RefreshVideoListMessage.cs" />
     <Compile Include="Models\Group.cs" />
     <Compile Include="Models\GroupMember.cs" />
@@ -219,7 +219,6 @@
     <Compile Include="Untils\SearchMethod\SearchModel.cs" />
     <Compile Include="Untils\SQLiteDatabase.cs" />
     <Compile Include="Untils\SearchMethod\SqlToolkit.cs" />
-    <Compile Include="Messaging\Dialog\ImportNetworkMediaDialogOpenMessage.cs" />
     <Compile Include="Messaging\MediaFlyoutCloseMessage.cs" />
     <Compile Include="Messaging\LoadMediaMessage.cs" />
     <Compile Include="Messaging\ManageExceptionMessage.cs" />

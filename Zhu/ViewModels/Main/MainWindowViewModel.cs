@@ -152,36 +152,17 @@ namespace Zhu.ViewModels.Main
             //Dialog Message
             Messenger.Default.Register<MediaSourcePlayDialogOpenMessage>(this, (e) =>
             {
-                var dialog = new MediaSourcePlayDialog
-                {
-                    DataContext = new MediaSourcePlayDialogViewModel()
-                };
-
-                _applicationState.ShowDialog(dialog);
-            });
-            Messenger.Default.Register<ImportNetworkMediaDialogOpenMessage>(this, (e) =>
-            {
-                var dialog = new ImportNetworkMediaDialog
-                {
-                    DataContext = new ImportNetworkMediaDialogViewModel(_applicationState, _mediaService)
-                };
-
-                _applicationState.ShowDialog(dialog);
-            });
-            Messenger.Default.Register<ScanMediaFileDialogOpenMessage>(this, (e) =>
-            {
-                var dialog = new ScanMediaFileDialog
-                {
-                    DataContext = new ScanMediaFileDialogViewModel(_applicationState, _mediaService)
-                };
-
-                _applicationState.ShowDialog(dialog);
+                MediaSourcePlayDialogOpenCommand.Execute(null);
             });
         }
 
         public RelayCommand ToggleMoviePalyerCommand { get; private set; }
 
         public RelayCommand MediaSourcePlayDialogOpenCommand { get; private set; }
+
+        public RelayCommand ScanMediaFileDialogOpenCommand { get; private set; }
+
+        public RelayCommand ImportNetworkMediaDialogOpenCommand { get; private set; }
 
         public RelayCommand PreCreateMediaGroupCommand { get; private set; }
 
@@ -200,7 +181,32 @@ namespace Zhu.ViewModels.Main
 
             MediaSourcePlayDialogOpenCommand = new RelayCommand(() =>
             {
-                Messenger.Default.Send(new MediaSourcePlayDialogOpenMessage());
+                var dialog = new MediaSourcePlayDialog
+                {
+                    DataContext = new MediaSourcePlayDialogViewModel()
+                };
+
+                _applicationState.ShowDialog(dialog);
+            });
+
+            ScanMediaFileDialogOpenCommand = new RelayCommand(() =>
+            {
+                var dialog = new ScanMediaFileDialog
+                {
+                    DataContext = new ScanMediaFileDialogViewModel(_applicationState, _mediaService)
+                };
+
+                _applicationState.ShowDialog(dialog);
+            });
+
+            ImportNetworkMediaDialogOpenCommand = new RelayCommand(() =>
+            {
+                var dialog = new ImportNetworkMediaDialog
+                {
+                    DataContext = new ImportNetworkMediaDialogViewModel(_applicationState, _mediaService)
+                };
+
+                _applicationState.ShowDialog(dialog);
             });
 
             PreCreateMediaGroupCommand = new RelayCommand(() =>

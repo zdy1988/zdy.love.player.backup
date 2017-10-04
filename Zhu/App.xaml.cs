@@ -83,6 +83,7 @@ namespace Zhu
             var splashScreenThread = new Thread(() =>
             {
                 var splashScreen = new Windows.SplashScreen();
+                splashScreen.OnCompleted += SplashScreen_OnCompleted;
                 _splashScreenDispatcher = splashScreen.Dispatcher;
                 _splashScreenDispatcher.ShutdownStarted += (o, args) => splashScreen.Close();
                 splashScreen.Show();
@@ -93,7 +94,7 @@ namespace Zhu
             splashScreenThread.Start();
 
             MainWindow = new MainWindow();
-            MainWindow.Initialized += async (sender2, e2) =>
+            MainWindow.Loaded += async (sender2, e2) =>
             {
                 await MainWindow.Dispatcher.InvokeAsync(() =>
                 {
@@ -104,7 +105,14 @@ namespace Zhu
                     Logger.Info($"Application Started In {elapsedStartMs} Milliseconds.");
                 });
             };
-            MainWindow.Show();
+        }
+
+        private void SplashScreen_OnCompleted(object sender, EventArgs e)
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                MainWindow.Show();
+            });
         }
     }
 }

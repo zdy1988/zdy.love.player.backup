@@ -27,6 +27,7 @@ namespace Zhu.ViewModels.Pages
             : base(applicationState, mediaService)
         {
             RegisterCommands();
+            RegisterMessages();
         }
 
         public override Task LoadMediasAsync(bool isRefresh = false)
@@ -39,13 +40,16 @@ namespace Zhu.ViewModels.Pages
             return base.LoadMediasAsync(isRefresh);
         }
 
-        public RelayCommand ImportNetworkMediaDialogOpenCommand { get; private set; }
-
         private void RegisterCommands()
         {
-            ImportNetworkMediaDialogOpenCommand = new RelayCommand(() =>
+         
+        }
+
+        private void RegisterMessages()
+        {
+            Messenger.Default.Register<RefreshNetTVListMessage>(this, async (e) =>
             {
-                Messenger.Default.Send(new ImportNetworkMediaDialogOpenMessage());
+                await LoadMediasAsync(e.IsRefresh).ConfigureAwait(false);
             });
         }
     }
