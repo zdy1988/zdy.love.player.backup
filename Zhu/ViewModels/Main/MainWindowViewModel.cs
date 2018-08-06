@@ -41,7 +41,7 @@ namespace Zhu.ViewModels.Main
 
         private IGroupMemberService _groupMemberService;
 
-        private bool _isMovieFlyoutOpen;
+        private bool _isMovieFlyoutOpen = true;
         public bool IsMovieFlyoutOpen
         {
             get { return _isMovieFlyoutOpen; }
@@ -110,10 +110,7 @@ namespace Zhu.ViewModels.Main
                         mediaGroups.Add(new Tuple<Group, int>(group, memberCount));
                     }
 
-                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                    {
-                        MediaGroups = mediaGroups;
-                    });
+                    DispatcherHelper.CheckBeginInvokeOnUI(() => MediaGroups = mediaGroups);
                 }).ConfigureAwait(false);
             }
             catch (Exception exception)

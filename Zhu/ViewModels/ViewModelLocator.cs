@@ -14,11 +14,11 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
 using Zhu.Services;
 using Zhu.ViewModels.Main;
 using Zhu.ViewModels.Player;
 using Zhu.ViewModels.Pages;
+using CommonServiceLocator;
 
 namespace Zhu.ViewModels
 {

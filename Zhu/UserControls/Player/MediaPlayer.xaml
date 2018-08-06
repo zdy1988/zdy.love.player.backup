@@ -57,7 +57,25 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <vlc:ThreadSeparatedImage Grid.Row="0" Grid.RowSpan="2" Stretch="Fill" x:Name="MediaShower"></vlc:ThreadSeparatedImage>
+        <DockPanel Grid.Row="0"
+                   x:Name="PlayerTopBar" Height="50" VerticalAlignment="Top" Panel.ZIndex="1">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="6">
+                <StackPanel.Resources>
+                    <Style BasedOn="{StaticResource MaterialDesignToolForegroundButton}" TargetType="Button">
+                        <Setter Property="Margin" Value="8 8 0 0"></Setter>
+                    </Style>
+                    <Style TargetType="MaterialDesign:PackIcon">
+                        <Setter Property="Width" Value="28"></Setter>
+                        <Setter Property="Height" Value="28"></Setter>
+                        <Setter Property="Foreground" Value="White"></Setter>
+                    </Style>
+                </StackPanel.Resources>
+                <Button ToolTip="关闭影像" Command="{Binding Main.ToggleMoviePalyerCommand,Source={StaticResource Locator}}">
+                    <MaterialDesign:PackIcon Kind="ArrowRight" />
+                </Button>
+            </StackPanel>
+        </DockPanel>
+        <vlc:ThreadSeparatedImage Grid.Row="0" Grid.RowSpan="3" Stretch="Fill" x:Name="MediaShower"></vlc:ThreadSeparatedImage>
         <StatusBar 
             x:Name="PlayerStatusBar"
             Grid.Row="1"
@@ -124,6 +142,7 @@
                 <Slider
                     x:Name="MediaPlayerSliderProgress"
                     HorizontalAlignment="Stretch"
+                    Margin="8 0"
                     IsMoveToPointEnabled="True"
                     Thumb.DragCompleted="MediaPlayerSliderProgress_DragCompleted"
                     Thumb.DragStarted="MediaPlayerSliderProgress_DragStarted"
@@ -135,7 +154,7 @@
                     ValueChanged="MediaPlayerSliderProgress_ValueChanged" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
-                <Slider x:Name="PlayerVolumeSlider"
+                <Slider x:Name="PlayerVolumeSlider" ToolTip="音量调节"
                     Width="100"
                     Margin="0 0 0 38"
                     HorizontalAlignment="Stretch"
@@ -149,6 +168,7 @@
                 <Button
                     Width="39"
                     Height="39"
+                    ToolTip="关闭"
                     Command="{Binding StopPlayingMediaCommand}">
                     <Canvas Width="15" Height="15">
                         <Path
@@ -161,21 +181,5 @@
                 </Button>
             </StatusBarItem>
         </StatusBar>
-        <Button Grid.Row="0" Command="{Binding Main.ToggleMoviePalyerCommand,Source={StaticResource Locator}}"
-                x:Name="PlayerReturnButton"
-                HorizontalAlignment="Left" 
-                VerticalAlignment="Top">
-            <Button.Resources>
-                <Style TargetType="{x:Type MaterialDesign:PackIcon}">
-                    <Setter Property="Width" Value="32" />
-                    <Setter Property="Height" Value="32" />
-                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                    <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    <Setter Property="FontSize" Value="18"/>
-                    <Setter Property="Foreground" Value="White"/>
-                </Style>
-            </Button.Resources>
-            <MaterialDesign:PackIcon Kind="ArrowRight" />
-        </Button>
     </Grid>
 </UserControl>

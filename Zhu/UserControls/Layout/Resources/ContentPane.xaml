@@ -7,7 +7,7 @@
                 <ControlTemplate TargetType="{x:Type Layout:ContentPane}">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="225"/>
+                            <RowDefinition Height="223"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
@@ -28,7 +28,7 @@
                                 <ContentPresenter Grid.Row="1" ContentSource="HeaderContent"></ContentPresenter>
                             </Grid>
                         </Border>
-                        <Border Grid.Row="1" BorderThickness="0 0 0 1" BorderBrush="{StaticResource MaterialDesignDivider}" />
+                        <Border Grid.Row="1" BorderThickness="0 0 0 2" BorderBrush="{StaticResource MaterialDesignDivider}" />
                         <ContentPresenter Grid.Row="2" ContentSource="InnerContent"></ContentPresenter>
                     </Grid>
                 </ControlTemplate>

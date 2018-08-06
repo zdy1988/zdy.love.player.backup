@@ -106,7 +106,7 @@ namespace Zhu.ViewModels.Dialogs
 
                                 var md5 = Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FullName));
 
-                                var mediaInfo = FFmpeg.FFmpegHelper.GetMediaInfo(file.FullName);
+                                //var mediaInfo = FFmpeg.FFmpegHelper.GetMediaInfo(file.FullName);
 
                                 var media = new Media
                                 {
@@ -120,7 +120,7 @@ namespace Zhu.ViewModels.Dialogs
                                     EnterDate = DateTime.Now,
                                     UpdateDate = DateTime.Now,
 
-                                    Duration = mediaInfo.Duration
+                                    Duration = 1000// mediaInfo.Duration
                                 };
 
                                 medias.Add(media);

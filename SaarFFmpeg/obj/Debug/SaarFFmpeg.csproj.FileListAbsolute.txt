@@ -16,3 +16,16 @@ D:\Work\zhu.player\SaarFFmpeg\bin\Debug\Saar.FFmpeg.dll
 D:\Work\zhu.player\SaarFFmpeg\bin\Debug\Saar.FFmpeg.pdb
 D:\Work\zhu.player\SaarFFmpeg\obj\Debug\Saar.FFmpeg.dll
 D:\Work\zhu.player\SaarFFmpeg\obj\Debug\Saar.FFmpeg.pdb
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\bin\Debug\avcodec-57.dll
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\bin\Debug\avformat-57.dll
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\bin\Debug\avutil-55.dll
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\bin\Debug\libfftw3-3.dll
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\bin\Debug\libfftw3f-3.dll
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\bin\Debug\swresample-2.dll
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\bin\Debug\swscale-4.dll
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\bin\Debug\Saar.FFmpeg.dll
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\bin\Debug\Saar.FFmpeg.pdb
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\obj\Debug\SaarFFmpeg.csprojAssemblyReference.cache
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\obj\Debug\SaarFFmpeg.csproj.CoreCompileInputs.cache
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\obj\Debug\Saar.FFmpeg.dll
+C:\Users\zdyla\Documents\work\zhu.player\SaarFFmpeg\obj\Debug\Saar.FFmpeg.pdb

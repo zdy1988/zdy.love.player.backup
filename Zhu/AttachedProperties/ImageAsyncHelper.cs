@@ -193,7 +193,7 @@ namespace Zhu.AttachedProperties
                                     {
                                         if (File.Exists(mediaSource))
                                         {
-                                            FFmpeg.FFmpegHelper.GetSnapshot(mediaSource, imageTempPath, imageSize.Width, imageSize.Height);
+                                            //FFmpeg.FFmpegHelper.GetSnapshot(mediaSource, imageTempPath, imageSize.Width, imageSize.Height);
                                         }
                                     }
                                 }

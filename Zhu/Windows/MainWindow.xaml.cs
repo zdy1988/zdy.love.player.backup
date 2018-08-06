@@ -20,6 +20,7 @@ using GalaSoft.MvvmLight.Ioc;
 using Zhu.Services;
 using GalaSoft.MvvmLight.Threading;
 using System.Windows.Controls;
+using System.Windows.Interop;
 
 namespace Zhu.Windows
 {
@@ -36,32 +37,26 @@ namespace Zhu.Windows
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+
+            InitializeHandleWindowResizeEnd();
             InitializeTaskBarNotify();
             InitializeMessageNotice();
 
-            Task.Factory.StartNew(() =>
-            {
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            Task.Factory
+                .StartNew(async () => await SQLiteDatabase.Initialize())
+                .ContinueWith(async (t) =>
                 {
-                    MainSnackbar.MessageQueue.Enqueue("Welcome to WantChaPlayer！");
-                });
-            })
-            .ContinueWith(async (t) => {
-               await Untils.SQLiteDatabase.Initialize();
-            })
-            .ContinueWith(async (t) =>
-            {
-                var vm = this.DataContext as MainWindowViewModel;
-                if (vm != null)
-                {
-                    await vm.LoadMediaGroup();
-                }
-            }, TaskScheduler.FromCurrentSynchronizationContext());
+                    var vm = this.DataContext as MainWindowViewModel;
+                    if (vm != null)
+                    {
+                        await vm.LoadMediaGroup();
+                    }
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         #region MessageNotice
 
-        public void InitializeMessageNotice()
+        private void InitializeMessageNotice()
         {
             var vm = DataContext as MainWindowViewModel;
             if (vm == null) return;
@@ -70,7 +65,8 @@ namespace Zhu.Windows
 
         private void Vm_MessageNotice(object sender, string message)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() => {
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
                 MainSnackbar.MessageQueue.Enqueue(message);
             });
         }
@@ -121,11 +117,33 @@ namespace Zhu.Windows
 
         #endregion
 
+        #region WindowResizeEnd
+
+        private void InitializeHandleWindowResizeEnd()
+        {
+            this.Player.Width = this.ActualWidth;
+            (new WPFWindowExtension(this)).ResizeEnd += new EventHandler(Window_ResizeEnd);
+        }
+
+        private void Window_ResizeEnd(object sender, EventArgs e)
+        {
+            this.Player.Width = this.ActualWidth;
+        }
+
+        #endregion
+
         #region WindowClose
 
         private void WindowClose_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            notifyIcon.Dispose();
+            ApiManager.ReleaseAll();
+            base.OnClosing(e);
         }
 
         #endregion
@@ -211,14 +229,7 @@ namespace Zhu.Windows
 
         #endregion
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            notifyIcon.Dispose();
-            ApiManager.ReleaseAll();
-            base.OnClosing(e);
-        }
-
-        #region MediaGroupCreate
+        #region MediaGroup Create 
 
         private void TextBox_CreateMediaGroup_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -246,5 +257,40 @@ namespace Zhu.Windows
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// WPFWindowExtension class
+    /// Reference: WPF Panel resize end event logic
+    /// http://www.meetup.com/NY-Dotnet/messages/2968326/
+    /// </summary>
+    public class WPFWindowExtension
+    {
+        private const int WM_EXITSIZEMOVE = 0x232;
+
+        public EventHandler ResizeEnd = null;
+
+        private readonly Window _owner;
+
+        public WPFWindowExtension(Window owner)
+        {
+            _owner = owner;
+            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(owner).Handle);
+            source.AddHook(new HwndSourceHook(WndProc));
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == WM_EXITSIZEMOVE)
+            {
+                //add panel resizeend event logic here
+                if (ResizeEnd != null)
+                    ResizeEnd(_owner, null);
+
+                handled = true;
+            }
+
+            return IntPtr.Zero;
+        }
     }
 }

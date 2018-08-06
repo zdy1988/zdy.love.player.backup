@@ -64,7 +64,6 @@ namespace Zhu.Untils
                                           NOT NULL,
                 Name       NVARCHAR (255) COLLATE NOCASE,
                 FormerName NVARCHAR (255) COLLATE NOCASE,
-                Photo      VARCHAR (100),
                 Summary    TEXT           COLLATE NOCASE,
                 BirthDay   DATETIME,
                 DebutDay   DATETIME,

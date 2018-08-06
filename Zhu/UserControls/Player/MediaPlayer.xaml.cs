@@ -106,9 +106,9 @@ namespace Zhu.UserControls
 
         private void Player_TimeChanged(object sender, EventArgs e)
         {
+            if ((Player == null) || (UserIsDraggingMediaPlayerSlider)) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {   
-                if ((Player == null) || (UserIsDraggingMediaPlayerSlider)) return;
                 MediaPlayerSliderProgress.Value = Player.Time.TotalSeconds;
             });
         }
@@ -141,6 +141,12 @@ namespace Zhu.UserControls
         private void VlcMediaPlayer_EndReached(object sender, EventArgs e)
         {
             MediaPlayerIsPlaying = false;
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                MediaPlayerStatusBarItemPlay.Visibility = Visibility.Collapsed;
+                MediaPlayerStatusBarItemPause.Visibility = Visibility.Visible;
+                MediaPlayerSliderProgress.Value = 0;
+            });
         }
 
         private void VlcMediaPlayer_EncounteredError(object sender, EventArgs e)
@@ -192,7 +198,7 @@ namespace Zhu.UserControls
             };
 
             PlayerStatusBar.BeginAnimation(OpacityProperty, opacityAnimation);
-            PlayerReturnButton.BeginAnimation(OpacityProperty, opacityAnimation);
+            PlayerTopBar.BeginAnimation(OpacityProperty, opacityAnimation);
         }
 
         private async void OnActivity(object sender, PreProcessInputEventArgs e)
@@ -235,7 +241,7 @@ namespace Zhu.UserControls
             };
 
             PlayerStatusBar.BeginAnimation(OpacityProperty, opacityAnimation);
-            PlayerReturnButton.BeginAnimation(OpacityProperty, opacityAnimation);
+            PlayerTopBar.BeginAnimation(OpacityProperty, opacityAnimation);
 
             await Task.Delay(TimeSpan.FromSeconds(1));
             _isMouseActivityCaptured = false;

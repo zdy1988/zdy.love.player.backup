@@ -3,13 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaterialDesignColors", "MaterialDesignColors\MaterialDesignColors.csproj", "{90B53209-C60C-4655-B28D-A1B3E1044BA3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaterialDesignThemes", "MaterialDesignThemes\MaterialDesignThemes.csproj", "{F079FB0A-A8ED-4216-B6A5-345756751A04}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zhu", "Zhu\Zhu.csproj", "{230E0545-73BE-49D4-82C5-6C9EE3820C15}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaarFFmpeg", "SaarFFmpeg\SaarFFmpeg.csproj", "{AB4CABA1-06E4-4A32-8A15-1FBE20ED5BC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,32 +12,17 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.AppVeyor|Any CPU.ActiveCfg = AppVeyor|Any CPU
-		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.AppVeyor|Any CPU.Build.0 = AppVeyor|Any CPU
-		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F079FB0A-A8ED-4216-B6A5-345756751A04}.AppVeyor|Any CPU.ActiveCfg = AppVeyor|Any CPU
-		{F079FB0A-A8ED-4216-B6A5-345756751A04}.AppVeyor|Any CPU.Build.0 = AppVeyor|Any CPU
-		{F079FB0A-A8ED-4216-B6A5-345756751A04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F079FB0A-A8ED-4216-B6A5-345756751A04}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F079FB0A-A8ED-4216-B6A5-345756751A04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F079FB0A-A8ED-4216-B6A5-345756751A04}.Release|Any CPU.Build.0 = Release|Any CPU
 		{230E0545-73BE-49D4-82C5-6C9EE3820C15}.AppVeyor|Any CPU.ActiveCfg = Release|Any CPU
 		{230E0545-73BE-49D4-82C5-6C9EE3820C15}.AppVeyor|Any CPU.Build.0 = Release|Any CPU
 		{230E0545-73BE-49D4-82C5-6C9EE3820C15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{230E0545-73BE-49D4-82C5-6C9EE3820C15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{230E0545-73BE-49D4-82C5-6C9EE3820C15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{230E0545-73BE-49D4-82C5-6C9EE3820C15}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB4CABA1-06E4-4A32-8A15-1FBE20ED5BC6}.AppVeyor|Any CPU.ActiveCfg = Release|Any CPU
-		{AB4CABA1-06E4-4A32-8A15-1FBE20ED5BC6}.AppVeyor|Any CPU.Build.0 = Release|Any CPU
-		{AB4CABA1-06E4-4A32-8A15-1FBE20ED5BC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB4CABA1-06E4-4A32-8A15-1FBE20ED5BC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB4CABA1-06E4-4A32-8A15-1FBE20ED5BC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB4CABA1-06E4-4A32-8A15-1FBE20ED5BC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AF166E5F-7B53-4844-A78B-879A7FB0A855}
 	EndGlobalSection
 EndGlobal

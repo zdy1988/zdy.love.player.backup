@@ -8,7 +8,8 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         mc:Ignorable="d"
-        Title="SplashScreen" Height="300" Width="300">
+        Icon="/favicon.ico"
+        Title="正在启动..." Height="300" Width="300">
     <Window.Resources>
         <CubicEase EasingMode="EaseIn" x:Key="CubicEaseIn" />
         <Storyboard x:Key="CountdownStoryboard" FillBehavior="Stop" Completed="CountdownStoryboard_OnCompleted">
