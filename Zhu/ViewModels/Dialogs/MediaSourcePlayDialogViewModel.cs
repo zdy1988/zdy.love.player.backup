@@ -63,10 +63,11 @@ namespace Zhu.ViewModels.Dialogs
 
         private void RegisterCommands()
         {
-            PlayMediaSourceCommand = new RelayCommand(()=> {
+            PlayMediaSourceCommand = new RelayCommand(() =>
+            {
                 if (!string.IsNullOrEmpty(MediaSource))
                 {
-                    Messenger.Default.Send(new LoadMediaMessage(new Media
+                    Messenger.Default.Send(new OpenMediaMessage(new Media
                     {
                         ID = 0,
                         Title = MediaTitle,

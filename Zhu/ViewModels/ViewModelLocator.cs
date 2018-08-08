@@ -35,6 +35,8 @@ namespace Zhu.ViewModels
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
+            SimpleIoc.Default.Register<IApplicationState, ApplicationState>();
+
             #region DataServices
             SimpleIoc.Default.Register<ITagService, TagService>();
             SimpleIoc.Default.Register<IMediaService, MediaService>();
@@ -42,8 +44,6 @@ namespace Zhu.ViewModels
             SimpleIoc.Default.Register<IGroupService, GroupService>();
             SimpleIoc.Default.Register<IGroupMemberService, GroupMemberService>();
             #endregion
-
-            SimpleIoc.Default.Register<IApplicationState, ApplicationState>();
 
             #region ViewModels
             SimpleIoc.Default.Register<MainWindowViewModel>();

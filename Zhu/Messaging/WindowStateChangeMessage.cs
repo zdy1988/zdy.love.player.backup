@@ -10,15 +10,15 @@ namespace Zhu.Messaging
         /// <summary>
         /// Indicated if a movie is playing
         /// </summary>
-        public bool IsMoviePlaying { get; }
+        public bool IsMediaPlaying { get; }
 
         /// <summary>
         /// Initialize a new instance of WindowStateChangeMessage class
         /// </summary>
-        /// <param name="isMoviePlaying">Indicates if a movie is playing</param>
-        public WindowStateChangeMessage(bool isMoviePlaying)
+        /// <param name="isMediaPlaying">Indicates if a movie is playing</param>
+        public WindowStateChangeMessage(bool isMediaPlaying)
         {
-            IsMoviePlaying = isMoviePlaying;
+            IsMediaPlaying = isMediaPlaying;
         }
     }
 }

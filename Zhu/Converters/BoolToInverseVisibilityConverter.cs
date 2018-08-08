@@ -2,11 +2,10 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Markup;
 
 namespace Zhu.Converters
 {
-    public class BoolToInverseVisibilityConverter : MarkupExtension, IValueConverter
+    public class BoolToInverseVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter,
             CultureInfo culture)
@@ -25,10 +24,5 @@ namespace Zhu.Converters
         {
             throw new NotSupportedException();
         }
-
-        private BoolToInverseVisibilityConverter _instance;
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
-            => _instance ?? (_instance = new BoolToInverseVisibilityConverter());
     }
 }

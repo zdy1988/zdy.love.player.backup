@@ -10,9 +10,19 @@ namespace Zhu.Untils
     public static class Constants
     {
         /// <summary>
-        /// 程序名称
+        /// 产品名称
         /// </summary>
-        public static string ApplicationName { get; } = "Zhu Player";
+        public static string ProductName { get; } = "Zhu Player";
+
+        /// <summary>
+        /// 产品Url
+        /// </summary>
+        public static string ProductUrl { get; } = "";
+
+        /// <summary>
+        /// 产品版本
+        /// </summary>
+        public static string ProductVersion { get; } = "v1.0";
 
         /// <summary>
         /// 数据库地址

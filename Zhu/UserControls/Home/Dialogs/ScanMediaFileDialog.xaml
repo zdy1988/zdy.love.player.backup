@@ -68,7 +68,7 @@
                     </Style>
                 </StackPanel.Resources>
                 <Button Style="{StaticResource MaterialDesignRaisedButton}"
-                        Visibility="{Binding IsHasData, Converter={Converters:BoolToInverseVisibilityConverter}}" 
+                        Visibility="{Binding IsHasData, Converter={StaticResource BoolToInverseVisibilityConverter}}" 
                         Command="{Binding ImportMediaFileDataCommand}">
                     <StackPanel Orientation="Horizontal">
                         <MaterialDesign:PackIcon Kind="Import"></MaterialDesign:PackIcon>

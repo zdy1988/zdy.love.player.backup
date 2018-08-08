@@ -6,7 +6,7 @@
 
         bool IsConnectionInError { get; set; }
 
-        bool IsMoviePlaying { get; set; }
+        bool IsMediaPlaying { get; set; }
 
         bool IsRootDialogOpen { get; set; }
 

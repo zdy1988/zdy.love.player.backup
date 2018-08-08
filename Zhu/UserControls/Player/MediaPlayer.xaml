@@ -6,180 +6,61 @@
              xmlns:local="clr-namespace:Zhu.UserControls"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:MaterialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:vlc="clr-namespace:Meta.Vlc.Wpf;assembly=Meta.Vlc.Wpf"
+             xmlns:MediaPlayerControls="clr-namespace:Zhu.UserControls.Player.Controls"
+             xmlns:FFmpeg="clr-namespace:Unosquare.FFME;assembly=ffme.win"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding MediaPlayer, Source={StaticResource Locator}}"
              Background="{DynamicResource MaterialDesignPaper}">
     <UserControl.Resources>
-        <ResourceDictionary>
-            <Style TargetType="Button">
-                <Setter Property="Margin" Value="16"/>
-                <Setter Property="Padding" Value="0"/>
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="BorderBrush" Value="Transparent"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                <Setter Property="Cursor" Value="Hand"></Setter>
-                <Setter Property="Width" Value="32" />
-                <Setter Property="Height" Value="32" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Grid>
-                                <MaterialDesign:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
-                                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                            Padding="{TemplateBinding Padding}" 
-                                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                </MaterialDesign:Ripple>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </ResourceDictionary>
+        <Storyboard x:Key="ShowControlOpacity" Storyboard.TargetProperty="(UIElement.Opacity)">
+            <DoubleAnimation To="1" Duration="0:0:0.100" FillBehavior="HoldEnd" />
+        </Storyboard>
+        <Storyboard x:Key="HideControlOpacity" Storyboard.TargetProperty="(UIElement.Opacity)">
+            <DoubleAnimation To="0" Duration="0:0:0.300" FillBehavior="HoldEnd" />
+        </Storyboard>
     </UserControl.Resources>
-    <UserControl.CommandBindings>
-        <CommandBinding
-            CanExecute="MediaPlayerPlayCanExecute"
-            Command="MediaCommands.Play"
-            Executed="MediaPlayerPlayExecuted" />
-        <CommandBinding
-            CanExecute="MediaPlayerPauseCanExecute"
-            Command="MediaCommands.Pause"
-            Executed="MediaPlayerPauseExecuted" />
-    </UserControl.CommandBindings>
-
     <Grid x:Name="PlayerContainer" Background="Black">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-        </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0"
-                   x:Name="PlayerTopBar" Height="50" VerticalAlignment="Top" Panel.ZIndex="1">
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="6">
-                <StackPanel.Resources>
-                    <Style BasedOn="{StaticResource MaterialDesignToolForegroundButton}" TargetType="Button">
-                        <Setter Property="Margin" Value="8 8 0 0"></Setter>
-                    </Style>
-                    <Style TargetType="MaterialDesign:PackIcon">
-                        <Setter Property="Width" Value="28"></Setter>
-                        <Setter Property="Height" Value="28"></Setter>
-                        <Setter Property="Foreground" Value="White"></Setter>
-                    </Style>
-                </StackPanel.Resources>
-                <Button ToolTip="关闭影像" Command="{Binding Main.ToggleMoviePalyerCommand,Source={StaticResource Locator}}">
+        <DockPanel x:Name="PlayerTopBar" Height="50" VerticalAlignment="Top" Panel.ZIndex="1">
+            <DockPanel.Resources>
+                <Style BasedOn="{StaticResource MaterialDesignToolForegroundButton}" TargetType="Button">
+                    <Setter Property="Margin" Value="8 8 0 0"></Setter>
+                </Style>
+                <Style TargetType="MaterialDesign:PackIcon">
+                    <Setter Property="Width" Value="28"></Setter>
+                    <Setter Property="Height" Value="28"></Setter>
+                    <Setter Property="Foreground" Value="White"></Setter>
+                </Style>
+            </DockPanel.Resources>
+            <StackPanel DockPanel.Dock="Left" Margin="6">
+                <Button ToolTip="返回" Command="{Binding Main.ToggleMediaPalyerCommand,Source={StaticResource Locator}}">
                     <MaterialDesign:PackIcon Kind="ArrowRight" />
                 </Button>
             </StackPanel>
+            <StackPanel DockPanel.Dock="Right" Margin="6 6 24 6" HorizontalAlignment="Right">
+                <Button ToolTip="关闭" Command="{Binding CloseMediaCommand}">
+                    <MaterialDesign:PackIcon Kind="Close" />
+                </Button>
+            </StackPanel>
         </DockPanel>
-        <vlc:ThreadSeparatedImage Grid.Row="0" Grid.RowSpan="3" Stretch="Fill" x:Name="MediaShower"></vlc:ThreadSeparatedImage>
-        <StatusBar 
-            x:Name="PlayerStatusBar"
-            Grid.Row="1"
-            Background="#10FFFFFF"
-            Padding="16 0"
-            VerticalAlignment="Bottom">
-            <StatusBar.Resources>
-                <Style TargetType="StatusBarItem">
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Cursor" Value="Hand"></Setter>
-                </Style>
-            </StatusBar.Resources>
-            <StatusBar.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                </ItemsPanelTemplate>
-            </StatusBar.ItemsPanel>
-            <StatusBarItem
-                x:Name="MediaPlayerStatusBarItemPause"
-                Grid.Column="0"
-                Visibility="Visible">
-                <Button
-                    Margin="5,0,5,0"
-                    Command="MediaCommands.Pause">
-                    <Canvas Width="15" Height="15">
-                        <Path
-                            Width="15"
-                            Height="15"
-                            Data="F1 M 26.9167,23.75L 33.25,23.75L 33.25,52.25L 26.9167,52.25L 26.9167,23.75 Z M 42.75,23.75L 49.0833,23.75L 49.0833,52.25L 42.75,52.25L 42.75,23.75 Z "
-                            Fill="White"
-                            Stretch="Fill" />
-                    </Canvas>
-                </Button>
-            </StatusBarItem>
-            <StatusBarItem
-                x:Name="MediaPlayerStatusBarItemPlay"
-                Grid.Column="0"
-                Visibility="Collapsed">
-                <Button
-                    Margin="5,0,5,0"
-                    Command="MediaCommands.Play">
-                    <Canvas Width="15" Height="15">
-                        <Path
-                            Width="15"
-                            Height="15"
-                            Data="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z "
-                            Fill="White"
-                            Stretch="Fill" />
-                    </Canvas>
-                </Button>
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="1">
-                <TextBlock Name="MoviePlayerTextProgressStatus" Foreground="White">00:00:00/00:00:00</TextBlock>
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch">
-                <Slider
-                    x:Name="MediaPlayerSliderProgress"
-                    HorizontalAlignment="Stretch"
-                    Margin="8 0"
-                    IsMoveToPointEnabled="True"
-                    Thumb.DragCompleted="MediaPlayerSliderProgress_DragCompleted"
-                    Thumb.DragStarted="MediaPlayerSliderProgress_DragStarted"
-                    MouseLeftButtonUp="MediaPlayerSliderProgress_MouseLeftButtonUp"
-                    MouseEnter="MediaPlayerSliderProgress_MouseEnter"
-                    MouseLeave="MediaPlayerSliderProgress_MouseLeave"
-                    MouseMove="MediaPlayerSliderProgress_MouseMove"
-                    ToolTip="00:00:00"
-                    ValueChanged="MediaPlayerSliderProgress_ValueChanged" />
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
-                <Slider x:Name="PlayerVolumeSlider" ToolTip="音量调节"
-                    Width="100"
-                    Margin="0 0 0 38"
-                    HorizontalAlignment="Stretch"
-                    Maximum="100"
-                    Minimum="0"
-                    MouseWheel="PlayerVolumeSlider_MouseWheel"
-                    Style="{DynamicResource MaterialDesignDiscreteSlider}"
-                    Value="{Binding Path=Volume, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="4">
-                <Button
-                    Width="39"
-                    Height="39"
-                    ToolTip="关闭"
-                    Command="{Binding StopPlayingMediaCommand}">
-                    <Canvas Width="15" Height="15">
-                        <Path
-                            Width="15"
-                            Height="15"
-                            Data="F1 M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z "
-                            Fill="White"
-                            Stretch="Fill" />
-                    </Canvas>
-                </Button>
-            </StatusBarItem>
-        </StatusBar>
+        <FFmpeg:MediaElement x:Name="MediaPlayerElement" Background="Black" LoadedBehavior="Play" />
+        <DockPanel x:Name="LayoutPanel" LastChildFill="False">
+            <MediaPlayerControls:ControllerPanelControl
+                x:Name="ControllerPanel"
+                DockPanel.Dock="Bottom"/>
+
+            <MediaPlayerControls:PlaylistPanelControl 
+                x:Name="PlaylistPanel"
+                DockPanel.Dock="Top"
+                HorizontalContentAlignment="Center"
+                Margin="0 100 0 0"
+                Visibility="{Binding IsPlaylistPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            
+            <MediaPlayerControls:PropertiesPanelControl
+                Margin="0 80 0 0"
+                x:Name="PropertiesPanel"
+                DockPanel.Dock="Right" 
+                Visibility="{Binding IsPropertiesPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        </DockPanel>
     </Grid>
 </UserControl>

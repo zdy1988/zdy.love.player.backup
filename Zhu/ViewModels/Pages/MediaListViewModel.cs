@@ -130,7 +130,7 @@ namespace Zhu.ViewModels.Pages
         {
             PlayMediaCommand = new RelayCommand<IMedia>((media) =>
             {
-                Messenger.Default.Send(new LoadMediaMessage(media));
+                Messenger.Default.Send(new OpenMediaMessage(media));
             });
 
             SearchMediaCommand = new RelayCommand(async () =>

@@ -14,6 +14,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Unosquare.FFME;
+using Unosquare.FFME.Shared;
+using Unosquare.FFME.Platform;
 
 namespace Zhu
 {
@@ -35,6 +38,20 @@ namespace Zhu
 
         public App()
         {
+            //ffmpeg
+            // Change the default location of the ffmpeg binaries
+            // You can get the binaries here: https://ffmpeg.zeranoe.com/builds/win32/shared/ffmpeg-4.0-win32-shared.zip
+            MediaElement.FFmpegDirectory = @"c:\ffmpeg";
+
+            // You can pick which FFmpeg binaries are loaded. See issue #28
+            // Full Features is already the default.
+            MediaElement.FFmpegLoadModeFlags = FFmpegLoadMode.FullFeatures;
+
+            // Multithreaded video enables the creation of independent
+            // dispatcher threads to render video frames.
+            MediaElement.EnableWpfMultithreadedVideo = GuiContext.Current.IsInDebugMode == false;
+
+
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -93,6 +110,7 @@ namespace Zhu
             splashScreenThread.SetApartmentState(ApartmentState.STA);
             splashScreenThread.Start();
 
+
             MainWindow = new MainWindow();
             MainWindow.Loaded += async (sender2, e2) =>
             {
@@ -105,6 +123,29 @@ namespace Zhu
                     Logger.Info($"Application Started In {elapsedStartMs} Milliseconds.");
                 });
             };
+
+            ThreadPool.QueueUserWorkItem((s) =>
+            {
+                try
+                {
+                    // Force loading
+                    MediaElement.LoadFFmpeg();
+                }
+                catch (Exception ex)
+                {
+                    GuiContext.Current?.EnqueueInvoke(() =>
+                    {
+                        MessageBox.Show(MainWindow,
+                            $"Unable to Load FFmpeg Libraries from path:\r\n    {MediaElement.FFmpegDirectory}" +
+                            $"\r\n{ex.GetType().Name}: {ex.Message}\r\n\r\nApplication will exit.",
+                            "FFmpeg Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+
+                        Application.Current?.Shutdown();
+                    });
+                }
+            });
         }
 
         private void SplashScreen_OnCompleted(object sender, EventArgs e)

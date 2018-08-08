@@ -1,26 +1,15 @@
-﻿using System.Threading;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
-using MaterialDesignThemes.Wpf;
-using System;
-using System.IO;
+using System.ComponentModel;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
 using Zhu.Untils;
 using Zhu.ViewModels.Main;
-using GalaSoft.MvvmLight.Messaging;
 using Zhu.Messaging;
-using Meta.Vlc.Wpf;
-using System.ComponentModel;
-using Zhu.Controls;
 using Zhu.Models;
-using Zhu.UserControls.Reused;
-using GalaSoft.MvvmLight.Ioc;
-using Zhu.Services;
-using GalaSoft.MvvmLight.Threading;
-using System.Windows.Controls;
-using System.Windows.Interop;
 
 namespace Zhu.Windows
 {
@@ -29,16 +18,22 @@ namespace Zhu.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
+        public MainWindowViewModel ViewModel => DataContext as MainWindowViewModel;
+
         public MainWindow()
         {
             InitializeComponent();
+
+
             Loaded += MainWindow_Loaded;
+            KeyDown += MainWindow_KeyDown;
+            SizeChanged += MainWindow_SizeChanged;
         }
+
+
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-
-            InitializeHandleWindowResizeEnd();
             InitializeTaskBarNotify();
             InitializeMessageNotice();
 
@@ -46,21 +41,32 @@ namespace Zhu.Windows
                 .StartNew(async () => await SQLiteDatabase.Initialize())
                 .ContinueWith(async (t) =>
                 {
-                    var vm = this.DataContext as MainWindowViewModel;
-                    if (vm != null)
+                    if (ViewModel != null)
                     {
-                        await vm.LoadMediaGroup();
+                        await ViewModel.LoadMediaGroup();
                     }
+
                 }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.E)
+            {
+                this.Close();
+            }
+        }
+
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            this.Player.Width = this.ActualWidth;
         }
 
         #region MessageNotice
 
         private void InitializeMessageNotice()
         {
-            var vm = DataContext as MainWindowViewModel;
-            if (vm == null) return;
-            vm.MessageNotice += Vm_MessageNotice;
+            ViewModel.MessageNotice += Vm_MessageNotice;
         }
 
         private void Vm_MessageNotice(object sender, string message)
@@ -69,18 +75,6 @@ namespace Zhu.Windows
             {
                 MainSnackbar.MessageQueue.Enqueue(message);
             });
-        }
-
-        #endregion
-
-        #region Keyboard Shortcuts
-
-        private void Window_KeyDown(object sender, KeyEventArgs e)
-        {
-            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.E)
-            {
-                this.Close();
-            }
         }
 
         #endregion
@@ -110,24 +104,7 @@ namespace Zhu.Windows
         {
             string fileName = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
 
-            SimpleIoc.Default.GetInstance<IApplicationState>().ShowLoadingDialog();
-
-            Messenger.Default.Send(new LoadMediaMessage(new Media { MediaSource = fileName }));
-        }
-
-        #endregion
-
-        #region WindowResizeEnd
-
-        private void InitializeHandleWindowResizeEnd()
-        {
-            this.Player.Width = this.ActualWidth;
-            (new WPFWindowExtension(this)).ResizeEnd += new EventHandler(Window_ResizeEnd);
-        }
-
-        private void Window_ResizeEnd(object sender, EventArgs e)
-        {
-            this.Player.Width = this.ActualWidth;
+            Messenger.Default.Send(new OpenMediaMessage(new Media { MediaSource = fileName }));
         }
 
         #endregion
@@ -142,7 +119,6 @@ namespace Zhu.Windows
         protected override void OnClosing(CancelEventArgs e)
         {
             notifyIcon.Dispose();
-            ApiManager.ReleaseAll();
             base.OnClosing(e);
         }
 
@@ -164,7 +140,7 @@ namespace Zhu.Windows
             if (File.Exists(iconPath))
             {
                 notifyIcon = new System.Windows.Forms.NotifyIcon();
-                notifyIcon.Text = Untils.Constants.ApplicationName;
+                notifyIcon.Text = Untils.Constants.ProductName;
                 notifyIcon.Icon = new System.Drawing.Icon(iconPath);
                 notifyIcon.Visible = true;
                 notifyIcon.MouseDoubleClick += NotifyIcon_MouseDoubleClick;
@@ -220,10 +196,9 @@ namespace Zhu.Windows
 
         private void SetWindowFullScreen()
         {
-            MainWindowViewModel vm = this.DataContext as MainWindowViewModel;
-            if (vm != null)
+            if (ViewModel != null)
             {
-                vm.ApplicationState.IsFullScreen = !vm.ApplicationState.IsFullScreen;
+                ViewModel.ApplicationState.IsFullScreen = !ViewModel.ApplicationState.IsFullScreen;
             }
         }
 
@@ -241,10 +216,9 @@ namespace Zhu.Windows
 
         private void TextBox_CreateMediaGroup_LostFocus(object sender, RoutedEventArgs e)
         {
-            var vm = this.DataContext as MainWindowViewModel;
-            if (vm != null)
+            if (ViewModel != null)
             {
-                vm.CreateOrCancelMediaGroupCommand.Execute(null);
+                ViewModel.CreateOrCancelMediaGroupCommand.Execute(null);
             }
         }
 
@@ -257,40 +231,5 @@ namespace Zhu.Windows
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// WPFWindowExtension class
-    /// Reference: WPF Panel resize end event logic
-    /// http://www.meetup.com/NY-Dotnet/messages/2968326/
-    /// </summary>
-    public class WPFWindowExtension
-    {
-        private const int WM_EXITSIZEMOVE = 0x232;
-
-        public EventHandler ResizeEnd = null;
-
-        private readonly Window _owner;
-
-        public WPFWindowExtension(Window owner)
-        {
-            _owner = owner;
-            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(owner).Handle);
-            source.AddHook(new HwndSourceHook(WndProc));
-        }
-
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            if (msg == WM_EXITSIZEMOVE)
-            {
-                //add panel resizeend event logic here
-                if (ResizeEnd != null)
-                    ResizeEnd(_owner, null);
-
-                handled = true;
-            }
-
-            return IntPtr.Zero;
-        }
     }
 }

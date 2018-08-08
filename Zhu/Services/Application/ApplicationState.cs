@@ -14,13 +14,6 @@ namespace Zhu.Services
             
         }
 
-        private bool _isConnectionInError;
-        public bool IsConnectionInError
-        {
-            get { return _isConnectionInError; }
-            set { Set(() => IsConnectionInError, ref _isConnectionInError, value); }
-        }
-
         private bool _isFullScreen;
         public bool IsFullScreen
         {
@@ -28,17 +21,24 @@ namespace Zhu.Services
             set
             {
                 Set(() => IsFullScreen, ref _isFullScreen, value);
-                Messenger.Default.Send(new WindowStateChangeMessage(IsMoviePlaying));
+                Messenger.Default.Send(new WindowStateChangeMessage(IsMediaPlaying));
             }
         }
 
-        private bool _isMoviePlaying;
-        public bool IsMoviePlaying
+        private bool _isConnectionInError;
+        public bool IsConnectionInError
         {
-            get { return _isMoviePlaying; }
+            get { return _isConnectionInError; }
+            set { Set(() => IsConnectionInError, ref _isConnectionInError, value); }
+        }
+
+        private bool _isMediaPlaying;
+        public bool IsMediaPlaying
+        {
+            get { return _isMediaPlaying; }
             set
             {
-                Set(() => IsMoviePlaying, ref _isMoviePlaying, value);
+                Set(() => IsMediaPlaying, ref _isMediaPlaying, value);
                 Messenger.Default.Send(new WindowStateChangeMessage(value));
             }
         }
@@ -69,7 +69,7 @@ namespace Zhu.Services
             IsRootDialogOpen = false;
         }
 
-        public void ShowLoadingDialog(string message = null)
+        public void ShowLoadingDialog(string message = "加载中...")
         {
             SampleLoading loading = new SampleLoading
             {

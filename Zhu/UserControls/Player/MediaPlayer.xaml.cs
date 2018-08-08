@@ -12,393 +12,287 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using Meta.Vlc.Wpf;
 using GalaSoft.MvvmLight.Threading;
+using System.Windows.Media;
+using Unosquare.FFME;
+using System.Linq;
+using Unosquare.FFME.Shared;
+using Zhu.Foundation;
+using Unosquare.FFME.ClosedCaptions;
 
 namespace Zhu.UserControls
 {
     public partial class MediaPlayer : UserControl, IDisposable
     {
+        public MediaPlayerViewModel ViewModel => DataContext as MediaPlayerViewModel;
+
         public MediaPlayer()
         {
             InitializeComponent();
 
-            Loaded += MoviePlayer_Loaded;
+            InitializeMediaPlayer();
+            InitializeMediaEvents();
         }
 
-        protected bool MediaPlayerIsPlaying { get; set; }
+        private static readonly Key[] TogglePlayPauseKeys = new[] { Key.Play, Key.MediaPlayPause, Key.Space };
+        private DateTime LastMouseMoveTime;
+        private Point LastMousePosition;
+        private DispatcherTimer MouseMoveTimer = null;
+        private MediaType StreamCycleMediaType = MediaType.None;
 
-        private void MoviePlayer_Loaded(object sender, RoutedEventArgs e)
+        private void InitializeMediaPlayer()
         {
+            ViewModel.MediaElement = MediaPlayerElement;
+            ViewModel.MediaPlayerLoaded();
+
+            Loaded += OnMediaPlayerLoaded;
+            PreviewKeyDown += OnWindowKeyDown;
+            MouseWheel += OnMouseWheelChange;
+
+            InitializeMouseMoveDetectionForHiding();
+        }
+
+        private void InitializeMouseMoveDetectionForHiding()
+        {
+            var window = Window.GetWindow(this);
+
+            LastMouseMoveTime = DateTime.UtcNow;
+
+            MouseMove += (s, e) =>
+            {
+                var currentPosition = e.GetPosition(window);
+                if (currentPosition.X != LastMousePosition.X || currentPosition.Y != LastMousePosition.Y)
+                    LastMouseMoveTime = DateTime.UtcNow;
+
+                LastMousePosition = currentPosition;
+            };
+
+            MouseLeave += (s, e) =>
+            {
+                LastMouseMoveTime = DateTime.UtcNow.Subtract(TimeSpan.FromSeconds(10));
+            };
+
+            MouseMoveTimer = new DispatcherTimer(DispatcherPriority.Background)
+            {
+                Interval = TimeSpan.FromMilliseconds(150),
+                IsEnabled = true
+            };
+
+            MouseMoveTimer.Tick += (s, e) =>
+            {
+                var elapsedSinceMouseMove = DateTime.UtcNow.Subtract(LastMouseMoveTime);
+                if (elapsedSinceMouseMove.TotalMilliseconds >= 3000 && MediaPlayerElement.IsOpen && ControllerPanel.IsMouseOver == false
+                    && PropertiesPanel.Visibility != Visibility.Visible && ControllerPanel.SoundMenuPopup.IsOpen == false)
+                {
+                    if (ControllerPanel.Opacity != 0d)
+                    {
+                        Cursor = Cursors.None;
+                        var sb = FindResource("HideControlOpacity") as Storyboard;
+                        Storyboard.SetTarget(sb, ControllerPanel);
+                        sb.Begin();
+                    }
+                }
+                else
+                {
+                    if (ControllerPanel.Opacity != 1d)
+                    {
+                        Cursor = Cursors.Arrow;
+                        var sb = FindResource("ShowControlOpacity") as Storyboard;
+                        Storyboard.SetTarget(sb, ControllerPanel);
+                        sb.Begin();
+                    }
+                }
+            };
+
+            MouseMoveTimer.Start();
+        }
+
+        private void InitializeMediaEvents()
+        {
+            // Global FFmpeg message handler
+            Unosquare.FFME.MediaElement.FFmpegMessageLogged += OnMediaFFmpegMessageLogged;
+
+            // MediaElement event bindings
+            MediaPlayerElement.PreviewMouseDoubleClick += OnMediaDoubleClick;
+            MediaPlayerElement.MediaInitializing += OnMediaInitializing;
+            MediaPlayerElement.MediaOpening += OnMediaOpening;
+            MediaPlayerElement.MediaOpened += OnMediaOpened;
+            //MediaPlayerElement.MediaChanging += OnMediaChanging;
+            //MediaPlayerElement.AudioDeviceStopped += OnAudioDeviceStopped;
+            //MediaPlayerElement.MediaChanged += OnMediaChanged;
+            MediaPlayerElement.PositionChanged += OnMediaPositionChanged;
+            MediaPlayerElement.MediaFailed += OnMediaFailed;
+            MediaPlayerElement.MessageLogged += OnMediaMessageLogged;
+
+            // Complex examples of MEdia Rendering Events
+            BindMediaRenderingEvents();
+        }
+
+        #region Window Control and Input Event Handlers
+
+        /// <summary>
+        /// Handles the Loaded event of the MainWindow control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        private void OnMediaPlayerLoaded(object sender, RoutedEventArgs e)
+        {
+            // Remove the event handler reference
+            Loaded -= OnMediaPlayerLoaded;
+
             var window = Window.GetWindow(this);
             if (window != null)
                 window.Closing += (s1, e1) => Dispose();
-
-            var vm = DataContext as MediaPlayerViewModel;
-            if (vm == null) return;
-            vm.StartPlayingMedia += OnStartPlayingMedia;
-            vm.StoppedPlayingMedia += OnStoppedPlayingMedia;
-
-            // start the activity timer used to manage visibility of the PlayerStatusBar
-            ActivityTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
-            ActivityTimer.Tick += OnInactivity;
-            ActivityTimer.Start();
-
-            InputManager.Current.PreProcessInput += OnActivity;
-
-            InitializeVlcPlayer();
         }
 
-        private void OnStartPlayingMedia(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the PreviewKeyDown event of the MainWindow control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
+        private void OnWindowKeyDown(object sender, KeyEventArgs e)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                Messenger.Default.Send(new MediaFlyoutOpenMessage());
-
-                var vm = DataContext as MediaPlayerViewModel;
-                if (vm == null) return;
-                if (vm.Media == null) return;
-                if (vm.Media.MediaSource == null) return;
-                //字幕
-                //if (!string.IsNullOrEmpty(vm.Movie.SelectedSubtitle?.FilePath))
-                //{
-                //    Zhu.LoadMediaWithOptions(vm.Movie.FilePath, $@":sub-file={vm.Movie.SelectedSubtitle?.FilePath}");
-                //}
-                //else
-                //{
-                //    Zhu.LoadMedia(vm.Movie.FilePath);
-                //}
-                Player.Stop();
-                Player.LoadMedia(vm.Media.MediaSource);
-                PlayMedia();
-            });
-        }
-
-        private void OnStoppedPlayingMedia(object sender, EventArgs e)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                if (Player.VlcMediaPlayer.IsPlaying)
-                {
-                    Player.Stop();
-                    MediaPlayerIsPlaying = false;
-                }
-            });
-        }
-
-        #region VlcPlayer
-
-        protected VlcPlayer Player = new VlcPlayer(true);
-
-        private void InitializeVlcPlayer()
-        {
-            string[] vlcOptions = new string[] { "-I", "--dummy-quiet", "--avi-index=1", "--ignore-config", "--no-video-title", "--no-sub-autodetect-file" };
-            string vlcPath = @"..\..\libvlc";
-            Player.Initialize(vlcPath, vlcOptions);
-            MediaShower.Source = Player.VideoSource;
-            Player.VideoSourceChanged += Player_VideoSourceChanged;
-            Player.TimeChanged += Player_TimeChanged;
-            Player.VlcMediaPlayer.Playing += VlcMediaPlayer_Playing;
-            Player.VlcMediaPlayer.Stoped += VlcMediaPlayer_Stoped;
-            Player.VlcMediaPlayer.EndReached += VlcMediaPlayer_EndReached;
-            Player.VlcMediaPlayer.EncounteredError += VlcMediaPlayer_EncounteredError;
-        }
-
-        private void Player_TimeChanged(object sender, EventArgs e)
-        {
-            if ((Player == null) || (UserIsDraggingMediaPlayerSlider)) return;
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {   
-                MediaPlayerSliderProgress.Value = Player.Time.TotalSeconds;
-            });
-        }
-
-        private void Player_VideoSourceChanged(object sender, VideoSourceChangedEventArgs e)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                MediaShower.Source = e.NewVideoSource;
-            });
-        }
-
-        private void VlcMediaPlayer_Playing(object sender, Meta.Vlc.ObjectEventArgs<Meta.Vlc.Interop.Media.MediaState> e)
-        {
-            MediaPlayerIsPlaying = true;
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                MediaPlayerSliderProgress.Minimum = 0;
-                MediaPlayerSliderProgress.Maximum = Player.Length.TotalSeconds;
-            });
-        }
-
-        private async void VlcMediaPlayer_Stoped(object sender, Meta.Vlc.ObjectEventArgs<Meta.Vlc.Interop.Media.MediaState> e)
-        {
-            MediaPlayerIsPlaying = false;
-            var vm = DataContext as MediaPlayerViewModel;
-            await vm.HasSeenMovie();
-        }
-
-        private void VlcMediaPlayer_EndReached(object sender, EventArgs e)
-        {
-            MediaPlayerIsPlaying = false;
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                MediaPlayerStatusBarItemPlay.Visibility = Visibility.Collapsed;
-                MediaPlayerStatusBarItemPause.Visibility = Visibility.Visible;
-                MediaPlayerSliderProgress.Value = 0;
-            });
-        }
-
-        private void VlcMediaPlayer_EncounteredError(object sender, EventArgs e)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                MediaPlayerIsPlaying = false;
-                Messenger.Default.Send(new ManageExceptionMessage(new Exception("媒体错误或者媒体地址未找到！")));
-                Messenger.Default.Send(new MediaFlyoutCloseMessage());
-            });
-        }
-
-        private void DisposeVlcPlayer()
-        {
-            Player.VideoSourceChanged -= Player_VideoSourceChanged;
-            Player.TimeChanged -= Player_TimeChanged;
-            Player.VlcMediaPlayer.Playing -= VlcMediaPlayer_Playing;
-            Player.VlcMediaPlayer.Stoped -= VlcMediaPlayer_Stoped;
-            Player.VlcMediaPlayer.EndReached -= VlcMediaPlayer_EndReached;
-            Player.VlcMediaPlayer.EncounteredError -= VlcMediaPlayer_EncounteredError;
-            Player.Stop();
-            Player.Dispose();
-        }
-
-        #endregion
-
-        #region PlayerStatusBar
-
-        protected DispatcherTimer ActivityTimer { get; set; }
-
-        protected Point InactiveMousePosition { get; set; } = new Point(0, 0);
-
-        private bool _isMouseActivityCaptured;
-
-        private void OnInactivity(object sender, EventArgs e)
-        {
-            InactiveMousePosition = Mouse.GetPosition(PlayerContainer);
-
-            var opacityAnimation = new DoubleAnimationUsingKeyFrames
-            {
-                Duration = new Duration(TimeSpan.FromSeconds(0.5)),
-                KeyFrames = new DoubleKeyFrameCollection
-                {
-                    new EasingDoubleKeyFrame(0.0, KeyTime.FromPercent(1d), new PowerEase
-                    {
-                        EasingMode = EasingMode.EaseInOut
-                    })
-                }
-            };
-
-            PlayerStatusBar.BeginAnimation(OpacityProperty, opacityAnimation);
-            PlayerTopBar.BeginAnimation(OpacityProperty, opacityAnimation);
-        }
-
-        private async void OnActivity(object sender, PreProcessInputEventArgs e)
-        {
-            if (_isMouseActivityCaptured)
+            // Console.WriteLine($"KEY: {e.Key}, SRC: {e.OriginalSource?.GetType().Name}");
+            if (e.OriginalSource is TextBox)
                 return;
 
-            _isMouseActivityCaptured = true;
+            // Keep the key focus on the main window
+            FocusManager.SetIsFocusScope(this, true);
+            FocusManager.SetFocusedElement(this, this);
 
-            var inputEventArgs = e.StagingItem.Input;
-            if (!(inputEventArgs is MouseEventArgs) && !(inputEventArgs is KeyboardEventArgs))
+            if (e.Key == Key.G)
             {
-                _isMouseActivityCaptured = false;
-                return;
-            }
-            var mouseEventArgs = e.StagingItem.Input as MouseEventArgs;
+                // Example of toggling subtitle color
+                if (Subtitles.GetForeground(MediaPlayerElement) == Brushes.LightYellow)
+                    Subtitles.SetForeground(MediaPlayerElement, Brushes.Yellow);
+                else
+                    Subtitles.SetForeground(MediaPlayerElement, Brushes.LightYellow);
 
-            // no button is pressed and the position is still the same as the application became inactive
-            if (mouseEventArgs?.LeftButton == MouseButtonState.Released &&
-                mouseEventArgs.RightButton == MouseButtonState.Released &&
-                mouseEventArgs.MiddleButton == MouseButtonState.Released &&
-                mouseEventArgs.XButton1 == MouseButtonState.Released &&
-                mouseEventArgs.XButton2 == MouseButtonState.Released &&
-                InactiveMousePosition == mouseEventArgs.GetPosition(PlayerContainer))
-            {
-                _isMouseActivityCaptured = false;
                 return;
             }
 
-            var opacityAnimation = new DoubleAnimationUsingKeyFrames
+            // Pause
+            if (TogglePlayPauseKeys.Contains(e.Key) && MediaPlayerElement.IsPlaying)
             {
-                Duration = new Duration(TimeSpan.FromSeconds(0.1)),
-                KeyFrames = new DoubleKeyFrameCollection
-                {
-                    new EasingDoubleKeyFrame(1.0, KeyTime.FromPercent(1.0), new PowerEase
-                    {
-                        EasingMode = EasingMode.EaseInOut
-                    })
-                }
-            };
+                ViewModel.PauseMediaCommand.Execute(null);
+                return;
+            }
 
-            PlayerStatusBar.BeginAnimation(OpacityProperty, opacityAnimation);
-            PlayerTopBar.BeginAnimation(OpacityProperty, opacityAnimation);
+            // Play
+            if (TogglePlayPauseKeys.Contains(e.Key) && MediaPlayerElement.IsPlaying == false)
+            {
+                ViewModel.PlayMediaCommand.Execute(null);
+                return;
+            }
 
-            await Task.Delay(TimeSpan.FromSeconds(1));
-            _isMouseActivityCaptured = false;
+            // Seek to left
+            //if (e.Key == Key.Left)
+            //{
+            //    if (MediaPlayerElement.IsPlaying) await MediaPlayerElement.Pause();
+            //    MediaPlayerElement.Position = Player.PositionPrevious;
+
+            //    return;
+            //}
+
+            // Seek to right
+            //if (e.Key == Key.Right)
+            //{
+            //    if (MediaPlayerElement.IsPlaying) await MediaPlayerElement.Pause();
+            //    //Player.Position = Player.PositionNext;
+
+            //    return;
+            //}
+
+            // Volume Up
+            if (e.Key == Key.Add || e.Key == Key.VolumeUp)
+            {
+                MediaPlayerElement.Volume += 0.05;
+                return;
+            }
+
+            // Volume Down
+            if (e.Key == Key.Subtract || e.Key == Key.VolumeDown)
+            {
+                MediaPlayerElement.Volume -= 0.05;
+                return;
+            }
+
+            // Mute/Unmute
+            if (e.Key == Key.M || e.Key == Key.VolumeMute)
+            {
+                MediaPlayerElement.IsMuted = !MediaPlayerElement.IsMuted;
+                return;
+            }
+
+            // Increase speed
+            if (e.Key == Key.Up)
+            {
+                MediaPlayerElement.SpeedRatio += 0.05;
+                return;
+            }
+
+            // Decrease speed
+            if (e.Key == Key.Down)
+            {
+                MediaPlayerElement.SpeedRatio -= 0.05;
+                return;
+            }
+
+            // Cycle through closed captions
+            if (e.Key == Key.C)
+            {
+                var currentCaptions = (int)MediaPlayerElement.ClosedCaptionsChannel;
+                var nextCaptions = currentCaptions >= (int)CaptionsChannel.CC4 ? CaptionsChannel.CCP : (CaptionsChannel)(currentCaptions + 1);
+                MediaPlayerElement.ClosedCaptionsChannel = nextCaptions;
+                return;
+            }
+
+            // Reset changes
+            if (e.Key == Key.R)
+            {
+                MediaPlayerElement.SpeedRatio = 1.0;
+                MediaPlayerElement.Volume = 1.0;
+                MediaPlayerElement.Balance = 0;
+                MediaPlayerElement.IsMuted = false;
+                ViewModel.Controller.MediaElementZoom = 1.0;
+                return;
+            }
+
+            // Exit fullscreen
+            if (e.Key == Key.Escape)
+            {
+                ViewModel._applicationState.IsFullScreen = false;
+                return;
+            }
         }
 
-        #endregion
-
-        #region PlayerVolume
-
-        public int Volume
+        /// <summary>
+        /// Handles the PreviewMouseDoubleClick event of the Player control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
+        private void OnMediaDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            get { return (int)GetValue(VolumeProperty); }
-
-            set { SetValue(VolumeProperty, value); }
+            if (sender != MediaPlayerElement) return;
+            e.Handled = true;
+            ViewModel._applicationState.IsFullScreen = !ViewModel._applicationState.IsFullScreen;
         }
 
-        internal static readonly DependencyProperty VolumeProperty = DependencyProperty.Register("Volume",
-            typeof(int),
-            typeof(MediaPlayer), new PropertyMetadata(100, OnVolumeChanged));
-
-        private static void OnVolumeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        /// <summary>
+        /// Handles the MouseWheel event of the MainWindow control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="MouseWheelEventArgs"/> instance containing the event data.</param>
+        private void OnMouseWheelChange(object sender, MouseWheelEventArgs e)
         {
-            var moviePlayer = obj as MediaPlayer;
-            if (moviePlayer == null)
+            if (MediaPlayerElement.IsOpen == false || MediaPlayerElement.IsOpening 
+                //|| MediaPlayerElement.IsChanging
+                )
                 return;
 
-            var newVolume = (int)e.NewValue;
-            moviePlayer.ChangeMediaVolume(newVolume);
+            var delta = (e.Delta / 2000d).ToMultipleOf(0.05d);
+            ViewModel.Controller.MediaElementZoom = Math.Round(ViewModel.Controller.MediaElementZoom + delta, 2);
         }
-
-        private void ChangeMediaVolume(int newValue) => Player.Volume = newValue;
-
-        private void PlayerVolumeSlider_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if ((Volume <= 190 && e.Delta > 0) || (Volume >= 10 && e.Delta < 0))
-                Volume += (e.Delta > 0) ? 10 : -10;
-        }
-
-        #endregion
-
-        #region PlayerProgress
-
-        protected bool UserIsDraggingMediaPlayerSlider { get; set; }
-
-        private void MediaPlayerSliderProgress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                MoviePlayerTextProgressStatus.Text =
-                  TimeSpan.FromSeconds(MediaPlayerSliderProgress.Value)
-                      .ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture) + " / " +
-                  TimeSpan.FromSeconds(Player.Length.TotalSeconds)
-                      .ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture);
-            });
-        }
-
-        protected void MediaPlayerSliderProgress_DragStarted(object sender, DragStartedEventArgs e) => UserIsDraggingMediaPlayerSlider = true;
-
-        private void MediaPlayerSliderProgress_DragCompleted(object sender, DragCompletedEventArgs e)
-        {
-            UserIsDraggingMediaPlayerSlider = false;
-            Player.Time = TimeSpan.FromSeconds(MediaPlayerSliderProgress.Value);
-        }
-
-        private void MediaPlayerSliderProgress_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {                      
-            Player.Time = TimeSpan.FromSeconds(((Slider)sender).Value);
-        }
-
-        private void MediaPlayerSliderProgress_MouseMove(object sender, MouseEventArgs e)
-        {
-            var rate = e.GetPosition(MediaPlayerSliderProgress).X / MediaPlayerSliderProgress.ActualWidth;
-            MediaPlayerSliderProgress.ToolTip = TimeSpan.FromSeconds(MediaPlayerSliderProgress.Maximum * rate).ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture);
-        }
-
-        private void MediaPlayerSliderProgress_MouseEnter(object sender, MouseEventArgs e)
-        {
-            UserIsDraggingMediaPlayerSlider = true;
-        }
-
-        private void MediaPlayerSliderProgress_MouseLeave(object sender, MouseEventArgs e)
-        {
-            UserIsDraggingMediaPlayerSlider = false;
-        }
-
-        #endregion
-
-        #region PlayMedia
-
-        private void PlayMedia()
-        {
-            Player.Play();
-            if (Player.VlcMediaPlayer.CanPlay)
-            {
-                MediaPlayerIsPlaying = true;
-
-                MediaPlayerStatusBarItemPlay.Visibility = Visibility.Collapsed;
-                MediaPlayerStatusBarItemPause.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Messenger.Default.Send(new MediaSourcePlayDialogOpenMessage());
-            }
-        }
-
-        private void MediaPlayerPlayCanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (MediaPlayerStatusBarItemPlay == null || MediaPlayerStatusBarItemPause == null) return;
-            e.CanExecute = Player != null;
-
-            if (MediaPlayerIsPlaying)
-            {
-                MediaPlayerStatusBarItemPlay.Visibility = Visibility.Collapsed;
-                MediaPlayerStatusBarItemPause.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                MediaPlayerStatusBarItemPlay.Visibility = Visibility.Visible;
-                MediaPlayerStatusBarItemPause.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void MediaPlayerPlayExecuted(object sender, ExecutedRoutedEventArgs e) => PlayMedia();
-
-        #endregion
-
-        #region PauseMedia
-
-        private void PauseMedia()
-        {
-            Player.Pause();
-            if (Player.VlcMediaPlayer.CanPause)
-            {
-                MediaPlayerIsPlaying = false;
-
-                MediaPlayerStatusBarItemPlay.Visibility = Visibility.Visible;
-                MediaPlayerStatusBarItemPause.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void MediaPlayerPauseCanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (MediaPlayerStatusBarItemPlay == null || MediaPlayerStatusBarItemPause == null) return;
-            e.CanExecute = MediaPlayerIsPlaying;
-            if (MediaPlayerIsPlaying)
-            {
-                MediaPlayerStatusBarItemPlay.Visibility = Visibility.Collapsed;
-                MediaPlayerStatusBarItemPause.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                MediaPlayerStatusBarItemPlay.Visibility = Visibility.Visible;
-                MediaPlayerStatusBarItemPause.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void MediaPlayerPauseExecuted(object sender, ExecutedRoutedEventArgs e) => PauseMedia();
 
         #endregion
 
@@ -411,29 +305,11 @@ namespace Zhu.UserControls
             if (Disposed)
                 return;
 
-            Loaded -= MoviePlayer_Loaded;
-
-            if (ActivityTimer != null)
-            {
-                ActivityTimer.Tick -= OnInactivity;
-                ActivityTimer.Stop();
-            }
-
-            InputManager.Current.PreProcessInput -= OnActivity;
-
-            MediaPlayerIsPlaying = false;
-
-            DisposeVlcPlayer();
-
-            var vm = DataContext as MediaPlayerViewModel;
-            if (vm != null)
-                vm.StoppedPlayingMedia -= OnStoppedPlayingMedia;
-                vm.StartPlayingMedia -= OnStartPlayingMedia;
+            Loaded -= OnMediaPlayerLoaded;
 
             Disposed = true;
 
-            if (disposing)
-                GC.SuppressFinalize(this);
+            if (disposing) GC.SuppressFinalize(this);
         }
 
         public void Dispose() => Dispose(true);

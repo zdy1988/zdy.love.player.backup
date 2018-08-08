@@ -11,13 +11,13 @@
         xmlns:Controls="clr-namespace:Zhu.Controls"
         xmlns:HomePage="clr-namespace:Zhu.UserControls.Home"
         xmlns:MediaPage="clr-namespace:Zhu.UserControls.Home.Media"
-        xmlns:Models="clr-namespace:Zhu.Models"
         mc:Ignorable="d"
+        x:Name="PlayerWindow"
         Icon="/favicon.ico"
         Title="ZDY ' LOVE - 以为能用爱去异想天开..." Height="800" Width="1100"
-        MinWidth="1020"
-        BorderThickness="5"
+        MinWidth="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={Converters:RatioConverter}, ConverterParameter='0.5'}"
         MinHeight="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={Converters:RatioConverter}, ConverterParameter='0.5'}"
+        BorderThickness="5"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -30,8 +30,7 @@
         SizeToContent="Manual"
         AllowsTransparency="True"
         FontFamily="{StaticResource MaterialDesignFont}" 
-        ResizeMode="CanResizeWithGrip"
-        KeyDown="Window_KeyDown">
+        ResizeMode="CanResizeWithGrip">
     <Window.Resources>
         <ResourceDictionary>
             <ContextMenu x:Key="NotifyIconMenu" StaysOpen="False">
@@ -61,10 +60,10 @@
                                AllowDrop="True"
                                DragEnter="PlayerMain_DragEnter" 
                                Drop="PlayerMain_Drop">
-        <MaterialDesign:DrawerHost IsRightDrawerOpen="{Binding IsMovieFlyoutOpen}">
+        <MaterialDesign:DrawerHost IsRightDrawerOpen="{Binding IsMediaPlayerFlyoutOpen}">
             <MaterialDesign:DrawerHost.RightDrawerContent>
                 <Grid x:Name="Player">
-                    <UserControls:MediaPlayer/>
+                    <UserControls:MediaPlayer x:Name="MediaPlayer"/>
                 </Grid>
             </MaterialDesign:DrawerHost.RightDrawerContent>
             <DockPanel>
@@ -83,7 +82,7 @@
                                     <Setter Property="Height" Value="20"></Setter>
                                 </Style>
                             </StackPanel.Resources>
-                            <Button x:Name="Menu" ToolTip="菜单" Command="{Binding ToggleMoviePalyerCommand}">
+                            <Button x:Name="Menu" ToolTip="菜单" Command="{Binding ToggleMediaPalyerCommand}">
                                 <MaterialDesign:PackIcon Kind="Menu" />
                             </Button>
                             <Button x:Name="WindowMinimized" ToolTip="最小化" Click="WindowMinimized_Click">
@@ -101,7 +100,7 @@
                                 Margin="12 0 0 0 "
                                 VerticalAlignment="Center"  
                                 HorizontalAlignment="Left"
-                                Command="{Binding ToggleMoviePalyerCommand}">
+                                Command="{Binding ToggleMediaPalyerCommand}">
                             ZDY ' LOVE
                         </Button>
                     </DockPanel>
@@ -216,7 +215,7 @@
                                     <StackPanel Grid.Row="3">
                                         <TextBox MaterialDesign:HintAssist.Hint="标签名称" x:Name="TextBox_CreateMediaGroup"
                                                  Margin="36 0 8 20"
-                                                 Visibility="{Binding IsCreateMeidaGroup, Converter={Converters:BoolToInverseVisibilityConverter}}"
+                                                 Visibility="{Binding IsCreateMeidaGroup, Converter={StaticResource BoolToInverseVisibilityConverter}}"
                                                  Text="{Binding TempMeidaGroupName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                  IsVisibleChanged="TextBox_CreateMediaGroup_IsVisibleChanged"
                                                  LostFocus="TextBox_CreateMediaGroup_LostFocus"

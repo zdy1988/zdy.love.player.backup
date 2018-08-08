@@ -140,7 +140,7 @@ namespace Zhu.ViewModels.Pages
         {
             RepalySeenMediaCommand = new RelayCommand<SeenListItemViewModel>((seen) =>
             {
-                Messenger.Default.Send(new LoadMediaMessage(new Media
+                Messenger.Default.Send(new OpenMediaMessage(new Media
                 {
                     ID = seen.MediaID,
                     Title = seen.Title,

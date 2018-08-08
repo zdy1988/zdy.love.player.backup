@@ -41,11 +41,11 @@ namespace Zhu.ViewModels.Main
 
         private IGroupMemberService _groupMemberService;
 
-        private bool _isMovieFlyoutOpen = true;
-        public bool IsMovieFlyoutOpen
+        private bool _isMediaPlayerFlyoutOpen = true;
+        public bool IsMediaPlayerFlyoutOpen
         {
-            get { return _isMovieFlyoutOpen; }
-            set { Set(() => IsMovieFlyoutOpen, ref _isMovieFlyoutOpen, value); }
+            get { return _isMediaPlayerFlyoutOpen; }
+            set { Set(() => IsMediaPlayerFlyoutOpen, ref _isMediaPlayerFlyoutOpen, value); }
         }
 
         private int _tabSelectedIndex = 0;
@@ -130,30 +130,25 @@ namespace Zhu.ViewModels.Main
 
         private void RegisterMessages()
         {
-            Messenger.Default.Register<MediaFlyoutOpenMessage>(this, e =>
-            {
-                IsMovieFlyoutOpen = true;
+            Messenger.Default.Register<MediaFlyoutOpenMessage>(this, e => {
+                if (IsMediaPlayerFlyoutOpen == false)
+                {
+                    IsMediaPlayerFlyoutOpen = true;
+                }
             });
-            Messenger.Default.Register<MediaFlyoutCloseMessage>(this, e =>
-            {
-                IsMovieFlyoutOpen = false;
+            Messenger.Default.Register<MediaFlyoutCloseMessage>(this, e => {
+                if (IsMediaPlayerFlyoutOpen == true)
+                {
+                    IsMediaPlayerFlyoutOpen = false;
+                }
             });
-            Messenger.Default.Register<ManageExceptionMessage>(this, e =>
-            {
-                MessageNotice?.Invoke(this, e.UnHandledException.Message);
-            });
-            Messenger.Default.Register<RefreshMediaGroupListMessage>(this, async (e) =>
-            {
-                await LoadMediaGroup();
-            });
+            Messenger.Default.Register<ManageExceptionMessage>(this, e => MessageNotice?.Invoke(this, e.UnHandledException.Message));
+            Messenger.Default.Register<RefreshMediaGroupListMessage>(this, async (e) => await LoadMediaGroup());
             //Dialog Message
-            Messenger.Default.Register<MediaSourcePlayDialogOpenMessage>(this, (e) =>
-            {
-                MediaSourcePlayDialogOpenCommand.Execute(null);
-            });
+            Messenger.Default.Register<MediaSourcePlayDialogOpenMessage>(this, (e) => MediaSourcePlayDialogOpenCommand.Execute(null));
         }
 
-        public RelayCommand ToggleMoviePalyerCommand { get; private set; }
+        public RelayCommand ToggleMediaPalyerCommand { get; private set; }
 
         public RelayCommand MediaSourcePlayDialogOpenCommand { get; private set; }
 
@@ -171,10 +166,7 @@ namespace Zhu.ViewModels.Main
 
         private void RegisterCommands()
         {
-            ToggleMoviePalyerCommand = new RelayCommand(() =>
-            {
-                IsMovieFlyoutOpen = !IsMovieFlyoutOpen;
-            });
+            ToggleMediaPalyerCommand = new RelayCommand(() => IsMediaPlayerFlyoutOpen = !IsMediaPlayerFlyoutOpen);
 
             MediaSourcePlayDialogOpenCommand = new RelayCommand(() =>
             {

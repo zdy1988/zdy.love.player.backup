@@ -26,7 +26,7 @@
                     <ProgressBar.Visibility>
                         <MultiBinding Converter="{Converters:MultiBooleanToVisibilityConverter}" ConverterParameter="AND">
                             <Binding Path="IsDataLoading"/>
-                            <Binding Converter="{Converters:BoolToInverseBoolConverter}" 
+                            <Binding Converter="{StaticResource BoolToInverseBoolConverter}" 
                                      Path="HasLoadingFailed"/>
                         </MultiBinding>
                     </ProgressBar.Visibility>
