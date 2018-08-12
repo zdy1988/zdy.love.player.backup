@@ -30,7 +30,7 @@
                         </Button>
                         <Button ToolTip="导入网媒"
                                     BorderBrush="Transparent"
-                                    Command="{Binding ImportNetworkMediaDialogOpenCommand}"
+                                    Command="{Binding ImportNetworkStreamDialogOpenCommand}"
                                     Background="{DynamicResource PrimaryHueMidBrush}"
                                     Foreground="{DynamicResource PrimaryHueMidForegroundBrush}">
                             <MaterialDesign:PackIcon Kind="FileImport" />

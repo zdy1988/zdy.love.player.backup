@@ -8,12 +8,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Zhu.Messaging;
 using Zhu.Models;
 using Zhu.Services;
+using Zhu.Untils;
 using Zhu.ViewModels.Reused;
 
 namespace Zhu.ViewModels.Dialogs
@@ -49,11 +51,18 @@ namespace Zhu.ViewModels.Dialogs
             set { Set(() => ScaningTootips, ref _scaningTootips, value); }
         }
 
-        private bool _isHasData;
+        private bool _isHasData = false;
         public bool IsHasData
         {
             get { return _isHasData; }
             set { Set(() => IsHasData, ref _isHasData, value); }
+        }
+
+        private bool _isImportToMovie = false;
+        public bool IsImportToMovie
+        {
+            get { return _isImportToMovie; }
+            set { Set(() => IsImportToMovie, ref _isImportToMovie, value); }
         }
 
         private List<Tuple<Media, ListItemIsSelectViewModel>> _medias = new List<Tuple<Media, ListItemIsSelectViewModel>>();
@@ -77,27 +86,56 @@ namespace Zhu.ViewModels.Dialogs
                 {
                     string foldPath = dialog.SelectedPath;
 
+                    DirectorySecurity security = new DirectorySecurity(foldPath, AccessControlSections.Access);
+                    if (security.AreAccessRulesProtected)
+                    {
+                        Messenger.Default.Send(new ManageExceptionMessage(new Exception($" {foldPath} 没有访问权限！")));
+                        return;
+                    }
+
                     TransitionerIndex = 1;
+                    IsImportToMovie = false;
 
                     Medias = await Task.Run(async () =>
                     {
-                        DirectoryInfo theFolder = new DirectoryInfo(foldPath);
-                        FileInfo[] dirInfo = new FileInfo[] { };
-                        try
+                        DispatcherHelper.CheckBeginInvokeOnUI(() => ScaningTootips = "开始分析目录...");
+
+                        await Task.Delay(1000);
+
+                        List<FileInfo> fileInfos = new List<FileInfo>();
+                        List<string> filePaths = new List<string>();
+                        DictionaryHelper.GetFiles(foldPath, filePaths);
+
+                        foreach (var filePath in filePaths)
                         {
-                            dirInfo = theFolder.GetFiles("*", SearchOption.AllDirectories);
+                            try
+                            {
+                                DirectorySecurity directorySecurity = new DirectorySecurity(filePath, AccessControlSections.Access);
+                                if (!directorySecurity.AreAccessRulesProtected)
+                                {
+                                    FileInfo fileInfo = new FileInfo(filePath);
+                                    fileInfos.Add(fileInfo);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.Error(e);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            Logger.Error(e);
-                        }
+
+                        DispatcherHelper.CheckBeginInvokeOnUI(() => ScaningTootips = "开始分析文件...");
+
+                        await Task.Delay(1000);
+
                         List<Tuple<Media, ListItemIsSelectViewModel>> medias = new List<Tuple<Media, ListItemIsSelectViewModel>>();
 
                         //遍历文件
-                        foreach (FileInfo file in dirInfo)
+                        foreach (FileInfo file in fileInfos)
                         {
                             if (Untils.Constants.IsValidVedioFormat(file.Extension))
                             {
+                                await Task.Delay(100);
+
                                 //大文件计算MD5太慢，暂用这个代替，之后用来检测文件唯一性
                                 var md5 = Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FullName.ToLower()));
 
@@ -119,14 +157,9 @@ namespace Zhu.ViewModels.Dialogs
 
                                 medias.Add(new Tuple<Media, ListItemIsSelectViewModel>(media, new ListItemIsSelectViewModel { IsSelected = true }));
 
-                                DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                                {
-                                    ScaningTootips = file.FullName;
-                                });
+                                DispatcherHelper.CheckBeginInvokeOnUI(() => ScaningTootips = file.FullName);
                             }
                         }
-
-                        await Task.Delay(1000);
 
                         return medias;
                     }).ConfigureAwait(false);
@@ -140,10 +173,11 @@ namespace Zhu.ViewModels.Dialogs
 
             ImportMediaFileDataCommand = new RelayCommand(async () =>
             {
-
                 if (Medias.Count() > 0)
                 {
                     _applicationState.ShowLoadingDialog();
+
+                    int count = 0;
 
                     await Task.Run(async () =>
                     {
@@ -152,6 +186,12 @@ namespace Zhu.ViewModels.Dialogs
                             //重复的文件不插入
                             if (await _mediaService.GetEntitiesCountAsync(t => t.MD5 == media.Item1.MD5) <= 0)
                             {
+                                if (IsImportToMovie)
+                                {
+                                    media.Item1.MediaType = (int)PubilcEnum.MediaType.Movie;
+                                }
+
+                                count++;
                                 await _mediaService.InsertAsync(media.Item1);
                             }
                         }
@@ -159,11 +199,10 @@ namespace Zhu.ViewModels.Dialogs
 
                     _applicationState.HideLoadingDialog();
 
-                    Messenger.Default.Send(new ManageExceptionMessage(new Exception($"成功加入 {Medias.Count} 个本地视频数据！")));
+                    Messenger.Default.Send(new ManageExceptionMessage(new Exception($"排除重复项后成功保存 {count} 个本地视频数据！")));
 
                     Messenger.Default.Send(new RefreshVideoListMessage());
                 }
-
             });
         }
     }

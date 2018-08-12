@@ -324,8 +324,8 @@
     </Compile>
     <Compile Include="UserControls\Layout\ContentPane.cs" />
     <Compile Include="UserControls\Layout\DialogPane.cs" />
-    <Compile Include="UserControls\Home\Dialogs\ImportNetworkMediaDialog.xaml.cs">
-      <DependentUpon>ImportNetworkMediaDialog.xaml</DependentUpon>
+    <Compile Include="UserControls\Home\Dialogs\ImportNetworkStreamDialog.xaml.cs">
+      <DependentUpon>ImportNetworkStreamDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Home\Dialogs\ScanMediaFileDialog.xaml.cs">
       <DependentUpon>ScanMediaFileDialog.xaml</DependentUpon>
@@ -358,7 +358,7 @@
     <Compile Include="ValidationRules\FileExistsValidationRule.cs" />
     <Compile Include="ValidationRules\IsUriValidationRule.cs" />
     <Compile Include="ValidationRules\NotEmptyValidationRule.cs" />
-    <Compile Include="ViewModels\Dialogs\ImportNetworkMediaDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\ImportNetworkStreamDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\JoinTheMediaGroupDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\ScanMediaFileDialogViewModel.cs" />
     <Compile Include="ViewModels\Main\MainWindowViewModel.cs" />
@@ -387,7 +387,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\ImageLoading.xaml">
+    <Page Include="Resources\ImageStates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -515,7 +515,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UserControls\Home\Dialogs\ImportNetworkMediaDialog.xaml">
+    <Page Include="UserControls\Home\Dialogs\ImportNetworkStreamDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -546,6 +546,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Resource Include="Resources\Images\video.png" />
+    <Resource Include="Resources\Images\tv.jpg" />
     <Resource Include="Resources\Images\1.jpg" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -573,8 +575,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\Chartridge046_small.jpg" />
-    <Resource Include="Resources\Images\Contact.png" />
     <Resource Include="Resources\Images\ProfilePic.jpg" />
   </ItemGroup>
   <ItemGroup>

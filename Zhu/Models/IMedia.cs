@@ -76,11 +76,11 @@ namespace Zhu.Models
         /// <summary>
         /// 评分
         /// </summary>
-        int? Rating { get; set; }
+        int Rating { get; set; }
         /// <summary>
         /// 是否最喜欢的
         /// </summary>
-        Boolean? IsFavorite { get; set; }
+        Boolean IsFavorite { get; set; }
         /// <summary>
         /// 录入时间
         /// </summary>

@@ -95,7 +95,7 @@
                                             <TextBlock>打开视频媒体</TextBlock>
                                         </StackPanel>
                                     </Button>
-                                    <Button Command="{Binding ImportNetworkMediaDialogOpenCommand}">
+                                    <Button Command="{Binding ImportNetworkStreamDialogOpenCommand}">
                                         <StackPanel Orientation="Horizontal">
                                             <MaterialDesign:PackIcon Kind="Import"></MaterialDesign:PackIcon>
                                             <TextBlock>导入网络媒体</TextBlock>
@@ -103,7 +103,7 @@
                                     </Button>
                                     <Button Command="{Binding ScanMediaFileDialogOpenCommand}">
                                         <StackPanel Orientation="Horizontal">
-                                            <MaterialDesign:PackIcon Kind="Import"></MaterialDesign:PackIcon>
+                                            <MaterialDesign:PackIcon Kind="Scanner"></MaterialDesign:PackIcon>
                                             <TextBlock>扫描本地文件</TextBlock>
                                         </StackPanel>
                                     </Button>
@@ -230,8 +230,8 @@
                                              SelectedIndex="{Binding TabSelectedIndex}" 
                                              ItemTemplate="{StaticResource ListItemTemplate}">
                                         <MainType:TabItem Title="影视时光" Icon="Blender"/>
-                                        <MainType:TabItem Title="我的视频" Icon="AirPlay"/>
                                         <MainType:TabItem Title="我的电影" Icon="Movie"/>
+                                        <MainType:TabItem Title="我的视频" Icon="AirPlay"/>
                                         <MainType:TabItem Title="网络电视" Icon="Cast"/>
                                         <MainType:TabItem Title="播放历史" Icon="CameraTimer"/>
                                         <MainType:TabItem Title="我喜欢的" Icon="HeartPulse"/>
@@ -295,8 +295,8 @@
                     <MaterialDesign:Transitioner SelectedIndex="{Binding TabSelectedIndex}" 
                                                  AutoApplyTransitionOrigins="True" Grid.RowSpan="2" Grid.Column="1">
                         <HomePage:Index/>
-                        <MediaPage:MyVideos />
                         <MediaPage:MyMoives />
+                        <MediaPage:MyVideos />
                         <MediaPage:MyNetTV />
                         <MediaPage:SeenHistory />
                         <MediaPage:MyFavorite />

@@ -14,10 +14,11 @@ using Zhu.Messaging;
 using Zhu.Models;
 using Zhu.Services;
 using Zhu.Untils;
+using Zhu.ViewModels.Reused;
 
 namespace Zhu.ViewModels.Dialogs
 {
-    public class ImportNetworkMediaDialogViewModel : ViewModelBase
+    public class ImportNetworkStreamDialogViewModel : ViewModelBase
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -46,14 +47,14 @@ namespace Zhu.ViewModels.Dialogs
             set { Set(() => IsHasData, ref _isHasData, value); }
         }
 
-        private List<Media> _medias = new List<Media>();
-        public List<Media> Medias
+        private List<Tuple<Media, ListItemIsSelectViewModel>> _medias = new List<Tuple<Media, ListItemIsSelectViewModel>>();
+        public List<Tuple<Media, ListItemIsSelectViewModel>> Medias
         {
             get { return _medias; }
             set { Set(() => Medias, ref _medias, value); }
         }
 
-        public ImportNetworkMediaDialogViewModel(IApplicationState applicationState,
+        public ImportNetworkStreamDialogViewModel(IApplicationState applicationState,
             IMediaService mediaService)
         {
             _applicationState = applicationState;
@@ -64,7 +65,7 @@ namespace Zhu.ViewModels.Dialogs
 
         public RelayCommand ReadMediaSourceFileCommand { get; private set; }
 
-        public RelayCommand ImportMediaSourceCommand { get; private set; }
+        public RelayCommand ImportNetworkStreamCommand { get; private set; }
 
         private void RegisterCommands()
         {
@@ -80,20 +81,23 @@ namespace Zhu.ViewModels.Dialogs
 
                     Medias = await Task.Run(async () =>
                     {
-                        List<Media> medias = new List<Media>();
+                        List<Tuple<Media, ListItemIsSelectViewModel>> medias = new List<Tuple<Media, ListItemIsSelectViewModel>>();
 
                         StreamReader sr = new StreamReader(filePath, Encoding.Default);
                         string line;
                         while ((line = await sr.ReadLineAsync()) != null)
                         {
-                            if (line.IndexOf(",") != -1)
+                            if (line.IndexOf("|") != -1)
                             {
-                                string[] item = line.Split(',');
+                                string[] item = line.Split('|');
 
                                 await Task.Delay(100);
 
+                                var md5 = Convert.ToBase64String(Encoding.UTF8.GetBytes(item[1].ToLower()));
+
                                 var media = new Media
                                 {
+                                    MD5 = md5,
                                     Title = item[0],
                                     MediaType = (int)PubilcEnum.MediaType.NetTV,
                                     MediaSource = item[1],
@@ -103,12 +107,9 @@ namespace Zhu.ViewModels.Dialogs
                                     UpdateDate = DateTime.Now
                                 };
 
-                                medias.Add(media);
+                                medias.Add(new Tuple<Media, ListItemIsSelectViewModel>(media, new ListItemIsSelectViewModel { IsSelected = true }));
 
-                                DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                                {
-                                    ScaningTootips = item[0];
-                                });
+                                DispatcherHelper.CheckBeginInvokeOnUI(() => ScaningTootips = item[0]);
                             }
                         }
 
@@ -122,23 +123,29 @@ namespace Zhu.ViewModels.Dialogs
                 }
             });
 
-            ImportMediaSourceCommand = new RelayCommand(async () =>
+            ImportNetworkStreamCommand = new RelayCommand(async () =>
             {
                 if (Medias.Count() > 0)
                 {
                     _applicationState.ShowLoadingDialog();
 
+                    int count = 0;
+
                     await Task.Run(async () =>
                     {
                         foreach (var media in Medias)
                         {
-                            await _mediaService.InsertAsync(media);
+                            if (await _mediaService.GetEntitiesCountAsync(t => t.MD5 == media.Item1.MD5) <= 0)
+                            {
+                                count++;
+                                await _mediaService.InsertAsync(media.Item1);
+                            }
                         }
                     });
 
                     _applicationState.HideLoadingDialog();
 
-                    Messenger.Default.Send(new ManageExceptionMessage(new Exception($"成功导入 {Medias.Count} 条网络视频源！")));
+                    Messenger.Default.Send(new ManageExceptionMessage(new Exception($"排除重复项后成功导入 {count} 条网络视数据！")));
 
                     Messenger.Default.Send(new RefreshNetTVListMessage());
                 }

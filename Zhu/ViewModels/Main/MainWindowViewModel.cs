@@ -162,7 +162,7 @@ namespace Zhu.ViewModels.Main
 
         public RelayCommand ScanMediaFileDialogOpenCommand { get; private set; }
 
-        public RelayCommand ImportNetworkMediaDialogOpenCommand { get; private set; }
+        public RelayCommand ImportNetworkStreamDialogOpenCommand { get; private set; }
 
         public RelayCommand PreCreateMediaGroupCommand { get; private set; }
 
@@ -199,11 +199,11 @@ namespace Zhu.ViewModels.Main
             });
 
             // 打开导入网络媒体窗口
-            ImportNetworkMediaDialogOpenCommand = new RelayCommand(() =>
+            ImportNetworkStreamDialogOpenCommand = new RelayCommand(() =>
             {
-                var dialog = new ImportNetworkMediaDialog
+                var dialog = new ImportNetworkStreamDialog
                 {
-                    DataContext = new ImportNetworkMediaDialogViewModel(_applicationState, _mediaService)
+                    DataContext = new ImportNetworkStreamDialogViewModel(_applicationState, _mediaService)
                 };
 
                 _applicationState.ShowDialog(dialog);

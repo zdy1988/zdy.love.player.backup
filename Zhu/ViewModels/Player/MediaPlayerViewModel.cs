@@ -118,10 +118,8 @@ namespace Zhu.ViewModels.Player
             CloseMediaCommand = new RelayCommand(async () =>
             {
                 _applicationState.ShowLoadingDialog();
-
                 await MediaElement.Close();
-
-                await Task.Delay(TimeSpan.FromSeconds(3)).ContinueWith(t =>
+                await Task.Delay(TimeSpan.FromSeconds(3)).ContinueWith(async (t) =>
                 {
                     _applicationState.HideLoadingDialog();
                     Messenger.Default.Send(new MediaFlyoutCloseMessage());

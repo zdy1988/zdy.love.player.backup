@@ -70,7 +70,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="10 20 0 0"
+                                <Grid Margin="10 20 0 20"
                                       RenderOptions.BitmapScalingMode="HighQuality"
                                       RenderOptions.ClearTypeHint="Enabled"
                                       TextOptions.TextRenderingMode="ClearType">
@@ -111,7 +111,7 @@
                                                 Cursor="Hand" 
                                                 HorizontalAlignment="Left"
                                                 Command="{x:Static MaterialDesign:Transitioner.MoveNextCommand}">
-                                            <TextBlock Text="{Binding Item1.Title}" ToolTip="{Binding Item1.Title}" ></TextBlock>
+                                            <TextBlock Text="{Binding Item1.Title}" FontWeight="Normal" ToolTip="{Binding Item1.Title}" ></TextBlock>
                                         </Button>
                                         <TextBlock Margin="3 0 2 0" Style="{StaticResource MaterialDesignBody1TextBlock}" Text="{Binding Item1.Actors}" FontSize="12" Opacity="0.6"></TextBlock>
                                         <DockPanel>

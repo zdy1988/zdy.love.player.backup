@@ -79,7 +79,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid  Margin="10 20 0 0"
+                                <Grid  Margin="10 20 0 20"
                                        RenderOptions.BitmapScalingMode="HighQuality"
                                        RenderOptions.ClearTypeHint="Enabled"
                                        TextOptions.TextRenderingMode="ClearType">
@@ -119,7 +119,7 @@
                                                 Margin="-2 0" 
                                                 Cursor="Hand" 
                                                 HorizontalAlignment="Left">
-                                            <TextBlock Text="{Binding Item1.Title}" ToolTip="{Binding Item1.Title}" ></TextBlock>
+                                            <TextBlock Text="{Binding Item1.Title}" FontWeight="Normal" ToolTip="{Binding Item1.Title}" ></TextBlock>
                                         </Button>
                                         <DockPanel>
                                             <Viewbox Height="16" DockPanel.Dock="Left">
@@ -132,9 +132,11 @@
                                                     MaterialDesign:RippleAssist.IsCentered="True" ToolTip="信息">
                                                     <MaterialDesign:PackIcon Kind="ShareVariant" />
                                                 </Button>
-                                                <ToggleButton Style="{StaticResource MaterialDesignActionAccentToggleButton}" Background="Transparent"
-                                                          Width="30" Padding="2 0 2 0" Opacity="0.7" ToolTip="喜欢"
-                                                          MaterialDesign:RippleAssist.IsCentered="True" IsChecked="{Binding Item1.IsFavorite}" >
+                                                <ToggleButton Style="{StaticResource MaterialDesignActionAccentToggleButton}" 
+                                                              Background="Transparent"
+                                                              Width="30" Padding="2 0 2 0" Opacity="0.7" ToolTip="喜欢"
+                                                              MaterialDesign:RippleAssist.IsCentered="True" 
+                                                              IsChecked="{Binding Item1.IsFavorite}">
                                                     <ToggleButton.Content>
                                                         <MaterialDesign:PackIcon Kind="Heart" Width="18" Height="18"/>
                                                     </ToggleButton.Content>

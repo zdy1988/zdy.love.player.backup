@@ -39,21 +39,35 @@ namespace Zhu.AttachedProperties
 
         private static ResourceDictionary imageStateResourceDictionary = new ResourceDictionary
         {
-            Source = new Uri("Zhu;component/Resources/ImageLoading.xaml", UriKind.Relative)
+            Source = new Uri("Zhu;component/Resources/ImageStates.xaml", UriKind.Relative)
         };
 
         public static ImageSource GetLoadingImageResource()
         {
-            var loadingImage = imageStateResourceDictionary["ImageLoading"] as DrawingImage;
-            loadingImage.Freeze();
-            return loadingImage;
+            var thumbnail = imageStateResourceDictionary["ImageLoading"] as DrawingImage;
+            thumbnail.Freeze();
+            return thumbnail;
         }
 
         public static ImageSource GetErrorImageResource()
         {
-            var errorThumbnail = imageStateResourceDictionary["ImageError"] as DrawingImage;
-            errorThumbnail.Freeze();
-            return errorThumbnail;
+            var thumbnail = imageStateResourceDictionary["ImageError"] as DrawingImage;
+            thumbnail.Freeze();
+            return thumbnail;
+        }
+
+        public static ImageSource GetDefaultNetTVImageResource()
+        {
+            var thumbnail = imageStateResourceDictionary["DefaultNetTVImage"] as DrawingImage;
+            thumbnail.Freeze();
+            return thumbnail;
+        }
+
+        public static ImageSource GetDefaultVideoImageResource()
+        {
+            var thumbnail = imageStateResourceDictionary["DefaultVideoImage"] as DrawingImage;
+            thumbnail.Freeze();
+            return thumbnail;
         }
 
         #endregion
@@ -136,7 +150,7 @@ namespace Zhu.AttachedProperties
             var path = e.NewValue as string;
             if (string.IsNullOrEmpty(path))
             {
-                image.SetImageError(imageType);
+                image.SetImageError(imageType, imageSubType);
                 return;
             }
 
@@ -233,7 +247,7 @@ namespace Zhu.AttachedProperties
                 catch (Exception ex)
                 {
                     Logger.Error(ex);
-                    image.SetImageError(imageType);
+                    image.SetImageError(imageType, imageSubType);
                 }
 
             }).ConfigureAwait(false);
@@ -275,7 +289,7 @@ namespace Zhu.AttachedProperties
             });
         }
 
-        public static void SetImageError(this Image image, ImageType imageType)
+        public static void SetImageError(this Image image, ImageType imageType,ImageSubType imageSubType)
         {
             image.RenderTransform = new TransformGroup();
 
@@ -283,10 +297,21 @@ namespace Zhu.AttachedProperties
             {
                 if (imageType == ImageType.Thumbnail)
                 {
-                    var errorImage = ImageAsyncHelper.GetErrorImageResource();
                     image.RenderTransformOrigin = new Point(0.5d, 0.5d);
                     image.Stretch = Stretch.None;
-                    image.Source = errorImage;
+
+                    switch (imageSubType)
+                    {
+                        case ImageSubType.NetTV:
+                            image.Source = ImageAsyncHelper.GetDefaultNetTVImageResource();
+                            break;
+                        case ImageSubType.Video:
+                            image.Source = ImageAsyncHelper.GetDefaultVideoImageResource();
+                            break;
+                        default:
+                            image.Source = ImageAsyncHelper.GetErrorImageResource();
+                            break;
+                    }
                 }
                 else
                 {

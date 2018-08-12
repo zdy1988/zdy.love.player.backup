@@ -63,4 +63,16 @@
 
     </DrawingImage>
 
+    <DrawingImage x:Key="DefaultNetTVImage">
+        <DrawingImage.Drawing>
+            <ImageDrawing ImageSource="Images/tv.jpg" Rect="50,50,50,50"></ImageDrawing>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="DefaultVideoImage">
+        <DrawingImage.Drawing>
+            <ImageDrawing ImageSource="Images/video.png" Rect="50,50,50,50"></ImageDrawing>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
 </ResourceDictionary>

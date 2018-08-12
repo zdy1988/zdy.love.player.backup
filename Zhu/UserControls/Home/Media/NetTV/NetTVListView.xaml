@@ -79,14 +79,14 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="10 20 0 0"
+                                <Grid Margin="10 20 0 20"
                                       RenderOptions.BitmapScalingMode="HighQuality"
                                       RenderOptions.ClearTypeHint="Enabled"
                                       TextOptions.TextRenderingMode="ClearType">
                                     <Grid.Width>
                                         <MultiBinding Converter="{StaticResource MediaListItemWidthConverter}">
                                             <Binding ElementName="ItemsContainer" Path="ActualWidth"/>
-                                            <Binding Source="160"/>
+                                            <Binding Source="180"/>
                                             <Binding Source="10"/>
                                         </MultiBinding>
                                     </Grid.Width>
@@ -119,7 +119,7 @@
                                                 Cursor="Hand" 
                                                 HorizontalAlignment="Left"
                                                 Command="{x:Static MaterialDesign:Transitioner.MoveNextCommand}">
-                                            <TextBlock Text="{Binding Item1.Title}" ToolTip="{Binding Item1.Title}" ></TextBlock>
+                                            <TextBlock Text="{Binding Item1.Title}" FontWeight="Normal" ToolTip="{Binding Item1.Title}" ></TextBlock>
                                         </Button>
                                         <DockPanel>
                                             <Viewbox Height="16" DockPanel.Dock="Left">

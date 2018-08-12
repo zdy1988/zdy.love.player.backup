@@ -111,11 +111,11 @@ namespace Zhu.ViewModels.Pages
         /// </summary>
         public string Introduction { get; set; }
 
-        private int? _rating;
+        private int _rating;
         /// <summary>
         /// 评分
         /// </summary>
-        public int? Rating
+        public int Rating
         {
             get { return _rating; }
             set
@@ -125,11 +125,11 @@ namespace Zhu.ViewModels.Pages
             }
         }
 
-        private Boolean? _isFavorite;
+        private Boolean _isFavorite;
         /// <summary>
         /// 是否最喜欢的
         /// </summary>
-        public Boolean? IsFavorite
+        public Boolean IsFavorite
         {
             get { return _isFavorite; }
             set

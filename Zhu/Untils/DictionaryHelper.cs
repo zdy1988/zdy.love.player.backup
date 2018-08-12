@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,29 +36,38 @@ namespace Zhu.Untils
         /// <param name="fileExtsions"></param>  
         public static void GetFiles(string dir, List<string> list, List<string> fileExtsions)
         {
-            //添加文件   
-            string[] files = Directory.GetFiles(dir);
-            if (fileExtsions.Count > 0)
+            try
             {
-                foreach (string file in files)
+                DirectorySecurity directorySecurity = new DirectorySecurity(dir, AccessControlSections.Access);
+                if (!directorySecurity.AreAccessRulesProtected)
                 {
-                    string extension = Path.GetExtension(file);
-                    if (extension != null && fileExtsions.Contains(extension))
+                    //添加文件   
+                    string[] files = Directory.GetFiles(dir);
+                    if (fileExtsions.Count > 0)
                     {
-                        list.Add(file);
+                        foreach (string file in files)
+                        {
+                            string extension = Path.GetExtension(file);
+                            if (extension != null && fileExtsions.Contains(extension.ToLower()))
+                            {
+                                list.Add(file);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        list.AddRange(files);
+                    }
+                    //如果是目录，则递归  
+                    DirectoryInfo[] directories = new DirectoryInfo(dir).GetDirectories();
+                    foreach (DirectoryInfo item in directories)
+                    {
+                        GetFiles(item.FullName, list, fileExtsions);
                     }
                 }
             }
-            else
-            {
-                list.AddRange(files);
-            }
-            //如果是目录，则递归  
-            DirectoryInfo[] directories = new DirectoryInfo(dir).GetDirectories();
-            foreach (DirectoryInfo item in directories)
-            {
-                GetFiles(item.FullName, list, fileExtsions);
-            }
+            catch
+            { }
         }
 
         /// <summary>  

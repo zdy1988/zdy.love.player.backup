@@ -19,9 +19,9 @@ namespace Zhu.UserControls.Home.Dialogs
     /// <summary>
     /// ImportNetworkMediaDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class ImportNetworkMediaDialog : UserControl
+    public partial class ImportNetworkStreamDialog : UserControl
     {
-        public ImportNetworkMediaDialog()
+        public ImportNetworkStreamDialog()
         {
             InitializeComponent();
         }

@@ -115,8 +115,10 @@ namespace Zhu.Untils
                 Countries       [VARCHAR] (100),
                 Summary         [TEXT],
                 Introduction    [TEXT],
-                Rating          [INTEGER]       DEFAULT (0),
-                IsFavorite      BOOLEAN         DEFAULT (0),
+                Rating          [INTEGER]       DEFAULT (0)
+                                                NOT NULL,
+                IsFavorite      BOOLEAN         DEFAULT (0)
+                                                NOT NULL,
                 EnterDate       [DATETIME]      DEFAULT (Datetime('now') ),
                 UpdateDate      [DATETIME]      DEFAULT (Datetime('now') ) 
             );",

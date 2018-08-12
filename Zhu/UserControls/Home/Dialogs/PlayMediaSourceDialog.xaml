@@ -47,7 +47,7 @@
                  MaterialDesign:HintAssist.Hint="网络媒体" 
                  x:Name="TextBox_NetAddress">
                     <TextBox.Text>
-                        <Binding Path="StreamNetworkAddress" UpdateSourceTrigger="PropertyChanged">
+                        <Binding Path="NetworkAddress" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
                                 <ValidationRules:IsUriValidationRule ValidatesOnTargetUpdated="True" />
                             </Binding.ValidationRules>
