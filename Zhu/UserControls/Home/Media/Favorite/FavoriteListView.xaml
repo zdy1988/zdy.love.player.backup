@@ -37,11 +37,11 @@
 
             <Grid>
                 <Button Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
-                        ToolTip="刷新" Command="{Binding RefreshMediaListCommand}"
+                        ToolTip="刷新列表" Command="{Binding RefreshMediaListCommand}"
                         Margin="0 -30 32 0" 
                         HorizontalAlignment="Right" 
                         VerticalAlignment="Top">
-                    <MaterialDesign:PackIcon Kind="Refresh" Height="24" Width="24" />
+                    <MaterialDesign:PackIcon Kind="Autorenew" Height="24" Width="24" />
                 </Button>
 
                 <Controls:AnimatedScrollViewer x:Name="ScrollView"

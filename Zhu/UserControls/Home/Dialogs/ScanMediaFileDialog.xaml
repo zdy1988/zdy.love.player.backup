@@ -9,9 +9,9 @@
              xmlns:Controls="clr-namespace:Zhu.Controls"
              xmlns:Converters="clr-namespace:Zhu.Converters"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Layout:DialogPane Title="扫描文件" Width="600">
+    <Layout:DialogPane Title="扫描本地文件" Width="600">
         <Layout:DialogPane.InnerContent>
-            <MaterialDesign:Transitioner SelectedIndex="{Binding TransitionerIndex}" Height="360"
+            <MaterialDesign:Transitioner SelectedIndex="{Binding TransitionerIndex}" Height="380"
                                              AutoApplyTransitionOrigins="True">
                 <Grid VerticalAlignment="Center">
                     <Button Style="{StaticResource MaterialDesignRaisedButton}" Width="100" Height="100"
@@ -34,45 +34,54 @@
                                    HorizontalAlignment="Center"></TextBlock>
                     </StackPanel>
                 </Grid>
-
                 <Grid>
-                    <Controls:AnimatedScrollViewer
-                                       Focusable="False"
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Controls:AnimatedScrollViewer Focusable="False" Grid.Row="1"
                                        CanKeyboardScroll="True"
                                        HorizontalAlignment="Stretch" 
                                        Height="360"
+                                       Padding="0 0 -18 0"
                                        TargetVerticalOffset="{Binding VerticalScroll, Mode=TwoWay}">
-                        <ListView ItemsSource="{Binding Medias}" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn DisplayMemberBinding="{Binding Title}" Header="名称" />
-                                    <GridViewColumn DisplayMemberBinding="{Binding MediaSource}" Header="地址" />
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
+                        <ItemsControl  ItemsSource="{Binding Medias}" 
+                                       Grid.IsSharedSizeScope="True">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="Border" Padding="8">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition SharedSizeGroup="Checkerz" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding Item2.IsSelected}"/>
+                                            <StackPanel Margin="8 0 0 0" Grid.Column="1">
+                                                <TextBlock FontWeight="Bold" Text="{Binding Item1.Title}" />
+                                                <TextBlock Text="{Binding Item1.MediaSource}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Item2.IsSelected}" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource MaterialDesignSelection}" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </Controls:AnimatedScrollViewer>
                 </Grid>
-
             </MaterialDesign:Transitioner>
         </Layout:DialogPane.InnerContent>
         <Layout:DialogPane.FooterContent>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="36">
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type Button}">
-                        <Setter Property="Foreground" Value="White"></Setter>
-                        <Setter Property="Margin" Value="10 0 0 0"></Setter>
-                    </Style>
-                    <Style TargetType="{x:Type MaterialDesign:PackIcon}">
-                        <Setter Property="Foreground" Value="White"></Setter>
-                        <Setter Property="Margin" Value="0 2 2 0"></Setter>
-                    </Style>
-                </StackPanel.Resources>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="36">
                 <Button Style="{StaticResource MaterialDesignRaisedButton}"
                         Visibility="{Binding IsHasData, Converter={StaticResource BoolToInverseVisibilityConverter}}" 
                         Command="{Binding ImportMediaFileDataCommand}">
                     <StackPanel Orientation="Horizontal">
-                        <MaterialDesign:PackIcon Kind="Import"></MaterialDesign:PackIcon>
-                        <TextBlock>导入数据</TextBlock>
+                        <MaterialDesign:PackIcon Kind="Import" Foreground="White"></MaterialDesign:PackIcon>
+                        <TextBlock Margin="0 4 0 0">保存</TextBlock>
                     </StackPanel>
                 </Button>
             </StackPanel>

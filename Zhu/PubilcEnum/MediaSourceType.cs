@@ -16,6 +16,6 @@ namespace Zhu.PubilcEnum
         /// <summary>
         /// 网络地址
         /// </summary>
-        NetworkAddress = 2
+        NetworkStream = 2
     }
 }

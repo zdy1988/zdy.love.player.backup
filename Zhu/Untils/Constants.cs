@@ -12,7 +12,7 @@ namespace Zhu.Untils
         /// <summary>
         /// 产品名称
         /// </summary>
-        public static string ProductName { get; } = "Zhu Player";
+        public static string ProductName { get; } = "Zdy's Love Player";
 
         /// <summary>
         /// 产品Url
@@ -27,7 +27,7 @@ namespace Zhu.Untils
         /// <summary>
         /// 数据库地址
         /// </summary>
-        public static string DatabasePath { get; } = Environment.CurrentDirectory + "/ZhuPlayer.db";
+        public static string DatabasePath { get; } = Environment.CurrentDirectory + "/ZdyLovePlayer.db";
 
         /// <summary>
         /// 图片数据源地址
@@ -37,8 +37,7 @@ namespace Zhu.Untils
         /// <summary>
         /// 图片临时目录
         /// </summary>
-        public static string ImageTempDirectory { get; } = Path.GetTempPath() + "ZhuPlayer\\Image\\";
-        //public static string ResourceDictionary { get; } = "D:\\MovieImage\\";
+        public static string ImageTempDirectory { get; } = Path.GetTempPath() + "ZdyLove\\Image\\";
 
         /// <summary>
         /// 加载影片数据条数

@@ -10,7 +10,7 @@
              xmlns:Converters="clr-namespace:Zhu.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Layout:DialogPane Title="导入网媒" Width="600">
+    <Layout:DialogPane Title="导入网络媒体(串流)" Width="600">
         <Layout:DialogPane.InnerContent>
             <MaterialDesign:Transitioner SelectedIndex="{Binding TransitionerIndex}" Height="360"
                                              AutoApplyTransitionOrigins="True">
@@ -58,22 +58,12 @@
         </Layout:DialogPane.InnerContent>
         <Layout:DialogPane.FooterContent>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="36">
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type Button}">
-                        <Setter Property="Foreground" Value="White"></Setter>
-                        <Setter Property="Margin" Value="10 0 0 0"></Setter>
-                    </Style>
-                    <Style TargetType="{x:Type MaterialDesign:PackIcon}">
-                        <Setter Property="Foreground" Value="White"></Setter>
-                        <Setter Property="Margin" Value="0 2 2 0"></Setter>
-                    </Style>
-                </StackPanel.Resources>
                 <Button Style="{StaticResource MaterialDesignRaisedButton}"
                     Visibility="{Binding IsHasData, Converter={StaticResource BoolToInverseVisibilityConverter}}" 
                     Command="{Binding ImportMediaSourceCommand}">
                     <StackPanel Orientation="Horizontal">
                         <MaterialDesign:PackIcon Kind="Import"></MaterialDesign:PackIcon>
-                        <TextBlock>导入数据</TextBlock>
+                        <TextBlock Margin="0 4 0 0">保存</TextBlock>
                     </StackPanel>
                 </Button>
             </StackPanel>

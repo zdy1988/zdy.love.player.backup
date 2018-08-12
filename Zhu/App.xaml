@@ -49,6 +49,10 @@
                     <Converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
                     <Converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
                     <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+                    <Converters:RatioConverter x:Key="RatioConverter" />
+                    <Converters:ImagePathConverter x:Key="ImagePathConverter" />
+
+                    <Converters:MediaListItemWidthConverter x:Key="MediaListItemWidthConverter" />
                 </ResourceDictionary>
 
             </ResourceDictionary.MergedDictionaries>

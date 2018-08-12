@@ -10,7 +10,7 @@ namespace Zhu.Untils
     /// <summary>  
     ///     文件辅助类  
     /// </summary>  
-    public class FileHelper
+    public class DictionaryHelper
     {
         /// <summary>  
         /// 编码方式  

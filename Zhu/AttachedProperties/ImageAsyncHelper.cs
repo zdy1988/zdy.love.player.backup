@@ -127,8 +127,9 @@ namespace Zhu.AttachedProperties
             var image = (Image)obj;
             var imageType = GetImageType(obj);
             var imageSubType = GetImageSubType(obj);
-            var mediaSource = GetMediaSource(obj);
+
             var imageSize = image.GetImageSize(imageType, imageSubType);
+            var mediaSource = GetMediaSource(obj);
 
             image.SetImageLoading();
 
@@ -142,13 +143,17 @@ namespace Zhu.AttachedProperties
             await Task.Run(async () =>
             {
 
-                var hash = Convert.ToBase64String(Encoding.UTF8.GetBytes(path));
+                //创建临时目录
                 var imageTempDirectory = $"{Constants.ImageTempDirectory}{imageType}\\{imageSubType}\\";
                 if (!Directory.Exists(imageTempDirectory))
                 {
                     Directory.CreateDirectory(imageTempDirectory);
                 }
+
+                //创建临时图片地址
+                var hash = Convert.ToBase64String(Encoding.UTF8.GetBytes(path));
                 var imageTempPath = imageTempDirectory + hash;
+
                 var isNeedCreate = File.Exists(imageTempPath) ? false : true;
                 try
                 {
@@ -228,10 +233,7 @@ namespace Zhu.AttachedProperties
                 catch (Exception ex)
                 {
                     Logger.Error(ex);
-                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                    {
-                        image.SetImageError(imageType);
-                    });
+                    image.SetImageError(imageType);
                 }
 
             }).ConfigureAwait(false);
@@ -264,26 +266,33 @@ namespace Zhu.AttachedProperties
 
             #endregion
 
-            image.Source = loadingImage;
-            image.Stretch = Stretch.Uniform;
-            image.RenderTransformOrigin = new Point(0.5, 0.5);
-            image.RenderTransform = loadingAnimationTransform;
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                image.Source = loadingImage;
+                image.Stretch = Stretch.Uniform;
+                image.RenderTransformOrigin = new Point(0.5, 0.5);
+                image.RenderTransform = loadingAnimationTransform;
+            });
         }
 
         public static void SetImageError(this Image image, ImageType imageType)
         {
             image.RenderTransform = new TransformGroup();
-            if (imageType == ImageType.Thumbnail)
+
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                var errorImage = ImageAsyncHelper.GetErrorImageResource();
-                image.RenderTransformOrigin = new Point(0.5d, 0.5d);
-                image.Stretch = Stretch.None;
-                image.Source = errorImage;
-            }
-            else
-            {
-                image.Source = new BitmapImage();
-            }
+                if (imageType == ImageType.Thumbnail)
+                {
+                    var errorImage = ImageAsyncHelper.GetErrorImageResource();
+                    image.RenderTransformOrigin = new Point(0.5d, 0.5d);
+                    image.Stretch = Stretch.None;
+                    image.Source = errorImage;
+                }
+                else
+                {
+                    image.Source = new BitmapImage();
+                }
+            });
         }
 
         public static bool IsLocalPath(this string path)

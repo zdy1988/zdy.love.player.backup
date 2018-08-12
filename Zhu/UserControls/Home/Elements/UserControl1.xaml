@@ -25,7 +25,7 @@
                     <StackPanel>
                         <Button ToolTip="打开媒体" 
                                     BorderBrush="Transparent" 
-                                    Command="{Binding MediaSourcePlayDialogOpenCommand}">
+                                    Command="{Binding PlayMediaSourceDialogOpenCommand}">
                             <MaterialDesign:PackIcon Kind="OpenInNew" Height="20" Width="20" />
                         </Button>
                         <Button ToolTip="导入网媒"

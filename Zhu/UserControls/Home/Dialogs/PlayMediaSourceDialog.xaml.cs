@@ -19,9 +19,9 @@ namespace Zhu.UserControls.Home.Dialogs
     /// <summary>
     /// MovieSelectDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class MediaSourcePlayDialog : UserControl
+    public partial class PlayMediaSourceDialog : UserControl
     {
-        public MediaSourcePlayDialog()
+        public PlayMediaSourceDialog()
         {
             InitializeComponent();
         }

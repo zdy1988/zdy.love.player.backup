@@ -37,7 +37,7 @@ namespace Zhu.ViewModels.Pages
             RegisterCommands();
         }
 
-        private ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>> _medias = new ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>>();
+        private ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>> _medias { get; set; } = new ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>>();
         public ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>> Medias
         {
             get { return _medias; }
@@ -50,7 +50,7 @@ namespace Zhu.ViewModels.Pages
             set { Set(() => SearchText, ref _searchText, value); }
         }
 
-        public virtual async Task LoadMediasAsync(bool isRefresh = false)
+        public override async Task LoadMediasAsync(bool isRefresh = false)
         {
             if (isRefresh)
             {
@@ -119,20 +119,12 @@ namespace Zhu.ViewModels.Pages
         public event EventHandler<EventArgs> MediaBeforeLoad;
         public event EventHandler<EventArgs> MediaLoaded;
 
-        #region Command
-
-        public RelayCommand<IMedia> PlayMediaCommand { get; set; }
         public RelayCommand SearchMediaCommand { get; set; }
+        public RelayCommand<IMedia> PlayMediaCommand { get; set; }
         public RelayCommand<IMedia> ShowMediaInfoCommand { get; set; }
-        public RelayCommand RefreshMediaListCommand { get; set; }
 
         private void RegisterCommands()
         {
-            PlayMediaCommand = new RelayCommand<IMedia>((media) =>
-            {
-                Messenger.Default.Send(new OpenMediaMessage(media));
-            });
-
             SearchMediaCommand = new RelayCommand(async () =>
             {
                 SearchQueryModel.Items.Clear();
@@ -143,9 +135,13 @@ namespace Zhu.ViewModels.Pages
                     SearchQueryModel.Items.Add(new ConditionItem("Actors", QueryMethod.Contains, this.SearchText, "media"));
                     SearchQueryModel.Items.Add(new ConditionItem("Keyword", QueryMethod.Equal, this.SearchText, "media"));
                 }
-                Medias.Clear();
-                PageIndex = 0;
-                await LoadMediasAsync().ConfigureAwait(false);
+
+                await LoadMediasAsync(true).ConfigureAwait(false);
+            });
+
+            PlayMediaCommand = new RelayCommand<IMedia>((media) =>
+            {
+                Messenger.Default.Send(new OpenMediaMessage(media));
             });
 
             ShowMediaInfoCommand = new RelayCommand<IMedia>((media) =>
@@ -156,13 +152,6 @@ namespace Zhu.ViewModels.Pages
                 };
                 _applicationState.ShowDialog(dialog);
             });
-
-            RefreshMediaListCommand = new RelayCommand(async () =>
-            {
-                await LoadMediasAsync(true).ConfigureAwait(false);
-            });
         }
-
-        #endregion
     }
 }

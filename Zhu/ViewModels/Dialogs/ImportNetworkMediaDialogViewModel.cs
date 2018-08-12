@@ -97,7 +97,7 @@ namespace Zhu.ViewModels.Dialogs
                                     Title = item[0],
                                     MediaType = (int)PubilcEnum.MediaType.NetTV,
                                     MediaSource = item[1],
-                                    MediaSourceType = (int)PubilcEnum.MediaSourceType.NetworkAddress,
+                                    MediaSourceType = (int)PubilcEnum.MediaSourceType.NetworkStream,
                                     IsFavorite = false,
                                     EnterDate = DateTime.Now,
                                     UpdateDate = DateTime.Now

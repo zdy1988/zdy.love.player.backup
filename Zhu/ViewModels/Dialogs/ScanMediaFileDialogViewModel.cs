@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using Zhu.Messaging;
 using Zhu.Models;
 using Zhu.Services;
+using Zhu.ViewModels.Reused;
 
 namespace Zhu.ViewModels.Dialogs
 {
@@ -55,8 +56,8 @@ namespace Zhu.ViewModels.Dialogs
             set { Set(() => IsHasData, ref _isHasData, value); }
         }
 
-        private List<Media> _medias = new List<Media>();
-        public List<Media> Medias
+        private List<Tuple<Media, ListItemIsSelectViewModel>> _medias = new List<Tuple<Media, ListItemIsSelectViewModel>>();
+        public List<Tuple<Media, ListItemIsSelectViewModel>> Medias
         {
             get { return _medias; }
             set { Set(() => Medias, ref _medias, value); }
@@ -90,21 +91,15 @@ namespace Zhu.ViewModels.Dialogs
                         {
                             Logger.Error(e);
                         }
-                        List<Media> medias = new List<Media>();
+                        List<Tuple<Media, ListItemIsSelectViewModel>> medias = new List<Tuple<Media, ListItemIsSelectViewModel>>();
 
                         //遍历文件
                         foreach (FileInfo file in dirInfo)
                         {
                             if (Untils.Constants.IsValidVedioFormat(file.Extension))
                             {
-                                //var md5 = await Task.Run(() =>
-                                //{
-                                //    return Untils.FileHelper.MD5File(file.FullName);
-                                //}).ConfigureAwait(false)
-
                                 //大文件计算MD5太慢，暂用这个代替，之后用来检测文件唯一性
-
-                                var md5 = Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FullName));
+                                var md5 = Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FullName.ToLower()));
 
                                 //var mediaInfo = FFmpeg.FFmpegHelper.GetMediaInfo(file.FullName);
 
@@ -112,18 +107,17 @@ namespace Zhu.ViewModels.Dialogs
                                 {
                                     MD5 = md5,
                                     Title = file.Name,
-                                    Cover = $"{Guid.NewGuid().ToString()}.jpg",
                                     MediaType = (int)PubilcEnum.MediaType.Video,
                                     MediaSource = file.FullName,
                                     MediaSourceType = (int)PubilcEnum.MediaSourceType.LocalFile,
                                     IsFavorite = false,
                                     EnterDate = DateTime.Now,
                                     UpdateDate = DateTime.Now,
-
+                                    
                                     Duration = 1000// mediaInfo.Duration
                                 };
 
-                                medias.Add(media);
+                                medias.Add(new Tuple<Media, ListItemIsSelectViewModel>(media, new ListItemIsSelectViewModel { IsSelected = true }));
 
                                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                                 {
@@ -153,9 +147,13 @@ namespace Zhu.ViewModels.Dialogs
 
                     await Task.Run(async () =>
                     {
-                        foreach (var media in Medias)
+                        foreach (var media in Medias.Where(t => t.Item2.IsSelected))
                         {
-                            await _mediaService.InsertAsync(media);
+                            //重复的文件不插入
+                            if (await _mediaService.GetEntitiesCountAsync(t => t.MD5 == media.Item1.MD5) <= 0)
+                            {
+                                await _mediaService.InsertAsync(media.Item1);
+                            }
                         }
                     });
 

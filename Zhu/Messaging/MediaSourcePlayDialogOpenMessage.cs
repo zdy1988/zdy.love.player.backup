@@ -2,7 +2,7 @@
 
 namespace Zhu.Messaging
 {
-    public class MediaSourcePlayDialogOpenMessage : MessageBase
+    public class PlayMediaSourceDialogOpenMessage : MessageBase
     {
     }
 }

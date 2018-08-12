@@ -111,7 +111,7 @@ namespace Zhu.ViewModels.Player
                 }
                 else
                 {
-                    Messenger.Default.Send(new MediaSourcePlayDialogOpenMessage());
+                    Messenger.Default.Send(new PlayMediaSourceDialogOpenMessage());
                 }
             });
 

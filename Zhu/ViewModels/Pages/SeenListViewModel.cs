@@ -42,7 +42,7 @@ namespace Zhu.ViewModels.Pages
             get { return _seenMedias; }
         }
 
-        public virtual async Task LoadMediasAsync(bool isRefresh = false)
+        public override async Task LoadMediasAsync(bool isRefresh = false)
         {
             if (isRefresh)
             {

@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Markup;
 
 namespace Zhu.Converters
 {
-    public class MediaListItemWidthConverter : MarkupExtension, IMultiValueConverter
+    public class MediaListItemWidthConverter : IMultiValueConverter
     {
-        private MediaListItemWidthConverter _instance;
-
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
             double width = 0;
@@ -38,8 +31,5 @@ namespace Zhu.Converters
         {
             throw new NotImplementedException();
         }
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
-            => _instance ?? (_instance = new MediaListItemWidthConverter());
     }
 }

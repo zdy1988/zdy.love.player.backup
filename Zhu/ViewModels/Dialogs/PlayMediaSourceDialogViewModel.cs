@@ -13,7 +13,7 @@ using Zhu.Services;
 
 namespace Zhu.ViewModels.Dialogs
 {
-    public class MediaSourcePlayDialogViewModel : ViewModelBase
+    public class PlayMediaSourceDialogViewModel : ViewModelBase
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -33,7 +33,7 @@ namespace Zhu.ViewModels.Dialogs
             set { Set(() => NetworkAddress, ref _networkAddress, value); }
         }
 
-        public MediaSourcePlayDialogViewModel()
+        public PlayMediaSourceDialogViewModel()
         {
             RegisterCommands();
         }
@@ -54,7 +54,7 @@ namespace Zhu.ViewModels.Dialogs
             }
         }
 
-        public MediaSourcePlayDialogViewModel(IApplicationState applicationState)
+        public PlayMediaSourceDialogViewModel(IApplicationState applicationState)
         {
             _applicationState = applicationState;
         }

@@ -15,8 +15,8 @@
         x:Name="PlayerWindow"
         Icon="/favicon.ico"
         Title="ZDY ' LOVE - 以为能用爱去异想天开..." Height="800" Width="1100"
-        MinWidth="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={Converters:RatioConverter}, ConverterParameter='0.5'}"
-        MinHeight="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={Converters:RatioConverter}, ConverterParameter='0.5'}"
+        MinWidth="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={StaticResource RatioConverter}, ConverterParameter='0.5'}"
+        MinHeight="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={StaticResource RatioConverter}, ConverterParameter='0.5'}"
         BorderThickness="5"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -72,7 +72,7 @@
                                   MouseDoubleClick="TopBar_MouseDoubleClick"
                                   x:Name="TopBar">
                     <DockPanel>
-                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0 0 10 0">
                             <StackPanel.Resources>
                                 <Style BasedOn="{StaticResource MaterialDesignToolForegroundButton}" TargetType="Button">
                                     <Setter Property="Margin" Value="8 0 0 0"></Setter>
@@ -82,11 +82,45 @@
                                     <Setter Property="Height" Value="20"></Setter>
                                 </Style>
                             </StackPanel.Resources>
-                            <Button x:Name="Menu" ToolTip="菜单" Command="{Binding ToggleMediaPalyerCommand}">
-                                <MaterialDesign:PackIcon Kind="Menu" />
+                            <MaterialDesign:PopupBox DockPanel.Dock="Right"  PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
+                                <StackPanel>
+                                    <StackPanel.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Margin" Value="5 1"></Setter>
+                                        </Style>
+                                    </StackPanel.Resources>
+                                    <Button Command="{Binding PlayMediaSourceDialogOpenCommand}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <MaterialDesign:PackIcon Kind="MovieRoll"></MaterialDesign:PackIcon>
+                                            <TextBlock>打开视频媒体</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding ImportNetworkMediaDialogOpenCommand}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <MaterialDesign:PackIcon Kind="Import"></MaterialDesign:PackIcon>
+                                            <TextBlock>导入网络媒体</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding ScanMediaFileDialogOpenCommand}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <MaterialDesign:PackIcon Kind="Import"></MaterialDesign:PackIcon>
+                                            <TextBlock>扫描本地文件</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                    <Separator/>
+                                    <Button>
+                                        <StackPanel Orientation="Horizontal">
+                                            <MaterialDesign:PackIcon Kind="Settings"></MaterialDesign:PackIcon>
+                                            <TextBlock>软件设置</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </MaterialDesign:PopupBox>
+                            <Button x:Name="Menu" ToolTip="设置">
+                                <MaterialDesign:PackIcon Kind="Settings" />
                             </Button>
                             <Button x:Name="WindowMinimized" ToolTip="最小化" Click="WindowMinimized_Click">
-                                <MaterialDesign:PackIcon Kind="FormatVerticalAlignBottom" />
+                                <MaterialDesign:PackIcon Kind="Minus" />
                             </Button>
                             <Button x:Name="WindowFullScreen" ToolTip="{Binding ApplicationState.IsFullScreen, Converter={Converters:WindowStateTooltipConverter}, Mode=TwoWay}" Click="WindowFullScreen_Click">
                                 <MaterialDesign:PackIcon Kind="{Binding ApplicationState.IsFullScreen, Converter={Converters:WindowStateIconConverter}, Mode=TwoWay}" />
@@ -203,17 +237,17 @@
                                         <MainType:TabItem Title="我喜欢的" Icon="HeartPulse"/>
                                     </ListBox>
                                     <DockPanel Margin="36 20" Grid.Row="2">
-                                        <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}">我的标签</TextBlock>
+                                        <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}">我的影集</TextBlock>
                                         <Button Style="{StaticResource MaterialDesignToolForegroundButton}" x:Name="Button_PreCreateMediaGroup"
                                                 DockPanel.Dock="Right" 
                                                 Command="{Binding PreCreateMediaGroupCommand}"
                                                 Width="24" Height="24" Margin="0 -6 -110 0"
-                                                ToolTip="创建标签">
+                                                ToolTip="创建影集">
                                             <MaterialDesign:PackIcon Kind="PlaylistPlus" Width="20" Height="20" />
                                         </Button>
                                     </DockPanel>
                                     <StackPanel Grid.Row="3">
-                                        <TextBox MaterialDesign:HintAssist.Hint="标签名称" x:Name="TextBox_CreateMediaGroup"
+                                        <TextBox MaterialDesign:HintAssist.Hint="影集名称" x:Name="TextBox_CreateMediaGroup"
                                                  Margin="36 0 8 20"
                                                  Visibility="{Binding IsCreateMeidaGroup, Converter={StaticResource BoolToInverseVisibilityConverter}}"
                                                  Text="{Binding TempMeidaGroupName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -227,23 +261,30 @@
                                                   ItemsSource="{Binding MediaGroups}">
                                             <ListView.ItemTemplate>
                                                 <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal" Width="180">
-                                                        <MaterialDesign:Badged Badge="{Binding Item2}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                                                           BadgeColorZoneMode="Accent" Margin="2">
+                                                    <Grid Width="180" ToolTip="{Binding Item1.Name}">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="20"/>
+                                                            <ColumnDefinition/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <MaterialDesign:Badged Badge="{Binding Item2}"
+                                                                               Grid.Column="0"
+                                                                               HorizontalAlignment="Stretch" 
+                                                                               VerticalAlignment="Stretch" 
+                                                                               BadgeColorZoneMode="Accent" Margin="1">
                                                             <MaterialDesign:PackIcon Kind="HandPointingRight" Width="20" Height="20"/>
                                                         </MaterialDesign:Badged>
-                                                        <TextBlock Margin="12 4 0 0" Text="{Binding Item1.Name}"></TextBlock>
+                                                        <TextBlock Margin="12 2 0 0" Grid.Column="1" Text="{Binding Item1.Name}"></TextBlock>
                                                         <i:Interaction.Triggers>
                                                             <i:EventTrigger EventName="MouseDown">
-                                                                <i:InvokeCommandAction Command="{Binding Main.JumpToMediaGroupPageCommand, Source={StaticResource Locator}}"
+                                                                <i:InvokeCommandAction Command="{Binding Main.MediaGroupViewOpenCommand, Source={StaticResource Locator}}"
                                                                                    CommandParameter="{Binding Item1}" />
                                                             </i:EventTrigger>
                                                         </i:Interaction.Triggers>
-                                                    </StackPanel>
+                                                    </Grid>
                                                 </DataTemplate>
                                             </ListView.ItemTemplate>
                                         </ListView>
-                                        <TextBlock Text="还没有创建标签呢！" 
+                                        <TextBlock Text="还没有创建影集呢！" 
                                                    Margin="36 0 8 0"
                                                    Visibility="{Binding MediaGroups, Converter={Converters:ListCountToVisibilityConverter}}"></TextBlock>
                                     </StackPanel>

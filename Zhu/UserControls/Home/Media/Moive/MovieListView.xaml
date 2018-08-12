@@ -75,18 +75,18 @@
                                       RenderOptions.ClearTypeHint="Enabled"
                                       TextOptions.TextRenderingMode="ClearType">
                                     <Grid.Width>
-                                        <MultiBinding Converter="{Converters:MediaListItemWidthConverter}">
+                                        <MultiBinding Converter="{StaticResource MediaListItemWidthConverter}">
                                             <Binding ElementName="ItemsContainer" Path="ActualWidth"/>
                                             <Binding Source="180"/>
                                             <Binding Source="10"/>
                                         </MultiBinding>
                                     </Grid.Width>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={Converters:RatioConverter}, ConverterParameter='1.5'}"/>
+                                        <RowDefinition Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={StaticResource RatioConverter}, ConverterParameter='1.5'}"/>
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
                                     <Image x:Name="ThumbnailImage" Grid.Row="0"
-                                           AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1.Cover,Converter={Converters:ImagePathConverter}, ConverterParameter='Thumbnail\\Movie', Mode=OneTime}"
+                                           AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1,Converter={StaticResource ImagePathConverter}, ConverterParameter='Thumbnail\\Movie', Mode=OneTime}"
                                            AttachedProperties:ImageAsyncHelper.ImageType="Thumbnail"
                                            AttachedProperties:ImageAsyncHelper.ImageSubType="Movie"
                                            AttachedProperties:ImageAsyncHelper.MediaSource="{Binding Item1.MediaSource, Mode=OneTime}"

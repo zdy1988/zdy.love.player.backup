@@ -56,6 +56,9 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonServiceLocator, Version=2.0.3.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.3\lib\net45\CommonServiceLocator.dll</HintPath>
@@ -237,8 +240,9 @@
     <Compile Include="Untils\Extension\LinqExtensions.cs" />
     <Compile Include="Untils\Extension\ObservableRangeCollection.cs" />
     <Compile Include="Untils\FileHashHelper.cs" />
-    <Compile Include="Untils\FileHelper.cs" />
+    <Compile Include="Untils\DictionaryHelper.cs" />
     <Compile Include="Untils\ImageHelper.cs" />
+    <Compile Include="Untils\NetWorkHelper.cs" />
     <Compile Include="Untils\SearchMethod\SearchModel.cs" />
     <Compile Include="Untils\SQLiteDatabase.cs" />
     <Compile Include="Untils\SearchMethod\SqlToolkit.cs" />
@@ -339,8 +343,8 @@
     <Compile Include="UserControls\Player\MediaPlayer.xaml.cs">
       <DependentUpon>MediaPlayer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Home\Dialogs\MediaSourcePlayDialog.xaml.cs">
-      <DependentUpon>MediaSourcePlayDialog.xaml</DependentUpon>
+    <Compile Include="UserControls\Home\Dialogs\PlayMediaSourceDialog.xaml.cs">
+      <DependentUpon>PlayMediaSourceDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Reused\PlayerMasker.xaml.cs">
       <DependentUpon>PlayerMasker.xaml</DependentUpon>
@@ -371,7 +375,7 @@
     <Compile Include="ViewModels\Player\MediaPlayerControllerViewModel.cs" />
     <Compile Include="ViewModels\Player\MediaPlayerPlaylistViewModel.cs" />
     <Compile Include="ViewModels\Player\MediaPlayerViewModel.cs" />
-    <Compile Include="ViewModels\Dialogs\MediaSourcePlayDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\PlayMediaSourceDialogViewModel.cs" />
     <Compile Include="ViewModels\Reused\ListItemIsSelectViewModel.cs" />
     <Compile Include="ViewModels\Reused\SampleLoadingViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
@@ -519,7 +523,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Home\Dialogs\MediaSourcePlayDialog.xaml">
+    <Page Include="UserControls\Home\Dialogs\PlayMediaSourceDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,28 +1,65 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Markup;
-using System.Windows.Media.Imaging;
+using Zhu.PubilcEnum;
+using Zhu.Untils;
+using Zhu.ViewModels.Pages;
 
 namespace Zhu.Converters
 {
-    public class ImagePathConverter : MarkupExtension, IValueConverter
+    public class ImagePathConverter : IValueConverter
     {
-        private ImagePathConverter _instance;
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || parameter == null)
             {
-                return null;
+                return "";
             }
 
-            return $"{Untils.Constants.ImageSourcePath}{parameter.ToString()}\\{value.ToString()}";
+            MediaListItemViewModel media = (MediaListItemViewModel)value;
+
+            if (media.Cover == null)
+            {
+                return "";
+            }
+
+            // 检测是否是网络地址
+            if (NetWorkHelper.IsUrlExist(media.Cover.ToString()))
+            {
+                return value.ToString();
+            }
+
+            // 如果是本地电影，优先从影片的特定目录中加载
+            if (media.MediaSourceType == (int)MediaSourceType.LocalFile && parameter.ToString().IndexOf("Movie") != -1)
+            {
+                if (!File.Exists(media.MediaSource))
+                {
+                    return "";
+                }
+
+                var dictionaryName = Path.GetDirectoryName(media.MediaSource);
+                var fileName = Path.GetFileNameWithoutExtension(media.MediaSource);
+
+                var coverPath = $"{dictionaryName}//Cover//{fileName}.jpg";
+
+                if (File.Exists(coverPath))
+                {
+                    return coverPath;
+                }
+            }
+
+            // 其他本地文件图片从本地自定目录中获取
+            var imagePath = $"{Untils.Constants.ImageSourcePath}{parameter.ToString()}\\{media.Cover.ToString()}";
+
+            if (!File.Exists(imagePath))
+            {
+                return "";
+            }
+            else
+            {
+                return imagePath;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter,
@@ -30,8 +67,5 @@ namespace Zhu.Converters
         {
             throw new NotSupportedException();
         }
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
-            => _instance ?? (_instance = new ImagePathConverter());
     }
 }

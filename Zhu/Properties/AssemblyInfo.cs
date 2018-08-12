@@ -7,11 +7,11 @@ using System.Windows;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("Player")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ZDY ' LOVE")]
+[assembly: AssemblyDescription("以为能用爱去异想天开...")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Player")]
+[assembly: AssemblyCompany("ZDY")]
+[assembly: AssemblyProduct("ZDY ' LOVE")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -130,6 +130,14 @@ namespace Zhu.ViewModels.Main
 
         private void RegisterMessages()
         {
+            Messenger.Default.Register<ManageExceptionMessage>(this, e => {
+                MessageNotice?.Invoke(this, e.UnHandledException.Message);
+            });
+
+            Messenger.Default.Register<RefreshMediaGroupListMessage>(this, async (e) => {
+                await LoadMediaGroup();
+            });
+
             Messenger.Default.Register<MediaFlyoutOpenMessage>(this, e => {
                 if (IsMediaPlayerFlyoutOpen == false)
                 {
@@ -142,15 +150,15 @@ namespace Zhu.ViewModels.Main
                     IsMediaPlayerFlyoutOpen = false;
                 }
             });
-            Messenger.Default.Register<ManageExceptionMessage>(this, e => MessageNotice?.Invoke(this, e.UnHandledException.Message));
-            Messenger.Default.Register<RefreshMediaGroupListMessage>(this, async (e) => await LoadMediaGroup());
-            //Dialog Message
-            Messenger.Default.Register<MediaSourcePlayDialogOpenMessage>(this, (e) => MediaSourcePlayDialogOpenCommand.Execute(null));
+
+            Messenger.Default.Register<PlayMediaSourceDialogOpenMessage>(this, (e) => {
+                PlayMediaSourceDialogOpenCommand.Execute(null);
+            });
         }
 
         public RelayCommand ToggleMediaPalyerCommand { get; private set; }
 
-        public RelayCommand MediaSourcePlayDialogOpenCommand { get; private set; }
+        public RelayCommand PlayMediaSourceDialogOpenCommand { get; private set; }
 
         public RelayCommand ScanMediaFileDialogOpenCommand { get; private set; }
 
@@ -162,22 +170,24 @@ namespace Zhu.ViewModels.Main
 
         public RelayCommand<IMedia> JoinTheMediaGroupDialogOpenCommand { get; private set; }
 
-        public RelayCommand<Group> JumpToMediaGroupPageCommand { get; private set; }
+        public RelayCommand<Group> MediaGroupViewOpenCommand { get; private set; }
 
         private void RegisterCommands()
         {
             ToggleMediaPalyerCommand = new RelayCommand(() => IsMediaPlayerFlyoutOpen = !IsMediaPlayerFlyoutOpen);
 
-            MediaSourcePlayDialogOpenCommand = new RelayCommand(() =>
+            // 打开媒体文件窗口
+            PlayMediaSourceDialogOpenCommand = new RelayCommand(() =>
             {
-                var dialog = new MediaSourcePlayDialog
+                var dialog = new PlayMediaSourceDialog
                 {
-                    DataContext = new MediaSourcePlayDialogViewModel()
+                    DataContext = new PlayMediaSourceDialogViewModel()
                 };
 
                 _applicationState.ShowDialog(dialog);
             });
 
+            // 打开扫描本地文件
             ScanMediaFileDialogOpenCommand = new RelayCommand(() =>
             {
                 var dialog = new ScanMediaFileDialog
@@ -188,6 +198,7 @@ namespace Zhu.ViewModels.Main
                 _applicationState.ShowDialog(dialog);
             });
 
+            // 打开导入网络媒体窗口
             ImportNetworkMediaDialogOpenCommand = new RelayCommand(() =>
             {
                 var dialog = new ImportNetworkMediaDialog
@@ -198,12 +209,14 @@ namespace Zhu.ViewModels.Main
                 _applicationState.ShowDialog(dialog);
             });
 
+            // 创建影集前
             PreCreateMediaGroupCommand = new RelayCommand(() =>
             {
                 IsCreateMeidaGroup = true;
                 TempMeidaGroupName = "";
             });
 
+            // 创建影集
             CreateOrCancelMediaGroupCommand = new RelayCommand(async () =>
             {
                 IsCreateMeidaGroup = false;
@@ -218,6 +231,7 @@ namespace Zhu.ViewModels.Main
                 }
             });
 
+            // 打开影片加入影集窗口
             JoinTheMediaGroupDialogOpenCommand = new RelayCommand<IMedia>((media) =>
             {
                 JoinTheMediaGroupDialog dialog = new JoinTheMediaGroupDialog
@@ -227,8 +241,9 @@ namespace Zhu.ViewModels.Main
 
                 _applicationState.ShowDialog(dialog);
             });
-
-            JumpToMediaGroupPageCommand = new RelayCommand<Group>((group) =>
+            
+            // 打开影集画面窗口
+            MediaGroupViewOpenCommand = new RelayCommand<Group>((group) =>
             {
                 TabSelectedIndex = 6;
                 Messenger.Default.Send(new RefreshMediaGroupMembersMessage(group));

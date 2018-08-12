@@ -34,14 +34,13 @@
             </Grid>
         </Layout:ContentPane.HeaderContent>
         <Layout:ContentPane.InnerContent>
-
-            <Grid>
+            <Grid Margin="0 0 0 30">
                 <Button Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
-                        ToolTip="播放" Command="{Binding Main.MediaSourcePlayDialogOpenCommand, Source={StaticResource Locator}}"
+                        ToolTip="刷新列表" Command="{Binding RefreshMediaListCommand}"
                         Margin="0 -30 32 0" 
                         HorizontalAlignment="Right" 
                         VerticalAlignment="Top">
-                    <MaterialDesign:PackIcon Kind="Play" Height="24" Width="24" />
+                    <MaterialDesign:PackIcon Kind="Autorenew" Height="24" Width="24" />
                 </Button>
 
                 <Controls:AnimatedScrollViewer x:Name="ScrollView"

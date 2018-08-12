@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using System.Windows.Markup;
 
 namespace Zhu.Converters
 {
@@ -9,10 +8,8 @@ namespace Zhu.Converters
     /// Convert double to double using a ratio parameter
     /// </summary>
     [ValueConversion(typeof(string), typeof(string))]
-    public class RatioConverter : MarkupExtension, IValueConverter
+    public class RatioConverter : IValueConverter
     {
-        private RatioConverter _instance;
-
         /// <summary>
         /// Modify value with a ratio parameter
         /// </summary>
@@ -42,8 +39,5 @@ namespace Zhu.Converters
         {
             throw new NotSupportedException();
         }
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
-            => _instance ?? (_instance = new RatioConverter());
     }
 }

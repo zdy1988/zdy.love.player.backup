@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using Infrastructure.SearchModel.Model;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,13 @@ using Zhu.Untils;
 
 namespace Zhu.ViewModels.Pages
 {
-    public class BasePagingViewModel : ViewModelBase
+    public abstract class BasePagingViewModel : ViewModelBase
     {
+        public BasePagingViewModel()
+        {
+            RegisterCommands();
+        }
+
         protected QueryModel SearchQueryModel = new QueryModel();
 
         protected int PageSize { get; set; } = Constants.LoadDataPageSize;
@@ -63,6 +69,18 @@ namespace Zhu.ViewModels.Pages
         {
             get { return _orderField; }
             set { Set(() => OrderField, ref _orderField, value); }
+        }
+
+        public abstract Task LoadMediasAsync(bool isRefresh = false);
+
+        public RelayCommand RefreshMediaListCommand { get; set; }
+
+        private void RegisterCommands()
+        {
+            RefreshMediaListCommand = new RelayCommand(async () =>
+            {
+                await LoadMediasAsync(true).ConfigureAwait(false);
+            });
         }
     }
 }

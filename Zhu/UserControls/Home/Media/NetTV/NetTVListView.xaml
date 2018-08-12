@@ -38,13 +38,13 @@
         </Layout:ContentPane.HeaderContent>
         <Layout:ContentPane.InnerContent>
             <Grid>
-                
+
                 <Button Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
-                        ToolTip="导入网络媒体" Command="{Binding Main.ImportNetworkMediaDialogOpenCommand, Source={StaticResource Locator}}"
+                        ToolTip="刷新列表" Command="{Binding RefreshMediaListCommand}"
                         Margin="0 -30 32 0" 
                         HorizontalAlignment="Right" 
                         VerticalAlignment="Top">
-                    <MaterialDesign:PackIcon Kind="Plus" Height="24" Width="24" />
+                    <MaterialDesign:PackIcon Kind="Autorenew" Height="24" Width="24" />
                 </Button>
 
                 <Controls:AnimatedScrollViewer x:Name="ScrollView"
@@ -84,7 +84,7 @@
                                       RenderOptions.ClearTypeHint="Enabled"
                                       TextOptions.TextRenderingMode="ClearType">
                                     <Grid.Width>
-                                        <MultiBinding Converter="{Converters:MediaListItemWidthConverter}">
+                                        <MultiBinding Converter="{StaticResource MediaListItemWidthConverter}">
                                             <Binding ElementName="ItemsContainer" Path="ActualWidth"/>
                                             <Binding Source="160"/>
                                             <Binding Source="10"/>
@@ -95,7 +95,7 @@
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
                                     <Image x:Name="ThumbnailImage" Grid.Row="0"
-                                           AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1.Cover,Converter={Converters:ImagePathConverter}, ConverterParameter='Thumbnail\\NetTV', Mode=OneTime}"
+                                           AttachedProperties:ImageAsyncHelper.ImagePath="{Binding Item1,Converter={StaticResource ImagePathConverter}, ConverterParameter='Thumbnail\\NetTV', Mode=OneTime}"
                                            AttachedProperties:ImageAsyncHelper.ImageType="Thumbnail"
                                            AttachedProperties:ImageAsyncHelper.ImageSubType="NetTV"
                                            Stretch="UniformToFill" 

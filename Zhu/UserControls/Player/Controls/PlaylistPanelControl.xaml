@@ -174,10 +174,10 @@
 
                                     <DockPanel Grid.Column="1" Margin="16 6 0 6">
                                         <DockPanel DockPanel.Dock="Right" Width="80" LastChildFill="False">
-                                            <Button DockPanel.Dock="Top"
+                                            <Button DockPanel.Dock="Top" ToolTip="播放"
                                                     Command="{Binding MediaPlayer.OpenMediaCommand,Source={StaticResource Locator}}" 
                                                     CommandParameter="{Binding MediaUrl}">
-                                                <MaterialDesign:PackIcon Kind="Play" />
+                                                <MaterialDesign:PackIcon Kind="Play" Foreground="White"></MaterialDesign:PackIcon>
                                             </Button>
                                             <TextBlock DockPanel.Dock="Bottom"  
                                                             Foreground="Black" TextAlignment="Center" TextTrimming="CharacterEllipsis"
