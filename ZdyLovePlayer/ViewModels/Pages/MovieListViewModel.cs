@@ -81,7 +81,7 @@ namespace ZdyLovePlayer.ViewModels.Pages
 
         #region Methods
 
-        public override void LoadMedias(bool isRefresh = false)
+        public override void ExecuteLoadMedias(bool isRefresh = false)
         {
             if (!this.SearchQueryModel.Items.Any(t => t.Field == "MediaType"))
             {
@@ -91,7 +91,7 @@ namespace ZdyLovePlayer.ViewModels.Pages
             {
                 this.SearchQueryModel.Items.Add(new ConditionItem("Countries", QueryMethod.Equal, SelectCountry));
             }
-            base.LoadMedias(isRefresh);
+            base.ExecuteLoadMedias(isRefresh);
         }
 
         #endregion

@@ -5,10 +5,6 @@ using Unosquare.FFME.Primitives;
 
 namespace ZdyLovePlayer.Foundation
 {
-    /// <summary>
-    /// A very simple set of extensions to more easily hanlde UI state changes based on
-    /// notification properties
-    /// </summary>
     internal static class ReactiveExtensions
     {
         /// <summary>
@@ -17,11 +13,10 @@ namespace ZdyLovePlayer.Foundation
         private static readonly Dictionary<INotifyPropertyChanged, SubscriptionSet> Subscriptions
             = new Dictionary<INotifyPropertyChanged, SubscriptionSet>();
 
-        private static readonly ISyncLocker Locker = SyncLockerFactory.Create(useSlim: true);
+        private static readonly object SyncLock = new object();
 
-        /// <summary>
-        /// The pinned actions (action that don't get remove if the weak reference is lost.
-        /// </summary>
+        // The pinned actions (action that don't get remove if the weak reference is lost.
+        // ReSharper disable once CollectionNeverQueried.Local
         private static readonly Dictionary<Action, bool> PinnedActions = new Dictionary<Action, bool>();
 
         /// <summary>
@@ -32,14 +27,9 @@ namespace ZdyLovePlayer.Foundation
         /// <param name="propertyNames">The property names.</param>
         internal static void WhenChanged(this Action callback, INotifyPropertyChanged publisher, params string[] propertyNames)
         {
-            callback.WhenChanged(true, publisher, propertyNames);
-        }
-
-        internal static void WhenChanged(this Action callback, bool pinned, INotifyPropertyChanged publisher, params string[] propertyNames)
-        {
             var bindPropertyChanged = false;
 
-            using (Locker.AcquireWriterLock())
+            lock (SyncLock)
             {
                 if (Subscriptions.ContainsKey(publisher) == false)
                 {
@@ -48,7 +38,7 @@ namespace ZdyLovePlayer.Foundation
                 }
 
                 // Save the Action reference so that the weak reference is not lost
-                if (pinned) PinnedActions[callback] = true;
+                PinnedActions[callback] = true;
 
                 foreach (var propertyName in propertyNames)
                 {
@@ -64,14 +54,14 @@ namespace ZdyLovePlayer.Foundation
             // Finally, bind to property changed
             publisher.PropertyChanged += (s, e) =>
             {
-                if (Subscriptions[publisher].ContainsKey(e.PropertyName) == false)
-                    return;
-
                 var deadCallbacks = new CallbackReferenceSet();
                 var aliveCallbacks = new CallbackReferenceSet();
 
-                using (Locker.AcquireReaderLock())
+                lock (SyncLock)
                 {
+                    if (Subscriptions[publisher].ContainsKey(e.PropertyName) == false)
+                        return;
+
                     aliveCallbacks.AddRange(Subscriptions[publisher][e.PropertyName]);
                 }
 
@@ -88,7 +78,7 @@ namespace ZdyLovePlayer.Foundation
 
                 if (deadCallbacks.Count == 0) return;
 
-                using (Locker.AcquireWriterLock())
+                lock (SyncLock)
                 {
                     foreach (var deadSubscriber in deadCallbacks)
                         Subscriptions[publisher][e.PropertyName].Remove(deadSubscriber);

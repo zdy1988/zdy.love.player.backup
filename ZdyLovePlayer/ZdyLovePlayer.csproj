@@ -61,8 +61,8 @@
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommonServiceLocator, Version=2.0.3.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.2.0.3\lib\net45\CommonServiceLocator.dll</HintPath>
+    <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net46\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="EmitMapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\EmitMapper.1.0.0\lib\EmitMapper.dll</HintPath>
@@ -79,8 +79,8 @@
     <Reference Include="ffme.win, Version=2018.6.3.20580, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FFME.Windows.4.0.260\lib\net461\ffme.win.dll</HintPath>
     </Reference>
-    <Reference Include="FFmpeg.AutoGen, Version=4.0.0.2, Culture=neutral, PublicKeyToken=9b7632533a381715, processorArchitecture=MSIL">
-      <HintPath>..\packages\FFmpeg.AutoGen.4.0.0.2\lib\net45\FFmpeg.AutoGen.dll</HintPath>
+    <Reference Include="FFmpeg.AutoGen, Version=4.1.0.2, Culture=neutral, PublicKeyToken=9b7632533a381715, processorArchitecture=MSIL">
+      <HintPath>..\packages\FFmpeg.AutoGen.4.1.0.2\lib\net45\FFmpeg.AutoGen.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
@@ -153,12 +153,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AttachedProperties\ImageAsyncHelper.cs" />
+    <Compile Include="Behavior\ReachingScrollViewerBottomBehavior.cs" />
     <Compile Include="Comparers\MediaFileComparer.cs" />
     <Compile Include="Controls\AnimatedScrollViewer.cs" />
     <Compile Include="Controls\AnimationPath.cs" />
     <Compile Include="Converters\Tools\BoolToInverseBoolConverter.cs" />
     <Compile Include="Converters\Tools\BoolToInverseVisibilityConverter.cs" />
     <Compile Include="Converters\Tools\BoolToVisibilityConverter.cs" />
+    <Compile Include="Formatters\BitFormatter.cs" />
     <Compile Include="Formatters\ByteFormatter.cs" />
     <Compile Include="Converters\ClosedCaptionsChannelConverter.cs" />
     <Compile Include="Converters\Tools\NullOrEmptyStringToVisibilityConverter.cs" />
@@ -286,6 +288,15 @@
     <Compile Include="UserControls\Main\Header.xaml.cs">
       <DependentUpon>Header.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Main\LeftSideHeader.xaml.cs">
+      <DependentUpon>LeftSideHeader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Main\LeftSideMediaGroup.xaml.cs">
+      <DependentUpon>LeftSideMediaGroup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Main\LeftSideNavList.xaml.cs">
+      <DependentUpon>LeftSideNavList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Main\Loading.xaml.cs">
       <DependentUpon>Loading.xaml</DependentUpon>
     </Compile>
@@ -386,19 +397,20 @@
     <Compile Include="ViewModels\Main\NavItem.cs" />
     <Compile Include="ViewModels\Pages\FavoriteListViewModel.cs" />
     <Compile Include="ViewModels\Pages\MediaGroupMembersViewModel.cs" />
-    <Compile Include="ViewModels\Pages\MediaListItemViewModel.cs" />
+    <Compile Include="ViewModels\Pages\MediaGroupViewModel.cs" />
     <Compile Include="ViewModels\Pages\MovieListViewModel.cs" />
     <Compile Include="ViewModels\Pages\NetTVListViewModel.cs" />
     <Compile Include="ViewModels\Pages\MediaListViewModel.cs" />
-    <Compile Include="ViewModels\Pages\BasePagingViewModel.cs" />
+    <Compile Include="ViewModels\Pages\BasePaginationViewModel.cs" />
     <Compile Include="ViewModels\Pages\SeenListViewModel.cs" />
     <Compile Include="ViewModels\Pages\VideoListViewModel.cs" />
     <Compile Include="ViewModels\Player\MediaPlayerControllerViewModel.cs" />
-    <Compile Include="ViewModels\Player\MediaPlayerPlaylistViewModel.cs" />
+    <Compile Include="ViewModels\Player\MediaPlayerPlayListViewModel.cs" />
     <Compile Include="ViewModels\Player\MediaPlayerViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\PlayMediaSourceDialogViewModel.cs" />
     <Compile Include="ViewModels\Reused\ListItemIsSelectViewModel.cs" />
     <Compile Include="ViewModels\Reused\SampleLoadingViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBasic.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="UserControls\Player\MediaPlayer.MediaEvents.cs" />
     <Compile Include="Windows\SplashScreen.xaml.cs">
@@ -453,6 +465,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Main\Header.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Main\LeftSideHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Main\LeftSideMediaGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Main\LeftSideNavList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

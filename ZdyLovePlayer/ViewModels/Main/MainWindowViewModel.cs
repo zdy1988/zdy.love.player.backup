@@ -75,71 +75,9 @@ namespace ZdyLovePlayer.ViewModels.Main
             set { Set(() => IsPageLoading, ref _isPageLoading, value); }
         }
 
-        #region  Media Groups
-
-        private List<Tuple<Group, int>> _mediaGroups = new List<Tuple<Group, int>>();
-        public List<Tuple<Group, int>> MediaGroups
-        {
-            get { return _mediaGroups; }
-            set { Set(() => MediaGroups, ref _mediaGroups, value); }
-        }
-
-        private bool _isCreateMeidaGroup;
-        public bool IsCreateMeidaGroup
-        {
-            get { return _isCreateMeidaGroup; }
-            set { Set(() => IsCreateMeidaGroup, ref _isCreateMeidaGroup, value); }
-        }
-
-        private string _tempMeidaGroupName;
-        public string TempMeidaGroupName
-        {
-            get { return _tempMeidaGroupName; }
-            set { Set(() => TempMeidaGroupName, ref _tempMeidaGroupName, value); }
-        }
-
-        #endregion
-
         #endregion
 
         #region Methods
-
-        public async Task LoadMediaGroup()
-        {
-            MediaGroups.Clear();
-
-            var watch = Stopwatch.StartNew();
-
-            Logger.Info($"Loading media group ...");
-
-            try
-            {
-                await Task.Run(async () =>
-                {
-                    var groups = await _groupService.GetEntitiesAsync(t => true, "ID", false);
-                    var mediaGroups = new List<Tuple<Group, int>>();
-                    foreach (var group in groups)
-                    {
-                        var memberCount = await _groupMemberService.GetEntitiesCountAsync(t => t.GroupID == group.ID);
-                        mediaGroups.Add(new Tuple<Group, int>(group, memberCount));
-                    }
-
-                    DispatcherHelper.CheckBeginInvokeOnUI(() => MediaGroups = mediaGroups);
-                }).ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error($"Error loading group : {exception.Message}");
-                Messenger.Default.Send(new ManageExceptionMessage(exception));
-            }
-            finally
-            {
-                watch.Stop();
-                var elapsedMs = watch.ElapsedMilliseconds;
-                Logger.Info($"Loaded group in {elapsedMs} milliseconds.");
-            }
-        }
-
         #endregion
 
         #region Events
@@ -177,11 +115,6 @@ namespace ZdyLovePlayer.ViewModels.Main
             Messenger.Default.Register<ManageExceptionMessage>(this, e =>
             {
                 OnMessageNotice?.Invoke(this, e.UnHandledException.Message);
-            });
-
-            Messenger.Default.Register<RefreshMediaGroupListMessage>(this, async (e) =>
-            {
-                await LoadMediaGroup();
             });
 
             Messenger.Default.Register<MediaFlyoutOpenMessage>(this, e =>
@@ -274,45 +207,6 @@ namespace ZdyLovePlayer.ViewModels.Main
             };
 
             _applicationState.ShowDialog(dialog);
-        })).Value;
-
-        public RelayCommand PreCreateMediaGroupCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
-        {
-            IsCreateMeidaGroup = true;
-            TempMeidaGroupName = "";
-        })).Value;
-
-        public RelayCommand CreateOrCancelMediaGroupCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
-        {
-            IsCreateMeidaGroup = false;
-            if (!string.IsNullOrEmpty(TempMeidaGroupName.Trim()))
-            {
-                await _groupService.InsertAsync(new Group
-                {
-                    Name = TempMeidaGroupName.Trim()
-                });
-
-                await LoadMediaGroup();
-            }
-        })).Value;
-
-        public RelayCommand<IMedia> JoinTheMediaGroupDialogOpenCommand => new Lazy<RelayCommand<IMedia>>(() => new RelayCommand<IMedia>((media) =>
-        {
-            JoinTheMediaGroupDialog dialog = new JoinTheMediaGroupDialog
-            {
-                DataContext = new JoinTheMediaGroupDialogViewModel(_applicationState, MediaGroups, media)
-            };
-
-            _applicationState.ShowDialog(dialog);
-        })).Value;
-
-        public RelayCommand<Group> MediaGroupViewOpenCommand => new Lazy<RelayCommand<Group>>(() => new RelayCommand<Group>((group) =>
-        {
-            Messenger.Default.Send<SwitchPageMessage>(new SwitchPageMessage
-            {
-                Content = AssemblyHelper.CreateInternalInstance($"UserControls.Pages.MediaGroup")
-            });
-            Messenger.Default.Send(new RefreshMediaGroupMembersMessage(group));
         })).Value;
 
         #endregion

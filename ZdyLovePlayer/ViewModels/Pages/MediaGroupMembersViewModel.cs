@@ -52,37 +52,14 @@ namespace ZdyLovePlayer.ViewModels.Pages
 
         #region Methods
 
-        public override void LoadMedias(bool isRefresh = false)
+        public override void ExecuteLoadMedias(bool isRefresh = false)
         {
             if (!this.SearchQueryModel.Items.Any(t => t.Field == "GroupID"))
             {
                 this.SearchQueryModel.Items.Add(new ConditionItem("GroupID", QueryMethod.Equal, CurrentGroup.ID));
             }
 
-            if (isRefresh)
-            {
-                PageIndex = 0;
-                Medias.Clear();
-            }
-
-            ExecuteActionAndWatchPageTurning(() => ExecuteActionWithProgress(async () =>
-            {
-                var medias = await ExecuteDataDelay<Media>(() => _groupService.GetMediasForPagingAsync(PageIndex, PageSize, OrderField, false, SearchQueryModel).Result);
-
-                var list = new ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>>();
-                for (var i = 0; i < medias.Item1.Count(); i++)
-                {
-                    var item = EmitMapper.ObjectMapperManager.DefaultInstance.GetMapper<Media, MediaListItemViewModel>().Map(medias.Item1[i]);
-                    var isSelect = new ListItemIsSelectViewModel { IsSelected = false };
-
-                    list.Add(new Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>(item, isSelect));
-                }
-
-                Medias = list;
-                IsDataFound = Medias.Any();
-                CurrentNumberOfData = Medias.Count;
-                MaxNumberOfData = medias.Item2;
-            }));
+            ExecuteLoadMedias(() => _groupService.GetMediasForPagingAsync(PageIndex, PageSize, OrderField, false, SearchQueryModel).Result, isRefresh);
         }
 
         public async void RemoveMediaFromGroup(IMedia media)
@@ -107,7 +84,7 @@ namespace ZdyLovePlayer.ViewModels.Pages
             {
                 this.SearchQueryModel.Items.Clear();
                 this.CurrentGroup = e.Group;
-                LoadMedias(e.IsRefresh);
+                ExecuteLoadMedias(e.IsRefresh);
             });
         }
 

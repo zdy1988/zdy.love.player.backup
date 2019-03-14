@@ -12,7 +12,7 @@ namespace ZdyLovePlayer.UserControls.Pages.Moive
     /// </summary>
     public partial class MovieListView : UserControl
     {
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        public MovieListViewModel ViewModel => DataContext as MovieListViewModel;
 
         public MovieListView()
         {
@@ -22,47 +22,27 @@ namespace ZdyLovePlayer.UserControls.Pages.Moive
 
         private void MovieLibrary_Loaded(object sender, RoutedEventArgs e)
         {
-            var vm = DataContext as MovieListViewModel;
-            vm.OrderField = "ID";
-            vm.LoadMedias();
+            if (ViewModel != null && !ViewModel.IsDataFound)
+            {
+                ViewModel.OrderField = "ID";
+                ViewModel.ExecuteLoadMedias();
+            }
         }
 
-        private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void ReachingScrollViewerBottomBehavior_ReachingBottomEvent()
         {
-            var totalHeight = e.VerticalOffset + e.ViewportHeight;
-            if (e.VerticalChange <= 0 || totalHeight < 2d / 3d * e.ExtentHeight)
+            if (ViewModel != null && !ViewModel.IsDataLoading)
             {
-                return;
+                ViewModel.ExecuteLoadMedias();
             }
-
-            if (_semaphore.CurrentCount == 0)
-            {
-                return;
-            }
-
-            await _semaphore.WaitAsync();
-            var vm = DataContext as MovieListViewModel;
-            if (vm == null)
-            {
-                _semaphore.Release();
-                return;
-            }
-
-            if (!vm.IsDataLoading)
-            {
-                vm.LoadMedias();
-            }
-
-            _semaphore.Release();
         }
 
         private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                var vm = DataContext as MovieListViewModel;
-                vm.SearchText = ((TextBox)sender).Text.Trim();
-                vm.SearchMediaCommand.Execute(null);
+                ViewModel.SearchQuery = ((TextBox)sender).Text.Trim();
+                ViewModel.SearchMediaCommand.Execute(null);
             }
         }
     }

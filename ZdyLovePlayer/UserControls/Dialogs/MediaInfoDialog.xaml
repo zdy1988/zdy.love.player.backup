@@ -34,7 +34,7 @@
                 <TextBlock Text="喜爱" Grid.Column="0" Grid.Row="5"></TextBlock>
                 <TextBlock Text="{Binding Title}" Grid.Column="1" Grid.Row="1"></TextBlock>
                 <TextBlock Text="{Binding MediaSource}" Grid.Column="1" Grid.Row="2"></TextBlock>
-                <TextBlock Text="{Binding Duration, Converter={StaticResource TimeSpanInWordsConverter}}" Grid.Column="1" Grid.Row="3"></TextBlock>
+                <TextBlock Text="{Binding Duration, Converter={StaticResource TimeSpanToWordsConverter}}" Grid.Column="1" Grid.Row="3"></TextBlock>
                 <Viewbox Height="16" Grid.Column="1" Grid.Row="4"
                          HorizontalAlignment="Left">
                     <MaterialDesign:RatingBar Value="{Binding Rating, Mode=TwoWay}" Orientation="Horizontal" Foreground="Gold" Margin="0" Cursor="Hand">

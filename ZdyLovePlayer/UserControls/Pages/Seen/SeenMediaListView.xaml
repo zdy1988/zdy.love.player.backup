@@ -3,9 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
              xmlns:MaterialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:Layout="clr-namespace:ZdyLovePlayer.UserControls.Layout"
              xmlns:Controls="clr-namespace:ZdyLovePlayer.Controls"
+             xmlns:Behavior="clr-namespace:ZdyLovePlayer.Behavior"
              xmlns:Common="clr-namespace:ZdyLovePlayer.UserControls.Pages.Common"
              DataContext="{Binding SeenList, Source={StaticResource Locator}}"
              mc:Ignorable="d" 
@@ -38,10 +40,12 @@
                                            Focusable="False"
                                            CanKeyboardScroll="True"
                                            HorizontalAlignment="Stretch" 
-                                           TargetVerticalOffset="{Binding VerticalScroll, Mode=TwoWay}"
-                                           ScrollChanged="ScrollViewer_ScrollChanged">
+                                           TargetVerticalOffset="{Binding VerticalScroll, Mode=TwoWay}">
+                    <i:Interaction.Behaviors>
+                        <Behavior:ReachingScrollViewerBottomBehavior ReachingBottomEvent="ReachingScrollViewerBottomBehavior_ReachingBottomEvent"/>
+                    </i:Interaction.Behaviors>
                     <DataGrid Background="White"  Margin="14 2 96 0"
-                              ItemsSource="{Binding SeenMedias}" 
+                              ItemsSource="{Binding Medias}" 
                               CanUserSortColumns="True" 
                               CanUserAddRows="False"
                               CanUserResizeColumns="False"
@@ -53,7 +57,7 @@
                                 <DataGridTemplateColumn.Header>
                                     <Border Background="Transparent" Padding="5 0 5 0" HorizontalAlignment="Center">
                                         <CheckBox HorizontalAlignment="Center" x:Name="CheckBox_SelectAll" 
-                                              IsChecked="{Binding SeenList.IsSelectedAll, Source={StaticResource Locator}}"/>
+                                                  IsChecked="{Binding SeenList.IsSelectedAll, Source={StaticResource Locator}}"/>
                                     </Border>
                                 </DataGridTemplateColumn.Header>
                                 <DataGridTemplateColumn.CellTemplate>
@@ -92,7 +96,9 @@
                                                     <Setter Property="Height" Value="20"></Setter>
                                                 </Style>
                                             </StackPanel.Resources>
-                                            <Button ToolTip="再次播放" Command="{Binding SeenList.RepalyMediaCommand,Source={StaticResource Locator}}" CommandParameter="{Binding Item1}">
+                                            <Button ToolTip="再次播放"
+                                                    Command="{Binding SeenList.RepalyMediaCommand, Source={StaticResource Locator}}" 
+                                                    CommandParameter="{Binding Item1}">
                                                 <MaterialDesign:PackIcon Kind="PlayBoxOutline"></MaterialDesign:PackIcon>
                                             </Button>
                                         </StackPanel>

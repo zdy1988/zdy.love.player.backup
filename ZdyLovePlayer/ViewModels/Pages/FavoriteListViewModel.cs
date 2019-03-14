@@ -26,14 +26,14 @@ namespace ZdyLovePlayer.ViewModels.Pages
 
         #region Methods
 
-        public override void LoadMedias(bool isRefresh = false)
+        public override void ExecuteLoadMedias(bool isRefresh = false)
         {
             if (!this.SearchQueryModel.Items.Any(t => t.Field == "IsFavorite"))
             {
                 this.SearchQueryModel.Items.Add(new ConditionItem("IsFavorite", QueryMethod.Equal, 1));
             }
 
-            base.LoadMedias(isRefresh);
+            base.ExecuteLoadMedias(isRefresh);
         }
 
         #endregion

@@ -28,6 +28,8 @@ namespace ZdyLovePlayer
 
         private static Stopwatch WatchStart { get; }
 
+        #region Constructor
+
         static App()
         {
             WatchStart = Stopwatch.StartNew();
@@ -36,6 +38,17 @@ namespace ZdyLovePlayer
         }
 
         public App()
+        {
+            HandleFFmpegSettings();
+
+            RegisterExceptionEvent();
+        }
+
+        #endregion
+
+        #region Handle FFmpeg
+
+        public void HandleFFmpegSettings()
         {
             //ffmpeg
             // Change the default location of the ffmpeg binaries
@@ -49,19 +62,42 @@ namespace ZdyLovePlayer
             // Multithreaded video enables the creation of independent
             // dispatcher threads to render video frames.
             MediaElement.EnableWpfMultithreadedVideo = GuiContext.Current.IsInDebugMode == false;
-
-
-            RegisterHandledExceptionEvent();
         }
 
-        #region Handle FFmpeg
-        
+        public void HandleFFmpegLoading()
+        {
+            ThreadPool.QueueUserWorkItem((s) =>
+            {
+                try
+                {
+                    // Force loading
+                    MediaElement.LoadFFmpeg();
+                }
+                catch (Exception ex)
+                {
+                    GuiContext.Current?.EnqueueInvoke(() =>
+                    {
+                        MessageBox.Show(MainWindow,
+                            $"Unable to Load FFmpeg Libraries from path:\r\n    {MediaElement.FFmpegDirectory}" +
+                            $"\r\nMake sure the above folder contains FFmpeg shared binaries (dll files) for the " +
+                            $"applicantion's architecture ({(Environment.Is64BitProcess ? "64-bit" : "32-bit")})" +
+                            $"\r\nTIP: You can download builds from https://ffmpeg.zeranoe.com/builds/" +
+                            $"\r\n{ex.GetType().Name}: {ex.Message}\r\n\r\nApplication will exit.",
+                            "FFmpeg Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+
+                        Application.Current?.Shutdown();
+                    });
+                }
+            });
+        }
 
         #endregion
 
         #region  Handle Exception
 
-        private void RegisterHandledExceptionEvent()
+        private void RegisterExceptionEvent()
         {
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
@@ -103,6 +139,8 @@ namespace ZdyLovePlayer
 
         #endregion
 
+        #region Startup
+
         /// <summary>
         /// Splash screen dispatcher
         /// </summary>
@@ -137,36 +175,14 @@ namespace ZdyLovePlayer
                 });
             };
 
-            ThreadPool.QueueUserWorkItem((s) =>
-            {
-                try
-                {
-                    // Force loading
-                    MediaElement.LoadFFmpeg();
-                }
-                catch (Exception ex)
-                {
-                    GuiContext.Current?.EnqueueInvoke(() =>
-                    {
-                        MessageBox.Show(MainWindow,
-                            $"Unable to Load FFmpeg Libraries from path:\r\n    {MediaElement.FFmpegDirectory}" +
-                            $"\r\n{ex.GetType().Name}: {ex.Message}\r\n\r\nApplication will exit.",
-                            "FFmpeg Error",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error);
-
-                        Application.Current?.Shutdown();
-                    });
-                }
-            });
+            HandleFFmpegLoading();
         }
 
         private void SplashScreen_OnCompleted(object sender, EventArgs e)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                MainWindow.Show();
-            });
+            DispatcherHelper.CheckBeginInvokeOnUI(() => MainWindow.Show());
         }
+
+        #endregion
     }
 }

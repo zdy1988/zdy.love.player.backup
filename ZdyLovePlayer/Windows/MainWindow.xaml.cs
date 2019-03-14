@@ -33,16 +33,11 @@ namespace ZdyLovePlayer.Windows
         {
             InitializeNotifyIcon();
             InitializeViewModelEvents();
-            InitializeShortcutKeys();
 
             Task.Factory
                 .StartNew(async () => await SQLiteDatabase.Initialize())
-                .ContinueWith(async (t) =>
+                .ContinueWith((t) =>
                 {
-                    if (ViewModel != null)
-                    {
-                        await ViewModel.LoadMediaGroup();
-                    }
 
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }
@@ -51,23 +46,6 @@ namespace ZdyLovePlayer.Windows
         {
             this.Player.Width = this.ActualWidth;
         }
-
-        #region Shortcut Keys
-
-        private void InitializeShortcutKeys()
-        {
-            KeyDown += MainWindow_KeyDown;
-        }
-
-        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
-        {
-            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.E)
-            {
-                this.Close();
-            }
-        }
-
-        #endregion
 
         #region ViewModel Events
 
@@ -90,10 +68,7 @@ namespace ZdyLovePlayer.Windows
 
         private void ViewModel_OnMessageNotice(object sender, string message)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                MainSnackbar.MessageQueue.Enqueue(message);
-            });
+            DispatcherHelper.CheckBeginInvokeOnUI(() => MainSnackbar.MessageQueue.Enqueue(message));
         }
 
         #endregion

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -72,6 +73,8 @@ namespace ZdyLovePlayer.AttachedProperties
 
         #endregion
 
+        #region Methods
+
         public static ImageType GetImageType(DependencyObject obj)
         {
             return (ImageType)obj.GetValue(ImageTypeProperty);
@@ -81,6 +84,10 @@ namespace ZdyLovePlayer.AttachedProperties
         {
             obj.SetValue(ImageTypeProperty, value);
         }
+
+        #endregion
+
+        #region Properties 
 
         public static readonly DependencyProperty ImageTypeProperty =
             DependencyProperty.RegisterAttached("ImageType",
@@ -136,7 +143,9 @@ namespace ZdyLovePlayer.AttachedProperties
                 typeof(ImageAsyncHelper),
                 new PropertyMetadata(new PropertyChangedCallback(OnImagePathPropertyChangedCallback)));
 
-        private static async void OnImagePathPropertyChangedCallback(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        #endregion
+
+        private static void OnImagePathPropertyChangedCallback(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             var image = (Image)obj;
             var imageType = GetImageType(obj);
@@ -154,8 +163,9 @@ namespace ZdyLovePlayer.AttachedProperties
                 return;
             }
 
-            await Task.Run(async () =>
+            ThreadPool.QueueUserWorkItem(new WaitCallback(async (state) =>
             {
+                Thread.Sleep(10000);
 
                 //创建临时目录
                 var imageTempDirectory = $"{Constants.ImageTempDirectory}{imageType}\\{imageSubType}\\";
@@ -250,7 +260,7 @@ namespace ZdyLovePlayer.AttachedProperties
                     image.SetImageError(imageType, imageSubType);
                 }
 
-            }).ConfigureAwait(false);
+            }));
         }
     }
 

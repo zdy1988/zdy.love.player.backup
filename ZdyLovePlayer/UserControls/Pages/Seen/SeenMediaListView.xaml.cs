@@ -22,7 +22,7 @@ namespace ZdyLovePlayer.UserControls.Pages.Seen
     /// </summary>
     public partial class SeenMediaListView : UserControl
     {
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        public SeenListViewModel ViewModel => DataContext as SeenListViewModel;
 
         public SeenMediaListView()
         {
@@ -35,39 +35,19 @@ namespace ZdyLovePlayer.UserControls.Pages.Seen
         {
             this.CheckBox_SelectAll.IsChecked = false;
 
-            var vm = DataContext as SeenListViewModel;
-            vm.OrderField = "ID";
-            vm.LoadMedias(true);
+            if (ViewModel != null && !ViewModel.IsDataFound)
+            {
+                ViewModel.OrderField = "ID";
+                ViewModel.ExecuteLoadMedias(true);
+            }
         }
 
-        private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void ReachingScrollViewerBottomBehavior_ReachingBottomEvent()
         {
-            var totalHeight = e.VerticalOffset + e.ViewportHeight;
-            if (e.VerticalChange <= 0 || totalHeight < 2d / 3d * e.ExtentHeight)
+            if (ViewModel != null && !ViewModel.IsDataLoading)
             {
-                return;
+                ViewModel.ExecuteLoadMedias();
             }
-
-            if (_semaphore.CurrentCount == 0)
-            {
-                return;
-            }
-
-            await _semaphore.WaitAsync();
-            var vm = DataContext as SeenListViewModel;
-            if (vm == null)
-            {
-                _semaphore.Release();
-                return;
-            }
-
-            if (!vm.IsDataLoading)
-            {
-                vm.LoadMedias();
-            }
-
-            _semaphore.Release();
-
         }
     }
 }

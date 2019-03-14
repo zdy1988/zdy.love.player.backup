@@ -24,7 +24,7 @@
 
     <Grid>
         <Main:Loading Visibility="{Binding IsPageLoading, Converter={StaticResource BoolToInverseVisibilityConverter}}"/>
-        <ContentPresenter Content="{Binding MainContent,IsAsync=True,Delay=1500}"
+        <ContentPresenter Content="{Binding MainContent}"
                           Visibility="{Binding IsPageLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
     </Grid>
 </UserControl>

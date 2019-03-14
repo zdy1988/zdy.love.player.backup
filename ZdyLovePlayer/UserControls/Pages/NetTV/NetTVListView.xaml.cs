@@ -22,7 +22,7 @@ namespace ZdyLovePlayer.UserControls.Pages.NetTV
     /// </summary>
     public partial class NetTVListView : UserControl
     {
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        public NetTVListViewModel ViewModel => DataContext as NetTVListViewModel;
 
         public NetTVListView()
         {
@@ -33,39 +33,19 @@ namespace ZdyLovePlayer.UserControls.Pages.NetTV
 
         private void NetTVListView_Loaded(object sender, RoutedEventArgs e)
         {
-            var vm = DataContext as NetTVListViewModel;
-            vm.OrderField = "ID";
-            vm.LoadMedias();
+            if (ViewModel != null && !ViewModel.IsDataFound)
+            {
+                ViewModel.OrderField = "ID";
+                ViewModel.ExecuteLoadMedias();
+            }
         }
 
-        private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void ReachingScrollViewerBottomBehavior_ReachingBottomEvent()
         {
-            var totalHeight = e.VerticalOffset + e.ViewportHeight;
-            if (e.VerticalChange <= 0 || totalHeight < 2d / 3d * e.ExtentHeight)
+            if (ViewModel != null && !ViewModel.IsDataLoading)
             {
-                return;
+                ViewModel.ExecuteLoadMedias();
             }
-
-            if (_semaphore.CurrentCount == 0)
-            {
-                return;
-            }
-
-            await _semaphore.WaitAsync();
-            var vm = DataContext as NetTVListViewModel;
-            if (vm == null)
-            {
-                _semaphore.Release();
-                return;
-            }
-
-            if (!vm.IsDataLoading)
-            {
-                vm.LoadMedias();
-            }
-
-            _semaphore.Release();
-
         }
     }
 }

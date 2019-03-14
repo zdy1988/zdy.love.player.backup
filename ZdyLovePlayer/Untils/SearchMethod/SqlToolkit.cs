@@ -56,7 +56,7 @@ namespace ZdyLovePlayer.Untils.SearchMethod
                 {
                     var item = queryModel.Items[i];
                     //以“NS__”开头的不是查询条件
-                    if (!item.Field.StartsWith("NS_") && item.Value != null && item.Value != "")
+                    if (!item.Field.StartsWith("NS_") && item.Value != null && item.Value.ToString() != "")
                     {
                         if (item.Field.EndsWith("_Start") || item.Field.EndsWith("_End"))
                         {

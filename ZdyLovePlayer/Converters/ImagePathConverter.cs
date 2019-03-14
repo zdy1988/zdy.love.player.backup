@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Windows.Data;
+using ZdyLovePlayer.Models;
 using ZdyLovePlayer.PubilcEnum;
 using ZdyLovePlayer.Untils;
 using ZdyLovePlayer.ViewModels.Pages;
@@ -17,7 +18,7 @@ namespace ZdyLovePlayer.Converters
                 return "";
             }
 
-            MediaListItemViewModel media = (MediaListItemViewModel)value;
+            Media media = (Media)value;
 
             if (media.Cover == null)
             {

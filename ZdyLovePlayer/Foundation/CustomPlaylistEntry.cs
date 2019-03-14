@@ -1,8 +1,8 @@
-﻿using Unosquare.FFME.Playlists;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using Unosquare.FFME.Playlists;
 
 namespace ZdyLovePlayer.Foundation
 {
@@ -12,29 +12,20 @@ namespace ZdyLovePlayer.Foundation
     /// <seealso cref="PlaylistEntry" />
     public sealed class CustomPlaylistEntry : PlaylistEntry
     {
-        private static readonly Dictionary<string, string> PropertyMap = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> PropertyMap = new Dictionary<string, string>
         {
             { nameof(Thumbnail), "ffme-thumbnail" },
             { nameof(Format), "info-format" },
-            { nameof(LastOpenedUtc), "ffme-lastopened" },
+            { nameof(LastOpenedUtc), "ffme-lastopened" }
         };
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CustomPlaylistEntry"/> class.
-        /// </summary>
-        public CustomPlaylistEntry()
-            : base()
-        {
-            // placeholder
-        }
 
         /// <summary>
         /// Gets or sets the thumbnail.
         /// </summary>
         public string Thumbnail
         {
-            get => GetMappedAttibuteValue();
-            set => SetMappedAttibuteValue(value);
+            get => GetMappedAttributeValue();
+            set => SetMappedAttributeValue(value);
         }
 
         /// <summary>
@@ -42,8 +33,8 @@ namespace ZdyLovePlayer.Foundation
         /// </summary>
         public string Format
         {
-            get => GetMappedAttibuteValue();
-            set => SetMappedAttibuteValue(value);
+            get => GetMappedAttributeValue();
+            set => SetMappedAttributeValue(value);
         }
 
         /// <summary>
@@ -53,36 +44,33 @@ namespace ZdyLovePlayer.Foundation
         {
             get
             {
-                var currentValue = GetMappedAttibuteValue();
+                var currentValue = GetMappedAttributeValue();
                 if (string.IsNullOrWhiteSpace(currentValue))
                     return default;
 
-                if (long.TryParse(currentValue, out long binaryValue))
-                    return DateTime.FromBinary(binaryValue);
-
-                return default;
+                return long.TryParse(currentValue, out var binaryValue) ?
+                    DateTime.FromBinary(binaryValue) :
+                    default(DateTime?);
             }
             set
             {
                 if (value == null)
                 {
-                    SetMappedAttibuteValue(null);
+                    SetMappedAttributeValue(null);
                     return;
                 }
 
                 var binaryValue = value.Value.ToBinary().ToString(CultureInfo.InvariantCulture);
-                SetMappedAttibuteValue(binaryValue);
+                SetMappedAttributeValue(binaryValue);
             }
         }
 
-        private string GetMappedAttibuteValue([CallerMemberName] string propertyName = null)
-        {
-            return Attributes.GetEntryValue(PropertyMap[propertyName]);
-        }
+        private string GetMappedAttributeValue([CallerMemberName] string propertyName = null) =>
+            Attributes.GetEntryValue(PropertyMap[propertyName ?? throw new ArgumentNullException(nameof(propertyName))]);
 
-        private void SetMappedAttibuteValue(string value, [CallerMemberName] string propertyName = null)
+        private void SetMappedAttributeValue(string value, [CallerMemberName] string propertyName = null)
         {
-            if (Attributes.SetEntryValue(PropertyMap[propertyName], value))
+            if (Attributes.SetEntryValue(PropertyMap[propertyName ?? throw new ArgumentNullException(nameof(propertyName))], value))
                 OnPropertyChanged(propertyName);
         }
     }

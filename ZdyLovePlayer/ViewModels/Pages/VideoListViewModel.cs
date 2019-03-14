@@ -25,14 +25,14 @@ namespace ZdyLovePlayer.ViewModels.Pages
 
         #region Methods
 
-        public override void LoadMedias(bool isRefresh = false)
+        public override void ExecuteLoadMedias(bool isRefresh = false)
         {
             if (!this.SearchQueryModel.Items.Any(t => t.Field == "MediaType"))
             {
                 this.SearchQueryModel.Items.Add(new ConditionItem("MediaType", QueryMethod.Equal, (int)PubilcEnum.MediaType.Video));
             }
 
-            base.LoadMedias(isRefresh);
+            base.ExecuteLoadMedias(isRefresh);
         }
 
         #endregion
@@ -41,7 +41,7 @@ namespace ZdyLovePlayer.ViewModels.Pages
 
         private void RegisterMessages()
         {
-            Messenger.Default.Register<RefreshVideoListMessage>(this, e => LoadMedias(e.IsRefresh));
+            Messenger.Default.Register<RefreshVideoListMessage>(this, e => ExecuteLoadMedias(e.IsRefresh));
         }
 
         #endregion

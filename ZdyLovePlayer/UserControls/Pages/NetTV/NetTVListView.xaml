@@ -11,6 +11,7 @@
              xmlns:AttachedProperties="clr-namespace:ZdyLovePlayer.AttachedProperties"
              xmlns:Reused="clr-namespace:ZdyLovePlayer.UserControls.Reused"
              xmlns:Common="clr-namespace:ZdyLovePlayer.UserControls.Pages.Common"
+             xmlns:Behavior="clr-namespace:ZdyLovePlayer.Behavior"
              DataContext="{Binding NetTVList, Source={StaticResource Locator}}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -40,11 +41,13 @@
                 </Button>
 
                 <Controls:AnimatedScrollViewer x:Name="ScrollView"
-                                           Focusable="False"
-                                           CanKeyboardScroll="True"
-                                           HorizontalAlignment="Stretch" 
-                                           TargetVerticalOffset="{Binding VerticalScroll, Mode=TwoWay}"
-                                           ScrollChanged="ScrollViewer_ScrollChanged">
+                                               Focusable="False"
+                                               CanKeyboardScroll="True"
+                                               HorizontalAlignment="Stretch" 
+                                               TargetVerticalOffset="{Binding VerticalScroll, Mode=TwoWay}">
+                    <i:Interaction.Behaviors>
+                        <Behavior:ReachingScrollViewerBottomBehavior ReachingBottomEvent="ReachingScrollViewerBottomBehavior_ReachingBottomEvent"/>
+                    </i:Interaction.Behaviors>
                     <ItemsControl VerticalAlignment="Top" x:Name="ItemsContainer" Margin="14 0 96 0"
                               ItemsSource="{Binding Medias, Mode=OneTime}"
                               ScrollViewer.CanContentScroll="True"
@@ -135,7 +138,7 @@
                                                     </MaterialDesign:ToggleButtonAssist.OnContent>
                                                 </ToggleButton>
                                                 <Button Style="{StaticResource MaterialDesignToolButton}" Width="30" Padding="2 0 2 0"
-                                                    Command="{Binding Main.JoinTheMediaGroupDialogOpenCommand, Source={StaticResource Locator}}"
+                                                    Command="{Binding MediaGroup.JoinTheMediaGroupDialogOpenCommand, Source={StaticResource Locator}}"
                                                     CommandParameter="{Binding Item1}"
                                                     MaterialDesign:RippleAssist.IsCentered="True" ToolTip="添加到">
                                                     <MaterialDesign:PackIcon Kind="ShapeSquarePlus" Width="18" Height="18"/>

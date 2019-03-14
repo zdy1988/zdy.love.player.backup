@@ -49,6 +49,9 @@
             </ContextMenu>
         </ResourceDictionary>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding WindowClosedCommand}" Key="E" Modifiers="Ctrl"></KeyBinding>
+    </Window.InputBindings>
     <MaterialDesign:DialogHost x:Name="PlayerMain" 
                                Identifier="RootDialog"
                                DialogContent="{Binding ApplicationState.RootDialogContent}"

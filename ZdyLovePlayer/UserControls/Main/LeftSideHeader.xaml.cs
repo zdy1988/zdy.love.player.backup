@@ -12,16 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ZdyLovePlayer.ViewModels.Main;
 
 namespace ZdyLovePlayer.UserControls.Main
 {
     /// <summary>
-    /// LeftSide.xaml 的交互逻辑
+    /// LeftSideHeader.xaml 的交互逻辑
     /// </summary>
-    public partial class LeftSide : UserControl
+    public partial class LeftSideHeader : UserControl
     {
-        public LeftSide()
+        public LeftSideHeader()
         {
             InitializeComponent();
         }

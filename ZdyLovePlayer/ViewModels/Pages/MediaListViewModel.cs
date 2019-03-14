@@ -22,7 +22,7 @@ using ZdyLovePlayer.UserControls.Dialogs;
 
 namespace ZdyLovePlayer.ViewModels.Pages
 {
-    public class MediaListViewModel : BasePagingViewModel
+    public class MediaListViewModel : BasePaginationViewModel<Media>
     {
         #region Constructor
 
@@ -38,52 +38,34 @@ namespace ZdyLovePlayer.ViewModels.Pages
 
         #region Properties
 
-        private string _searchText;
-        public string SearchText
+        private Media _currentMedia = new Media();
+        public Media CurrentMedia
         {
-            get { return _searchText; }
-            set { Set(() => SearchText, ref _searchText, value); }
-        }
-
-        private ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>> _medias = new ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>>();
-        public ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>> Medias
-        {
-            get { return _medias; }
-            set { Set(() => Medias, ref _medias, value); }
+            get { return _currentMedia; }
+            set { Set(() => CurrentMedia, ref _currentMedia, value); }
         }
 
         #endregion
 
         #region Methods
 
-        public override void LoadMedias(bool isRefresh = false)
+        public override void ExecuteLoadMedias(bool isRefresh = false)
         {
             MediaLoadBefore?.Invoke(this, new EventArgs());
 
-            if (isRefresh)
-            {
-                PageIndex = 0;
-                Medias.Clear();
-            }
+            ExecuteLoadMedias(() => _mediaService.GetMediasForPagingAsync(PageIndex, PageSize, OrderField, false, SearchQueryModel).Result, isRefresh);
 
-            ExecuteActionAndWatchPageTurning(() => ExecuteActionWithProgress(async () =>
-            {
-                var medias = await ExecuteDataDelay<Media>(() => _mediaService.GetMediasForPagingAsync(PageIndex, PageSize, OrderField, false, SearchQueryModel).Result);
+            MediaLoadAfter?.Invoke(this, new EventArgs());
+        }
 
-                var list = new ObservableCollection<Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>>();
-                for (var i = 0; i < medias.Item1.Count(); i++)
-                {
-                    var item = EmitMapper.ObjectMapperManager.DefaultInstance.GetMapper<Media, MediaListItemViewModel>().Map(medias.Item1[i]);
-                    var isSelect = new ListItemIsSelectViewModel { IsSelected = false };
-
-                    list.Add(new Tuple<MediaListItemViewModel, ListItemIsSelectViewModel>(item, isSelect));
-                }
-
-                Medias = list;
-                IsDataFound = Medias.Any();
-                CurrentNumberOfData = Medias.Count;
-                MaxNumberOfData = medias.Item2;
-            }));
+        private void ChangeToDataBase()
+        {
+            //Task.Run(async () =>
+            //{
+            //    var _mediaService = SimpleIoc.Default.GetInstance<IMediaService>();
+            //    var media = EmitMapper.ObjectMapperManager.DefaultInstance.GetMapper<Media, Media>().Map(this);
+            //    await _mediaService.UpdateAsync(media);
+            //}).ConfigureAwait(false);
         }
 
         #endregion
@@ -100,15 +82,15 @@ namespace ZdyLovePlayer.ViewModels.Pages
         public RelayCommand SearchMediaCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             SearchQueryModel.Items.Clear();
-            if (!string.IsNullOrEmpty(this.SearchText))
+            if (!string.IsNullOrEmpty(this.SearchQuery))
             {
-                SearchQueryModel.Items.Add(new ConditionItem("Code", QueryMethod.Contains, this.SearchText, "media"));
-                SearchQueryModel.Items.Add(new ConditionItem("Title", QueryMethod.Contains, this.SearchText, "media"));
-                SearchQueryModel.Items.Add(new ConditionItem("Actors", QueryMethod.Contains, this.SearchText, "media"));
-                SearchQueryModel.Items.Add(new ConditionItem("Keyword", QueryMethod.Equal, this.SearchText, "media"));
+                SearchQueryModel.Items.Add(new ConditionItem("Code", QueryMethod.Contains, this.SearchQuery, "media"));
+                SearchQueryModel.Items.Add(new ConditionItem("Title", QueryMethod.Contains, this.SearchQuery, "media"));
+                SearchQueryModel.Items.Add(new ConditionItem("Actors", QueryMethod.Contains, this.SearchQuery, "media"));
+                SearchQueryModel.Items.Add(new ConditionItem("Keyword", QueryMethod.Equal, this.SearchQuery, "media"));
             }
 
-            LoadMedias(true);
+            ExecuteLoadMedias(true);
         })).Value;
 
         public RelayCommand<IMedia> PlayMediaCommand => new Lazy<RelayCommand<IMedia>>(() => new RelayCommand<IMedia>((media) =>

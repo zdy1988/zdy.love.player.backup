@@ -1,21 +1,18 @@
-﻿using FFmpeg.AutoGen;
-using System;
+﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
+using FFmpeg.AutoGen;
 using Unosquare.FFME.Shared;
 
 namespace ZdyLovePlayer.Foundation
 {
+    /// <inheritdoc />
     /// <summary>
     /// Provides an example of a very simple custom input stream.
     /// </summary>
     /// <seealso cref="IMediaInputStream" />
     public sealed unsafe class FileInputStream : IMediaInputStream
     {
-        /// <summary>
-        /// The custom file scheme (URL prefix) including ://
-        /// </summary>
-        public const string Scheme = "customfile://";
-
         private readonly FileStream BackingStream;
         private readonly object ReadLock = new object();
         private readonly byte[] ReadBuffer;
@@ -26,34 +23,35 @@ namespace ZdyLovePlayer.Foundation
         /// <param name="path">The path.</param>
         public FileInputStream(string path)
         {
-            path = Path.GetFullPath(path);
-
-            BackingStream = File.OpenRead(path);
-            var uri = new Uri(path);
+            var fullPath = Path.GetFullPath(path);
+            BackingStream = File.OpenRead(fullPath);
+            var uri = new Uri(fullPath);
             StreamUri = new Uri(uri.ToString().Replace("file://", Scheme));
             CanSeek = true;
             ReadBuffer = new byte[ReadBufferLength];
         }
 
         /// <summary>
-        /// Gets the stream URI. This is just a pseudo URI to identify the stream.
+        /// The custom file scheme (URL prefix) including ://
         /// </summary>
+        public static string Scheme => "customfile://";
+
+        /// <inheritdoc />
         public Uri StreamUri { get; }
 
-        /// <summary>
-        /// Gets a value indicating whether this stream is seekable.
-        /// </summary>
+        /// <inheritdoc />
         public bool CanSeek { get; }
 
-        /// <summary>
-        /// Gets the length in bytes of the read buffer that will be allocated.
-        /// Something like 4096 is recommended
-        /// </summary>
+        /// <inheritdoc />
         public int ReadBufferLength => 1024 * 16;
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
+        /// <inheritdoc />
+        //public InputStreamInitializing OnInitializing { get; } = null;
+
+        /// <inheritdoc />
+        //public InputStreamInitialized OnInitialized { get; } = null;
+
+        /// <inheritdoc />
         public void Dispose()
         {
             BackingStream?.Dispose();
@@ -69,7 +67,7 @@ namespace ZdyLovePlayer.Foundation
         /// <returns>
         /// The number of bytes that have been read
         /// </returns>
-        public unsafe int Read(void* opaque, byte* targetBuffer, int targetBufferLength)
+        public int Read(void* opaque, byte* targetBuffer, int targetBufferLength)
         {
             lock (ReadLock)
             {
@@ -77,10 +75,7 @@ namespace ZdyLovePlayer.Foundation
                 {
                     var readCount = BackingStream.Read(ReadBuffer, 0, ReadBuffer.Length);
                     if (readCount > 0)
-                    {
-                        fixed (byte* sourceBuffer = &ReadBuffer[0])
-                            Buffer.MemoryCopy(sourceBuffer, targetBuffer, targetBufferLength, readCount);
-                    }
+                        Marshal.Copy(ReadBuffer, 0, (IntPtr)targetBuffer, readCount);
 
                     return readCount;
                 }
@@ -91,26 +86,15 @@ namespace ZdyLovePlayer.Foundation
             }
         }
 
-        /// <summary>
-        /// Seeks to the specified offset. The offsect can be in byte position or in time units.
-        /// This is specified by the whence parameter which is one of the AVSEEK prefixed constants.
-        /// </summary>
-        /// <param name="opaque">The opaque.</param>
-        /// <param name="offset">The offset.</param>
-        /// <param name="whence">The whence.</param>
-        /// <returns>
-        /// The position in bytes or time scale that has been read
-        /// </returns>
-        public unsafe long Seek(void* opaque, long offset, int whence)
+        /// <inheritdoc />
+        public long Seek(void* opaque, long offset, int whence)
         {
             lock (ReadLock)
             {
                 try
                 {
-                    if (whence == ffmpeg.AVSEEK_SIZE)
-                        return BackingStream.Length;
-
-                    return BackingStream.Seek(offset, SeekOrigin.Begin);
+                    return whence == ffmpeg.AVSEEK_SIZE ?
+                        BackingStream.Length : BackingStream.Seek(offset, SeekOrigin.Begin);
                 }
                 catch
                 {

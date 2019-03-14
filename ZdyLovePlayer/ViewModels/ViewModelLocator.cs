@@ -52,6 +52,7 @@ namespace ZdyLovePlayer.ViewModels
             SimpleIoc.Default.Register<VideoListViewModel>();
             SimpleIoc.Default.Register<SeenListViewModel>();
             SimpleIoc.Default.Register<FavoriteListViewModel>();
+            SimpleIoc.Default.Register<MediaGroupViewModel>();
             SimpleIoc.Default.Register<MediaGroupMembersViewModel>();
         }
 
@@ -62,6 +63,7 @@ namespace ZdyLovePlayer.ViewModels
         public VideoListViewModel VideoList => ServiceLocator.Current.GetInstance<VideoListViewModel>();
         public SeenListViewModel SeenList => ServiceLocator.Current.GetInstance<SeenListViewModel>();
         public FavoriteListViewModel FavoriteList => ServiceLocator.Current.GetInstance<FavoriteListViewModel>();
+        public MediaGroupViewModel MediaGroup => ServiceLocator.Current.GetInstance<MediaGroupViewModel>();
         public MediaGroupMembersViewModel MediaGroupMembers => ServiceLocator.Current.GetInstance<MediaGroupMembersViewModel>();
     }
 }

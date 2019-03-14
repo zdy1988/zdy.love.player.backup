@@ -7,7 +7,7 @@
                 <ControlTemplate TargetType="{x:Type Layout:ContentPane}">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="242"/>
+                            <RowDefinition Height="243.5"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
