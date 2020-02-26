@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Formatters="clr-namespace:ZDY.LovePlayer.Formatters">
+
+    <Formatters:BitFormatter x:Key="BitFormatter" />
+    <Formatters:ByteFormatter x:Key="ByteFormatter" />
+    <Formatters:DateTimeFormatter x:Key="DateTimeFormatter" />
+    <Formatters:DurationFormatter x:Key="DurationFormatter" />
+    <Formatters:PercentageFormatter x:Key="PercentageFormatter" />
+    <Formatters:TimeSpanFormatter x:Key="TimeSpanFormatter" />
+
+</ResourceDictionary>
